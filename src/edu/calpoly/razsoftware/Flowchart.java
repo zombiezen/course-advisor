@@ -1,5 +1,6 @@
 package edu.calpoly.razsoftware;
 
+import com.google.gson.Gson;
 import java.util.Set;
 
 public class Flowchart
@@ -9,5 +10,20 @@ public class Flowchart
     public Set<CourseOption> getSectionReqs()
     {
         return sectionReqs;
+    }
+
+    public void addOption(CourseOption newOption)
+    {
+        sectionReqs.add(newOption);
+    }
+
+    /*
+     * returns the JSON string for this object
+     */
+    public String ToJSONString()
+    {
+        // TODO (aspurgin)
+        Gson gson = new Gson();
+        for(CourseOption cs : sectionReqs)
     }
 }
