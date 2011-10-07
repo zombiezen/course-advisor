@@ -13,6 +13,10 @@ public class CourseList
 {
     private Set<Course> catalog;
 
+    /**
+     * constructs a course list based off a given JSON file
+     * @param path File path
+     */
     public CourseList(File path)
     {
         // TODO(rlight)
@@ -32,6 +36,9 @@ public class CourseList
         }
     }
 
+    /**
+     * replaces course keys attained from JSON file with class references from CourseList
+     */
     private void completePointers()
     {
         for(Course c : catalog)
@@ -68,7 +75,13 @@ public class CourseList
             c.setCoRequisites(newCo);
         }
     }
-    
+
+    /**
+     * returns a full class object from the course list
+     * @param major abbreviation of major
+     * @param number course number
+     * @return the full course reference
+     */
     public Course lookUp(String major, int number) 
     {    
         for(Course c :catalog.toArray(new Course[catalog.size()]))

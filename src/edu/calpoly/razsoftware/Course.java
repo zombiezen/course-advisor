@@ -24,6 +24,10 @@ public class Course
         return false;
     }
 
+    /**
+     * used to obtain a reference to the set of corequisites
+     * @return set of coRequisites
+     */
     public Set<Set<Course>> getCoRequisites()
     {
         return coRequisites;
