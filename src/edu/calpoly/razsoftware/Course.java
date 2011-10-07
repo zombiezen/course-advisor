@@ -8,6 +8,7 @@ public class Course
     private List<String> major;
     private int number;
     private int units;
+    private String name;
     private String description;
     private Set<Set<Course>> preRequisites;
     private Set<Set<Course>> coRequisites;
@@ -26,6 +27,16 @@ public class Course
     public Set<Set<Course>> getCoRequisites()
     {
         return coRequisites;
+    }
+    
+    public void setCoRequisites(Set<Set<Course>> in)
+    {
+        coRequisites = in;
+    }
+    
+    public String getName()
+    {
+        return name;
     }
 
     public String getDescription()
@@ -46,6 +57,11 @@ public class Course
     public Set<Set<Course>> getPreRequisites()
     {
         return preRequisites;
+    }
+    
+    public void setPreRequisites(Set<Set<Course>> in)
+    {
+        preRequisites = in;
     }
 
     public int getUnits()
