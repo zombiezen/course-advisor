@@ -13,6 +13,10 @@ public class CourseList
 {
     private Set<Course> catalog;
 
+    public CourseList(Collection in)
+    {
+        // TODO (aspurgin)
+    }
     /**
      * constructs a course list based off a given JSON file
      * @param path File path
