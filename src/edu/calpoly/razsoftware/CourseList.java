@@ -3,6 +3,7 @@ package edu.calpoly.razsoftware;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -13,9 +14,17 @@ public class CourseList
 {
     private Set<Course> catalog;
 
-    public CourseList(Collection in)
+    
+    /**
+     * constructs a catalog off of a collection of courses
+     * @param in 
+     */
+    public CourseList(Collection<Course> in)
     {
-        // TODO (aspurgin)
+        for(Course c : in)
+        {
+            catalog.add(c);
+        }
     }
     /**
      * constructs a course list based off a given JSON file
