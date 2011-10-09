@@ -17,13 +17,4 @@ public class Flowchart
         sectionReqs.add(newOption);
     }
 
-    /*
-     * returns the JSON string for this object
-     */
-    public String ToJSONString()
-    {
-        // TODO (aspurgin)
-        Gson gson = new Gson();
-        for(CourseOption cs : sectionReqs)
-    }
 }
