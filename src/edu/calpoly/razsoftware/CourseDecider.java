@@ -1,5 +1,6 @@
 package edu.calpoly.razsoftware;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,37 @@ public class CourseDecider
 
     public Result decideClasses(UserState state, Flowchart flowchart)
     {
-        // TODO(rlight)
-        return null;
+        final Set<CourseOption> sectionReqs = flowchart.getSectionReqs();
+        final Set<Course> available = state.getTaken();
+        final Set<CourseOption> met = new HashSet(), notMet = new HashSet();
+
+        for (CourseOption req : sectionReqs)
+        {
+            Course fulfillingCourse = null;
+
+            for (Course opt : req.getOptions())
+            {
+                if (available.contains(opt))
+                {
+                    fulfillingCourse = opt;
+                    break;
+                }
+            }
+
+            if (fulfillingCourse != null)
+            {
+                met.add(req);
+                if (req.isMutuallyExclusive())
+                {
+                    available.remove(fulfillingCourse);
+                }
+            }
+            else
+            {
+                notMet.add(req);
+            }
+        }
+
+        return new Result(met, notMet);
     }
 }
