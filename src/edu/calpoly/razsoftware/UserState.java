@@ -24,6 +24,11 @@ public class UserState
         // TODO(dpanger)
     }
 
+    public Set<Course> getTaken()
+    {
+        return taken;
+    }
+
     public void write(File file) throws IOException
     {
         // TODO(dpanger)
