@@ -1,11 +1,21 @@
 package edu.calpoly.razsoftware;
 
-import com.google.gson.Gson;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Flowchart
 {
     private Set<CourseOption> sectionReqs;
+
+    public Flowchart()
+    {
+        sectionReqs = new HashSet();
+    }
+
+    public Flowchart(Set<CourseOption> sectionReqs)
+    {
+        this.sectionReqs = new HashSet<CourseOption>(sectionReqs);
+    }
 
     public Set<CourseOption> getSectionReqs()
     {
@@ -16,5 +26,4 @@ public class Flowchart
     {
         sectionReqs.add(newOption);
     }
-
 }
