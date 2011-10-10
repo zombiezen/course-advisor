@@ -15,12 +15,39 @@ public class Course
 
     public Course(List<String> major, int number, int units, String description)
     {
-        // TODO(msvanbee)
+        this.major = major;
+        this.number = number;
+        this.units = units;
+        this.description = description;
+        preRequisites = new Set<Set<Course>>();
+        coRequisites = new Set<Set<Course>>();
     }
 
-    boolean preRequisitesMet(List<Course> taken)
+    public boolean isClass(String dept, int num)
     {
-        // TODO(msvanbee)
+        if(num == number)
+            for(String s : major)
+                if(s.toUpperCase().equals(dept.toUpperCase()))
+                    return true;
+        
+        return false;
+    }
+    
+    public boolean preRecsMet(Set<Course> coursesTaken)
+    {
+        boolean preRecMet = false;
+        
+        for(Set<Course> s : preRequisites)
+        {
+            preRecMet = true;
+            for(Course t : s)
+                if(!coursesTaken.contains(t))
+                    preRecMet = false;
+            
+            if(preRecMet)
+                return true;
+        }
+        
         return false;
     }
 
