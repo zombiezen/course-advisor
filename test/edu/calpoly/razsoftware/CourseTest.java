@@ -77,4 +77,25 @@ public class CourseTest
 
         assertTrue(c2.preRecsMet(ImmutableSet.<Course>of(c1, c3)));
     }
+    
+    @Test
+    public void optionShouldMatch()
+    {
+        final Course m1 = new Course(ImmutableList.of("MATH"),101, 4, "MATH 101");
+        final Course c1 = new Course(ImmutableList.of("CSC"),101, 4, "CSC 101");
+        final Course c2 = new Course(ImmutableList.of("CSC"),102, 4, "CSC 102");
+        final Course c3 = new Course(ImmutableList.of("CSC"),103, 4, "CSC 103");
+        
+        c3.getPreRequisites().add(ImmutableSet.<Course>of(m1,c1));
+        c3.getPreRequisites().add(ImmutableSet.<Course>of(m1,c2));
+        
+        assertFalse(c3.preRecsMet(ImmutableSet.<Course>of()));
+        assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(m1)));
+        assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c1)));
+        assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c2)));
+        assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c1)));
+        assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c2)));
+        assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c1, c2)));
+        assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c1, c2)));
+    }
 }
