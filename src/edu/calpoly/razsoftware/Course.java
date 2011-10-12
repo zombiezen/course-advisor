@@ -2,7 +2,7 @@ package edu.calpoly.razsoftware;
 
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 public class Course
 {
@@ -20,8 +20,8 @@ public class Course
         this.number = number;
         this.units = units;
         this.description = description;
-        preRequisites = new TreeSet<Set<Course>>();
-        coRequisites = new TreeSet<Set<Course>>();
+        preRequisites = new HashSet<Set<Course>>();
+        coRequisites = new HashSet<Set<Course>>();
     }
 
     public boolean isClass(String dept, int num)
