@@ -14,11 +14,12 @@ public class Course
     private Set<Set<Course>> preRequisites;
     private Set<Set<Course>> coRequisites;
 
-    public Course(List<String> major, int number, int units, String description)
+    public Course(List<String> major, int number, int units, String name, String description)
     {
         this.major = major;
         this.number = number;
         this.units = units;
+        this.name = name;
         this.description = description;
         preRequisites = new HashSet<Set<Course>>();
         coRequisites = new HashSet<Set<Course>>();
@@ -97,6 +98,22 @@ public class Course
         return preRequisites;
     }
     
+    public String getPreRequisitesString()
+    {
+        String preRecStr = "";
+        
+        for(Set<Course> s : preRequisites)
+        {
+            for(Course t : s)
+                preRecStr += s.toString() + "&";
+            preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+            preRecStr += " or ";
+        }
+        preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
+        
+        return preRecStr;
+    }
+    
     public void setPreRequisites(Set<Set<Course>> in)
     {
         preRequisites = in;
@@ -105,5 +122,10 @@ public class Course
     public int getUnits()
     {
         return units;
+    }
+    
+    public String toString()
+    {
+        return major.get(0) + number;
     }
 }
