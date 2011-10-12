@@ -1,8 +1,8 @@
 package edu.calpoly.razsoftware;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CourseDecider
@@ -11,7 +11,7 @@ public class CourseDecider
     {
         private Set<Course> preReqMet;
         private Set<Course> preReqNotMet;
-        
+
         public Result(final Set<Course> preReqMet,
                       final Set<Course> preReqNotMet)
         {
@@ -23,7 +23,7 @@ public class CourseDecider
         {
             return preReqMet;
         }
-        
+
         public Set<Course> getPrerequisitesNotMet()
         {
             return preReqNotMet;
@@ -33,14 +33,15 @@ public class CourseDecider
     public Result decideClasses(UserState state, Flowchart flowchart)
     {
         final Set<CourseOption> sectionReqs = flowchart.getSectionReqs();
-        final Set<Course> taken = state.getTaken();
+        final ImmutableSet<Course> taken =
+                ImmutableSet.copyOf(state.getTaken());
         final Set<Course> need = new HashSet<Course>();
         final Set<Course> met = new HashSet<Course>();
         final Set<Course> notMet = new HashSet<Course>();
 
         for (CourseOption req : sectionReqs)
         {
-            final Set<Course> options = req.getOptions();
+            final Set<Course> options = ImmutableSet.copyOf(req.getOptions());
             if (Sets.intersection(taken, options).isEmpty())
             {
                 // Requirement not fulfilled
