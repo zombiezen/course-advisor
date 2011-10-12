@@ -38,4 +38,20 @@ public class CourseOption
     {
         return requirement;
     }
+    
+    @Override
+    public String toString()
+    {
+        String req = "";
+        
+        if(options.size() > 0)
+        {
+            for(Course c : options)
+                req += c.toString() + " or ";
+            
+            req = req.substring(0,req.length() - 4);
+        }
+        
+        return req;
+    }
 }
