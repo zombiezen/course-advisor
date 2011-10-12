@@ -127,6 +127,7 @@ public class Course
         return units;
     }
     
+    @Override
     public String toString()
     {
         return major.get(0) + number;
