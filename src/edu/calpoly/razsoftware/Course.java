@@ -102,14 +102,17 @@ public class Course
     {
         String preRecStr = "";
         
-        for(Set<Course> s : preRequisites)
+        if(preRequisites.size() > 0)
         {
-            for(Course t : s)
-                preRecStr += s.toString() + "&";
-            preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
-            preRecStr += " or ";
+            for(Set<Course> s : preRequisites)
+            {
+                for(Course t : s)
+                    preRecStr += t.toString() + "&";
+                preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+                preRecStr += " or ";
+            }
+            preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
         }
-        preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
         
         return preRecStr;
     }
