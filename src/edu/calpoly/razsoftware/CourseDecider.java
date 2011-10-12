@@ -1,5 +1,6 @@
 package edu.calpoly.razsoftware;
 
+import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,22 +9,22 @@ public class CourseDecider
 {
     public static class Result
     {
-        private Set<CourseOption> preReqMet;
-        private Set<CourseOption> preReqNotMet;
+        private Set<Course> preReqMet;
+        private Set<Course> preReqNotMet;
         
-        public Result(final Set<CourseOption> preReqMet,
-                      final Set<CourseOption> preReqNotMet)
+        public Result(final Set<Course> preReqMet,
+                      final Set<Course> preReqNotMet)
         {
             this.preReqMet = preReqMet;
             this.preReqNotMet = preReqNotMet;
         }
 
-        public Set<CourseOption> getPrerequisitesMet()
+        public Set<Course> getPrerequisitesMet()
         {
             return preReqMet;
         }
         
-        public Set<CourseOption> getPrerequisitesNotMet()
+        public Set<Course> getPrerequisitesNotMet()
         {
             return preReqNotMet;
         }
@@ -32,33 +33,28 @@ public class CourseDecider
     public Result decideClasses(UserState state, Flowchart flowchart)
     {
         final Set<CourseOption> sectionReqs = flowchart.getSectionReqs();
-        final Set<Course> available = state.getTaken();
-        final Set<CourseOption> met = new HashSet(), notMet = new HashSet();
+        final Set<Course> taken = state.getTaken();
+        final Set<Course> need = new HashSet<Course>();
+        final Set<Course> met = new HashSet<Course>();
+        final Set<Course> notMet = new HashSet<Course>();
 
         for (CourseOption req : sectionReqs)
         {
-            Course fulfillingCourse = null;
-
-            for (Course opt : req.getOptions())
+            final Set<Course> options = req.getOptions();
+            if (Sets.intersection(taken, options).isEmpty())
             {
-                if (available.contains(opt))
+                // Requirement not fulfilled
+                for (Course neededCourse : options)
                 {
-                    fulfillingCourse = opt;
-                    break;
+                    if (neededCourse.preRecsMet(taken))
+                    {
+                        met.add(neededCourse);
+                    }
+                    else
+                    {
+                        notMet.add(neededCourse);
+                    }
                 }
-            }
-
-            if (fulfillingCourse != null)
-            {
-                met.add(req);
-                if (req.isMutuallyExclusive())
-                {
-                    available.remove(fulfillingCourse);
-                }
-            }
-            else
-            {
-                notMet.add(req);
             }
         }
 
