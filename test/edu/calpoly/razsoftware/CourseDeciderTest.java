@@ -22,11 +22,11 @@ public class CourseDeciderTest
     public void createSampleCourses()
     {
         cpe101 = new Course(ImmutableList.of("CPE", "CSC"), 101, 4,
-                            "The first class in CPE");
+                            "Fund of CS 1","The first class in CPE");
         cpe102 = new Course(ImmutableList.of("CPE", "CSC"), 102, 4,
-                            "The second class in CPE");
+                            "Fund of CS 2","The second class in CPE");
         cpe103 = new Course(ImmutableList.of("CPE", "CSC"), 103, 4,
-                            "The third class in CPE");
+                            "Fund of CS 3","The third class in CPE");
         cpe102.getPreRequisites().add(ImmutableSet.<Course>of(cpe101));
         cpe103.getPreRequisites().add(ImmutableSet.<Course>of(cpe102));
     }
