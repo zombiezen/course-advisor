@@ -66,6 +66,7 @@ public class CourseTest
         c2.getPreRequisites().add(ImmutableSet.<Course>of(c1));
 
         assertTrue(c2.preRecsMet(ImmutableSet.<Course>of(c1)));
+        assertEquals("CSC101", c2.getPreRequisitesString());
     }
 
     @Test
@@ -99,5 +100,7 @@ public class CourseTest
         assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c2)));
         assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c1, c2)));
         assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c1, c2)));
+        
+        assertEquals("MATH101&CSC102 or MATH101&CSC101", c3.getPreRequisitesString());
     }
 }
