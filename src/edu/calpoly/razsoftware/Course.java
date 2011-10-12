@@ -37,19 +37,25 @@ public class Course
     public boolean preRecsMet(Set<Course> coursesTaken)
     {
         boolean preRecMet = false;
-        
-        for(Set<Course> s : preRequisites)
+        if(preRequisites != null && preRequisites.size() > 0)
         {
-            preRecMet = true;
-            for(Course t : s)
-                if(!coursesTaken.contains(t))
-                    preRecMet = false;
+            for(Set<Course> s : preRequisites)
+            {
+                preRecMet = true;
+                for(Course t : s)
+                    if(!coursesTaken.contains(t))
+                        preRecMet = false;
             
-            if(preRecMet)
-                return true;
+                if(preRecMet)
+                    return true;
+            }
+            
+            return false;
         }
-        
-        return false;
+        else 
+        {
+            return true;
+        }
     }
 
     /**
