@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Scanner;
 
+/**
+ * Represents a current user's "state", which is the courses that he or she
+ * has already completed.
+ * @author dpanger
+ */
 public class UserState
 {
     private Set<Course> taken;
