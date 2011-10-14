@@ -49,6 +49,11 @@ public class CourseList
         }
     }
 
+    public Set<Course> getCatalog() {
+        
+        return this.catalog;
+        
+    }
     /**
      * replaces course keys attained from JSON file with class references from CourseList
      */
