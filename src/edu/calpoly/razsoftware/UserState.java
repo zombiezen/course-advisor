@@ -42,15 +42,27 @@ public class UserState
      * @throws IOException If the file is not found or can not be opened, an
      * IOException is thrown
      */
-    public UserState(File file) throws IOException
+    public UserState(File file, CourseList cl) throws IOException
     {
         Gson gson = new Gson();
         Scanner s = new Scanner(file);
         taken = new HashSet<Course>();
         
-        while ( s.hasNextLine() )
-            taken.add(gson.fromJson(s.nextLine(), Course.class));
-        // else we have an empty JSon file
+        // Add from a Course List, not from a JSon
+        
+        while ( s.hasNextLine() ) {
+            
+            String str = s.nextLine();
+            Course c = gson.fromJson(str, Course.class);
+            
+            // Look up the course from the Class List
+            Course c2 = cl.lookUp(c.getMajor().get(0), c.getNumber());
+            
+            // Add Class List course so we are using the same objects, not
+            // creating new ones.
+            taken.add(c2);
+            
+        } // else we have an empty JSon file
         
         s.close();
     }
