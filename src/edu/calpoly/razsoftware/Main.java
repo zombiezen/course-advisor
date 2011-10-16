@@ -5,6 +5,8 @@
 
 package edu.calpoly.razsoftware;
 
+import javax.swing.UIManager;
+
 /**
  *
  * @author light
@@ -17,7 +19,27 @@ public class Main
      */
     public static void main(String[] args)
     {
-        // TODO code application logic here
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (ClassNotFoundException ex)
+        {
+            java.util.logging.Logger.getLogger(SchedulerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (InstantiationException ex)
+        {
+            java.util.logging.Logger.getLogger(SchedulerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (IllegalAccessException ex)
+        {
+            java.util.logging.Logger.getLogger(SchedulerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ex)
+        {
+            java.util.logging.Logger.getLogger(SchedulerFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        new SchedulerFrame().setVisible(true);
     }
 
 }
