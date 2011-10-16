@@ -7,12 +7,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CourseList
 {
-    private Set<Course> catalog;
+    private Set<Course> catalog=new TreeSet<Course>();
 
     
     /**
