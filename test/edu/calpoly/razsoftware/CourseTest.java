@@ -101,6 +101,18 @@ public class CourseTest
         assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c1, c2)));
         assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c1, c2)));
         
-        assertEquals("MATH101&CSC102 or MATH101&CSC101", c3.getPreRequisitesString());
+        assertTrue(c3.getPreRequisitesString().equals("CSC101&MATH101 or CSC102&MATH101"));
+    }
+    
+    @Test
+    public void compareToTest()
+    {
+        final Course m1 = new Course(ImmutableList.of("MATH"),101, 4,"Calc 1", "MATH 101");
+        final Course c1 = new Course(ImmutableList.of("CSC"),101, 4,"Fund of CS 1", "CSC 101");
+        final Course c2 = new Course(ImmutableList.of("CSC"),102, 4,"Fund of CS 2", "CSC 102");
+        
+        assertTrue(c1.compareTo(c2) < 0);
+        assertTrue(c2.compareTo(c1) > 0);
+        
     }
 }
