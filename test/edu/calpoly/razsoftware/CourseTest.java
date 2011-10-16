@@ -101,7 +101,14 @@ public class CourseTest
         assertFalse(c3.preRecsMet(ImmutableSet.<Course>of(c1, c2)));
         assertTrue(c3.preRecsMet(ImmutableSet.<Course>of(m1, c1, c2)));
         
-        assertTrue(c3.getPreRequisitesString().equals("CSC101&MATH101 or CSC102&MATH101"));
+        assertTrue(c3.getPreRequisitesString().equals("CSC101&MATH101 or CSC102&MATH101") ||
+                   c3.getPreRequisitesString().equals("CSC102&MATH101 or CSC101&MATH101") ||
+                   c3.getPreRequisitesString().equals("MATH101&CSC101 or CSC102&MATH101") ||
+                   c3.getPreRequisitesString().equals("MATH101&CSC102 or CSC101&MATH101") ||
+                   c3.getPreRequisitesString().equals("CSC101&MATH101 or MATH101&CSC102") ||
+                   c3.getPreRequisitesString().equals("CSC102&MATH101 or MATH101&CSC101") ||
+                   c3.getPreRequisitesString().equals("MATH101&CSC101 or MATH101&CSC102") ||
+                   c3.getPreRequisitesString().equals("MATH101&CSC102 or MATH101&CSC101") );
     }
     
     @Test
@@ -113,6 +120,7 @@ public class CourseTest
         
         assertTrue(c1.compareTo(c2) < 0);
         assertTrue(c2.compareTo(c1) > 0);
+        assertTrue(m1.compareTo(c1) > 0);
         
     }
 }
