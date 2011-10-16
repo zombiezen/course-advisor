@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
-public class Course
+public class Course implements Comparable<Course>
 {
     private List<String> major;
     private int number;
@@ -25,6 +25,12 @@ public class Course
         coRequisites = new HashSet<Set<Course>>();
     }
 
+    @Override
+    public int compareTo(Course c)
+    {
+        return this.toString().compareTo(c.toString());
+    }
+    
     public boolean isClass(String dept, int num)
     {
         if(num == number)
