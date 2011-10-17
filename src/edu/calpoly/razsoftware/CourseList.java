@@ -3,6 +3,7 @@ package edu.calpoly.razsoftware;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -44,6 +45,25 @@ public class CourseList
         {
             Logger.getLogger(CourseList.class.getName()).log(Level.SEVERE, null, ex);
         }
+        while(s.hasNextLine())
+        {
+            catalog.add(gson.fromJson(s.nextLine(), Course.class));
+        }
+    }
+    
+    public CourseList(InputStream input)
+    {
+        // TODO(rlight)
+        Gson gson = new Gson();
+        Scanner s = null;
+//        try
+//        {
+            s = new Scanner(input);
+//        }
+//        catch (FileNotFoundException ex)
+//        {
+//            Logger.getLogger(CourseList.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         while(s.hasNextLine())
         {
             catalog.add(gson.fromJson(s.nextLine(), Course.class));
