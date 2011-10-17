@@ -8,6 +8,7 @@ public class CourseOption
     private String requirement;
     private Set<Course> options;
     private boolean mutuallyExclusive;
+    private int quarter;
     
     public CourseOption(Course onlyCourse)
     {
@@ -17,11 +18,12 @@ public class CourseOption
         this.mutuallyExclusive = true;
     }
     
-    public CourseOption(String name, Set<Course> options, boolean mutuallyExclusive)
+    public CourseOption(String name, Set<Course> options, boolean mutuallyExclusive, int quarter)
     {
         this.requirement = name;
         this.options = options;
         this.mutuallyExclusive = mutuallyExclusive;
+        this.quarter = quarter;
     }
 
     public boolean isMutuallyExclusive()
