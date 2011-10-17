@@ -32,74 +32,54 @@ public class CourseDeciderTest
     }
 
     @Test
-    public void resultConstructorShouldAllowEmpty()
-    {
-        CourseDecider.Result result = new CourseDecider.Result(
-                ImmutableSet.<Course>of(),
-                ImmutableSet.<Course>of());
-        assertEquals(ImmutableSet.of(), result.getPrerequisitesMet());
-        assertEquals(ImmutableSet.of(), result.getPrerequisitesNotMet());
-    }
-
-    @Test
     public void emptyCase()
     {
         UserState state = new UserState();
         Flowchart flowchart = new Flowchart();
 
-        CourseDecider.Result result = decider.decideClasses(state, flowchart);
-
-        assertEquals(ImmutableSet.<Course>of(),
-                     result.getPrerequisitesMet());
-        assertEquals(ImmutableSet.<Course>of(),
-                     result.getPrerequisitesNotMet());
+        assertEquals(ImmutableSet.<CourseOption>of(),
+                     decider.decideClasses(state, flowchart));
     }
 
     @Test
     public void shouldReportEmptyForComplete()
     {
         Flowchart flowchart = new Flowchart();
-        flowchart.addOption(new CourseOption(cpe101));
+        CourseOption option101 = new CourseOption(cpe101);
+        flowchart.addOption(option101);
         UserState state = new UserState(ImmutableSet.of(cpe101));
 
-        CourseDecider.Result result = decider.decideClasses(state, flowchart);
-
-        assertEquals(ImmutableSet.<Course>of(),
-                     result.getPrerequisitesMet());
-        assertEquals(ImmutableSet.<Course>of(),
-                     result.getPrerequisitesNotMet());
+        assertEquals(ImmutableSet.<CourseOption>of(),
+                     decider.decideClasses(state, flowchart));
     }
 
     @Test
     public void shouldReportAbleToTake()
     {
         Flowchart flowchart = new Flowchart();
-        flowchart.addOption(new CourseOption(cpe101));
-        flowchart.addOption(new CourseOption(cpe102));
+        CourseOption option101 = new CourseOption(cpe101);
+        CourseOption option102 = new CourseOption(cpe102);
+        flowchart.addOption(option101);
+        flowchart.addOption(option102);
         UserState state = new UserState(ImmutableSet.of(cpe101));
 
-        CourseDecider.Result result = decider.decideClasses(state, flowchart);
-
-        assertEquals(ImmutableSet.<Course>of(cpe102),
-                     result.getPrerequisitesMet());
-        assertEquals(ImmutableSet.<Course>of(),
-                     result.getPrerequisitesNotMet());
+        assertEquals(ImmutableSet.<CourseOption>of(option102),
+                     decider.decideClasses(state, flowchart));
     }
 
     @Test
     public void shouldReportUnableToTake()
     {
         Flowchart flowchart = new Flowchart();
-        flowchart.addOption(new CourseOption(cpe101));
-        flowchart.addOption(new CourseOption(cpe102));
-        flowchart.addOption(new CourseOption(cpe103));
+        CourseOption option101 = new CourseOption(cpe101);
+        CourseOption option102 = new CourseOption(cpe102);
+        CourseOption option103 = new CourseOption(cpe103);
+        flowchart.addOption(option101);
+        flowchart.addOption(option102);
+        flowchart.addOption(option103);
         UserState state = new UserState(ImmutableSet.of(cpe101));
 
-        CourseDecider.Result result = decider.decideClasses(state, flowchart);
-
-        assertEquals(ImmutableSet.<Course>of(cpe102),
-                     result.getPrerequisitesMet());
-        assertEquals(ImmutableSet.<Course>of(cpe103),
-                     result.getPrerequisitesNotMet());
+        assertEquals(ImmutableSet.<CourseOption>of(option102, option103),
+                     decider.decideClasses(state, flowchart));
     }
 }
