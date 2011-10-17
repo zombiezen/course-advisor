@@ -2,6 +2,7 @@ package edu.calpoly.razsoftware;
 
 import java.io.File;
 import com.google.gson.*;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -60,10 +61,37 @@ public class FlowchartReader
                 if(course != null)
                 {
                     c = course;
+                    System.out.println(gson.toJson(course));
+                }
+                else
+                {
+                    System.out.println("could not find course " + c.getMajor().get(0) + " " + c.getNumber());
                 }
             }
+            System.out.println("--");
             options.add(co);
         }
         return new Flowchart(options);
+    }
+
+  
+
+    public static void main(String[] args) throws FileNotFoundException
+    {
+        InputStream catalog = new FileInputStream("/home/aspurgin/NetBeansProjects/RAZ/src/edu/calpoly/razsoftware/Cat.json");
+        InputStream flowchart = new FileInputStream("/home/aspurgin/NetBeansProjects/RAZ/src/edu/calpoly/razsoftware/FlowChart.json");
+        System.out.println(catalog);
+        System.out.println(flowchart);
+        CourseList courses = new CourseList(catalog);
+        Flowchart fc = readFlowchart(flowchart, courses);
+
+        for(CourseOption co : fc.getSectionReqs())
+        {
+            for(Course c : co.getOptions())
+            {
+                System.out.println(gson.toJson(c));
+            }
+            System.out.print("\n----\n\n");
+        }
     }
 }
