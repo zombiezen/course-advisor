@@ -45,7 +45,7 @@ public class CourseDeciderTest
     public void shouldReportEmptyForComplete()
     {
         Flowchart flowchart = new Flowchart();
-        CourseOption option101 = new CourseOption(cpe101);
+        CourseOption option101 = new CourseOption(cpe101,1);
         flowchart.addOption(option101);
         UserState state = new UserState(ImmutableSet.of(cpe101));
 
@@ -57,8 +57,8 @@ public class CourseDeciderTest
     public void shouldReportAbleToTake()
     {
         Flowchart flowchart = new Flowchart();
-        CourseOption option101 = new CourseOption(cpe101);
-        CourseOption option102 = new CourseOption(cpe102);
+        CourseOption option101 = new CourseOption(cpe101,1);
+        CourseOption option102 = new CourseOption(cpe102,2);
         flowchart.addOption(option101);
         flowchart.addOption(option102);
         UserState state = new UserState(ImmutableSet.of(cpe101));
@@ -71,9 +71,9 @@ public class CourseDeciderTest
     public void shouldReportUnableToTake()
     {
         Flowchart flowchart = new Flowchart();
-        CourseOption option101 = new CourseOption(cpe101);
-        CourseOption option102 = new CourseOption(cpe102);
-        CourseOption option103 = new CourseOption(cpe103);
+        CourseOption option101 = new CourseOption(cpe101,1);
+        CourseOption option102 = new CourseOption(cpe102,2);
+        CourseOption option103 = new CourseOption(cpe103,3);
         flowchart.addOption(option101);
         flowchart.addOption(option102);
         flowchart.addOption(option103);
