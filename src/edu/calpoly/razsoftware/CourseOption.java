@@ -10,20 +10,21 @@ public class CourseOption
     private boolean mutuallyExclusive;
     private int quarter;
     
-    public CourseOption(Course onlyCourse)
+    public CourseOption(Course onlyCourse, int quarterToTake)
     {
         this.requirement = onlyCourse.toString();
         this.options = new TreeSet<Course>();
         this.options.add(onlyCourse);
         this.mutuallyExclusive = true;
+        this.quarter = quarterToTake;
     }
     
-    public CourseOption(String name, Set<Course> options, boolean mutuallyExclusive, int quarter)
+    public CourseOption(String name, Set<Course> options, boolean mutuallyExclusive, int quarterToTake)
     {
         this.requirement = name;
         this.options = options;
         this.mutuallyExclusive = mutuallyExclusive;
-        this.quarter = quarter;
+        this.quarter = quarterToTake;
     }
 
     public boolean isMutuallyExclusive()
@@ -39,6 +40,11 @@ public class CourseOption
     public String getRequirement()
     {
         return requirement;
+    }
+    
+    public int getQuarter()
+    {
+        return quarter;
     }
     
     @Override
