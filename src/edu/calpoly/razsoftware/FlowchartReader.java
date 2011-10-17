@@ -18,7 +18,7 @@ public class FlowchartReader
      * @param path location of the JSON file
      * @return a flowchart based off the file
      */
-    public static Flowchart readFlowchart(File path, CourseList courses)
+   /* public static Flowchart readFlowchart(File path, CourseList courses)
     {
         HashSet<CourseOption> options = new HashSet<CourseOption>();
         Scanner s = null;
@@ -45,22 +45,23 @@ public class FlowchartReader
             options.add(co);
         }
         return new Flowchart(options);
-    }
+    }*/
 
     public static Flowchart readFlowchart(InputStream iStream, CourseList courses)
     {
         HashSet<CourseOption> options = new HashSet<CourseOption>();
         Scanner s = new Scanner(iStream);
-        HashSet<Course> tmpCourseList = new HashSet<Course>();
+        
         while(s.hasNextLine())
         {
+            HashSet<Course> tmpCourseList = new HashSet<Course>();
             CourseOption co = gson.fromJson(s.nextLine(), CourseOption.class);
             for(Course c : co.getOptions())
             {
                 Course course = courses.lookUp(c.getMajor().get(0), c.getNumber());
                 if(course != null)
                 {
-                    c = course;
+                    tmpCourseList.add(course);
                     System.out.println(gson.toJson(course));
                 }
                 else
@@ -68,6 +69,7 @@ public class FlowchartReader
                     System.out.println("could not find course " + c.getMajor().get(0) + " " + c.getNumber());
                 }
             }
+            co = new CourseOption(co.getRequirement(), tmpCourseList, co.isMutuallyExclusive(), co.getQuarter());
             System.out.println("--");
             options.add(co);
         }
