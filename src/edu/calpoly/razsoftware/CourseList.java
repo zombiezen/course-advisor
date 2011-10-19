@@ -37,7 +37,11 @@ public class CourseList
      
         while(s.hasNextLine())
         {
-            catalog.add(gson.fromJson(s.nextLine(), Course.class));
+            Course addMe = gson.fromJson(s.nextLine(), Course.class);
+            if(lookUp(addMe.getMajor().get(0), addMe.getNumber()) == null)
+            {
+                catalog.add(addMe);
+            }
         }
         
         completePointers();
