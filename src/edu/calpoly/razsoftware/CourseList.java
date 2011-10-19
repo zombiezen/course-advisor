@@ -88,14 +88,12 @@ public class CourseList
         {
             /*workin with the prereqs*/
             Set<Set<Course>> preR = c.getPreRequisites();
-            System.out.println(c.getName());
             Set<Set<Course>> newPreR = new HashSet<Set<Course>>();
             if(preR != null) for(Set<Course> sc : preR)
             {
                 HashSet<Course> sub = new HashSet<Course>();
                 for(Course c1 : sc)
                 {
-                    System.out.print("\t" + c1.getNumber());
                     boolean found = false;
                     for(Course lookup : coursearray)
                     {
@@ -105,7 +103,6 @@ public class CourseList
                             {
                                 if(c1.getMajor().contains(s))
                                 {
-                                    System.out.print(lookup.getName());
                                     sub.add(lookup);
                                     found = true;
                                     break;
@@ -115,7 +112,6 @@ public class CourseList
                         if (found == true)
                             break;                            
                     }
-                    System.out.println();
                 }
                 newPreR.add(sub);
             }
@@ -124,14 +120,12 @@ public class CourseList
             
             /*workin with the coreqs*/
             Set<Set<Course>> coR = c.getCoRequisites();
-            System.out.println(c.getName());
             Set<Set<Course>> newCoR = new HashSet<Set<Course>>();
             if(preR != null) for(Set<Course> sc : coR)
             {
                 HashSet<Course> sub = new HashSet<Course>();
                 for(Course c1 : sc)
                 {
-                    System.out.print("\t" + c1.getNumber());
                     boolean found = false;
                     for(Course lookup : coursearray)
                     {
@@ -141,7 +135,6 @@ public class CourseList
                             {
                                 if(c1.getMajor().contains(s))
                                 {
-                                    System.out.print(lookup.getName());
                                     sub.add(lookup);
                                     found = true;
                                     break;
@@ -151,14 +144,11 @@ public class CourseList
                         if (found == true)
                             break;                            
                     }
-                    System.out.println();
                 }
                 newCoR.add(sub);
             }
             c.setCoRequisites(newCoR);
-            
         }
-        
     }
    
 
