@@ -173,8 +173,6 @@ public class SchedulerFrame extends JFrame
         flowchart =
                 FlowchartReader.readFlowchart(
                         getClass().getResourceAsStream("FlowChart.json"), list);
-         list = new CourseList(new File(
-         "C:\\Users\\Daniel\\workspace\\trunk\\src\\edu\\calpoly\\razsoftware\\Cat.json"));
         for (Course c : list.getCatalog())
         {
             passedModel.addRow(new Object[] { Boolean.FALSE, c });

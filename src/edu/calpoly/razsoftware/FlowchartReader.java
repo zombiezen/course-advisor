@@ -62,7 +62,6 @@ public class FlowchartReader
                 if(course != null)
                 {
                     tmpCourseList.add(course);
-                    System.out.println(gson.toJson(course));
                 }
                 else
                 {
