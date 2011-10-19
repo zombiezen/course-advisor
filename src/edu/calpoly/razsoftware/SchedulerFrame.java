@@ -7,7 +7,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -117,8 +120,9 @@ public class SchedulerFrame extends JFrame
                                                                   requiredList);
     private static final String       UNITS               = "Units";
     private JLabel                    unitsSelecter       = new JLabel(UNITS);
-    private JTextField                unitsField          = new JTextField(
-                                                                  "TF3");
+    private JTextField                unitsField          =
+                                                                  new JTextField(
+                                                                          "16");
     private JButton                   addButton           = new JButton(">");
     private JButton                   removeButton        = new JButton("<");
     private final JButton             suggestButton       =
@@ -162,11 +166,15 @@ public class SchedulerFrame extends JFrame
     {
         System.out.println(getClass().getResourceAsStream("Cat.json"));
         list = new CourseList(getClass().getResourceAsStream("Cat.json"));
+        
+        for(Course c:list.getCatalog()){
+            System.out.println(c+" "+c.getUnits());
+        }
         flowchart =
                 FlowchartReader.readFlowchart(
                         getClass().getResourceAsStream("FlowChart.json"), list);
-        // list = new CourseList(new File(
-        // "C:\\Users\\Daniel\\workspace\\trunk\\src\\edu\\calpoly\\razsoftware\\Cat.json"));
+         list = new CourseList(new File(
+         "C:\\Users\\Daniel\\workspace\\trunk\\src\\edu\\calpoly\\razsoftware\\Cat.json"));
         for (Course c : list.getCatalog())
         {
             passedModel.addRow(new Object[] { Boolean.FALSE, c });
@@ -280,6 +288,21 @@ public class SchedulerFrame extends JFrame
         suggestedList.addListSelectionListener(l);
         requiredList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         suggestedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        unitsField.addKeyListener(new KeyAdapter()
+        {
+
+            @Override
+            public void keyTyped(KeyEvent keyevent)
+            {
+                if (!Character.isDigit(keyevent.getKeyChar()))
+                {
+                    keyevent.consume();
+                }
+
+            }
+
+        });
 
         addButton.addActionListener(new ActionListener()
         {
@@ -710,10 +733,13 @@ public class SchedulerFrame extends JFrame
 
         int unitCount = 0;
 
+
+//        System.out.println(list.lookUp("MATH", 141).getUnits());
         for (int i = 0; i < suggestedModel.getSize(); i++)
         {
             if (suggestedModel.get(i) instanceof Course)
             {
+//                System.out.println(suggestedModel.get(i)+"is "+((Course) suggestedModel.get(i)).getUnits());
                 unitCount += ((Course) suggestedModel.get(i)).getUnits();
             }
         }
@@ -819,17 +845,17 @@ public class SchedulerFrame extends JFrame
                 }
             }
         }
-//
-//        for (Course c : metArray)
-//        {
-//            System.out.println(c + " has prereqs met");
-//
-//        }
-//        for (Course c : noMetArray)
-//        {
-//            System.out.println(c + " has prereqs not met");
-//
-//        }
+        //
+        // for (Course c : metArray)
+        // {
+        // System.out.println(c + " has prereqs met");
+        //
+        // }
+        // for (Course c : noMetArray)
+        // {
+        // System.out.println(c + " has prereqs not met");
+        //
+        // }
         both = new HashSet<Course>();
 
         // metArray = result.getPrerequisitesMet();
@@ -987,7 +1013,63 @@ public class SchedulerFrame extends JFrame
 
     private void suggestSchedule()
     {
+        if (CourseOptions == null || CourseOptions.size() == 0)
+        {
+            return;
+        }
+        int maxUnits = Integer.parseInt(unitsField.getText());
 
+        int unitCount = 0;
+        ArrayList<CourseOption> list =
+                new ArrayList<CourseOption>(CourseOptions);
+
+        Collections.sort(list);
+        List<Course> suggested = new ArrayList<Course>();
+
+        for (CourseOption co : list)
+        {
+            if (unitCount >= maxUnits)
+            {
+                break;
+            }
+            System.out.println(co.getRequirement() + " " + co.getQuarter());
+
+            for (Course c : co.getOptions())
+            {
+                System.out.println("\t" + c);
+
+                if (c.preRecsMet(state.getTaken()) && !suggested.contains(c)
+                        && unitCount + c.getUnits() < maxUnits)
+                {
+                    System.out.println("\t\tAdding");
+                    suggested.add(c);
+                    unitCount += c.getUnits();
+                    break;
+                }
+                if (!c.preRecsMet(state.getTaken())){
+                    System.out.println("\t\tPrereqs not met");
+                    
+                }
+                if (suggested.contains(c))
+                {
+
+                    System.out.println("\t\tAlready in list");
+                }
+                if (unitCount + c.getUnits() > maxUnits)
+                {
+
+                    System.out.println("\t\tToo many units Current:"
+                            + unitCount + " trying to add" + c.getUnits());
+                }
+
+            }
+        }
+        suggestedModel.removeAllElements();
+        for (Course c : suggested)
+        {
+            suggestedModel.addElement(c);
+        }
+        updateUnitCount();
     }
 
     private void saveUserState()
