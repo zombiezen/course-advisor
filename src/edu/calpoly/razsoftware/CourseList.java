@@ -68,6 +68,7 @@ public class CourseList
         {
             catalog.add(gson.fromJson(s.nextLine(), Course.class));
         }
+        completePointers();
     }
 
     public Set<Course> getCatalog() {
@@ -78,42 +79,88 @@ public class CourseList
     /**
      * replaces course keys attained from JSON file with class references from CourseList
      */
+    
     private void completePointers()
     {
-        for(Course c : catalog)
+        Course[] coursearray = new Course[0];
+        coursearray = catalog.toArray(coursearray);
+        for(Course c : coursearray)
         {
-            Set<Set<Course>> newPre = new HashSet<Set<Course>>(); 
-            for(Set<Course> s : c.getPreRequisites())
+            /*workin with the prereqs*/
+            Set<Set<Course>> preR = c.getPreRequisites();
+            System.out.println(c.getName());
+            Set<Set<Course>> newPreR = new HashSet<Set<Course>>();
+            if(preR != null) for(Set<Course> sc : preR)
             {
-                HashSet<Course> newset = new HashSet<Course>();
-                for(Course c1 : s)
+                HashSet<Course> sub = new HashSet<Course>();
+                for(Course c1 : sc)
                 {
-                    Course match = lookUp(c1.getMajor().get(0), c1.getNumber());
-                    //if(match != null)
-                        //System.out.println("\"" + c1.major.get(0) + c1.number + "\" " +match.ToString());
-                    newset.add(match);
+                    System.out.print("\t" + c1.getNumber());
+                    boolean found = false;
+                    for(Course lookup : coursearray)
+                    {
+                        if(lookup.getNumber() != c.getNumber() && lookup.getNumber() == c1.getNumber())
+                        {
+                            for(String s : lookup.getMajor())
+                            {
+                                if(c1.getMajor().contains(s))
+                                {
+                                    System.out.print(lookup.getName());
+                                    sub.add(lookup);
+                                    found = true;
+                                    break;
+                                }                               
+                            }
+                        }
+                        if (found == true)
+                            break;                            
+                    }
+                    System.out.println();
                 }
-                newPre.add(newset);
-                //System.out.println(newset.toString());
+                newPreR.add(sub);
             }
-            c.setPreRequisites(newPre);
+            c.setPreRequisites(newPreR);
             
-            Set<Set<Course>> newCo = new HashSet<Set<Course>>(); 
-            for(Set<Course> s : c.getCoRequisites())
+            
+            /*workin with the coreqs*/
+            Set<Set<Course>> coR = c.getCoRequisites();
+            System.out.println(c.getName());
+            Set<Set<Course>> newCoR = new HashSet<Set<Course>>();
+            if(preR != null) for(Set<Course> sc : coR)
             {
-                HashSet<Course> newset = new HashSet<Course>();
-                for(Course c1 : s)
+                HashSet<Course> sub = new HashSet<Course>();
+                for(Course c1 : sc)
                 {
-                    Course match = lookUp(c1.getMajor().get(0), c1.getNumber());
-                    //if(match != null)
-                        //System.out.println("\"" + c1.major.get(0) + c1.number + "\" " +match.ToString());
-                    newset.add(match);
+                    System.out.print("\t" + c1.getNumber());
+                    boolean found = false;
+                    for(Course lookup : coursearray)
+                    {
+                        if(lookup.getNumber() != c.getNumber() && lookup.getNumber() == c1.getNumber())
+                        {
+                            for(String s : lookup.getMajor())
+                            {
+                                if(c1.getMajor().contains(s))
+                                {
+                                    System.out.print(lookup.getName());
+                                    sub.add(lookup);
+                                    found = true;
+                                    break;
+                                }                               
+                            }
+                        }
+                        if (found == true)
+                            break;                            
+                    }
+                    System.out.println();
                 }
-                newCo.add(newset);
+                newCoR.add(sub);
             }
-            c.setCoRequisites(newCo);
+            c.setCoRequisites(newCoR);
+            
         }
+        
     }
+   
 
     /**
      * returns a full class object from the course list
