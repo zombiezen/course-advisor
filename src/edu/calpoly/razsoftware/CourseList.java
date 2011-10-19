@@ -16,7 +16,6 @@ public class CourseList
 {
     private Set<Course> catalog=new TreeSet<Course>();
 
-    
     /**
      * constructs a catalog off of a collection of courses
      * @param in 
@@ -28,46 +27,19 @@ public class CourseList
             catalog.add(c);
         }
     }
-    /**
-     * constructs a course list based off a given JSON file
-     * @param path File path
-     */
-    public CourseList(File path)
-    {
-        // TODO(rlight)
-        Gson gson = new Gson();
-        Scanner s = null;
-        try
-        {
-            s = new Scanner(path);
-        }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(CourseList.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        while(s.hasNextLine())
-        {
-            catalog.add(gson.fromJson(s.nextLine(), Course.class));
-        }
-    }
     
     public CourseList(InputStream input)
     {
-        // TODO(rlight)
         Gson gson = new Gson();
         Scanner s = null;
-//        try
-//        {
-            s = new Scanner(input);
-//        }
-//        catch (FileNotFoundException ex)
-//        {
-//            Logger.getLogger(CourseList.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        
+        s = new Scanner(input);   
+     
         while(s.hasNextLine())
         {
             catalog.add(gson.fromJson(s.nextLine(), Course.class));
         }
+        
         completePointers();
     }
 
@@ -76,10 +48,10 @@ public class CourseList
         return this.catalog;
         
     }
+    
     /**
      * replaces course keys attained from JSON file with class references from CourseList
      */
-    
     private void completePointers()
     {
         Course[] coursearray = new Course[0];
