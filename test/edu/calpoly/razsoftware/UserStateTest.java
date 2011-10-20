@@ -1,6 +1,7 @@
 package edu.calpoly.razsoftware;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,36 +41,37 @@ public class UserStateTest
     public void tearDown()
     {
     }
-
-    /**
-     * Test of getTaken method, of class UserState.
-     */
-    @Test
-    public void testGetTaken()
-    {
-        System.out.println("getTaken");
-        
-    }
-
+    
     /**
      * Test of write method, of class UserState.
      */
     @Test
     public void testWrite() throws Exception
     {
-        UserState us = new UserState();
-        
+        System.out.println("test writing an initial User State");
         File file = new File("/home/dpanger/NetBeansProjects/Cat.json");
-        UserState us2 = new UserState(file);
+        FileInputStream fis = new FileInputStream(file);
+
+        CourseList cl = new CourseList(fis);
+        UserState us = new UserState(cl.getCatalog());
+        
+        File file2 = new File("/home/dpanger/NetBeansProjects/CatTest.json");
+        us.write(file2);
+        
+        System.out.println("test getting User State");
+        UserState us3 = new UserState(file2, cl);
+        // Unless tester wants to add a lot more setup code, use System.print
+        // to verify data.
         
         System.out.println("write to a null File pointer");
-        File file2 = null;
-        us.write(file2);
+        UserState us2 = new UserState();
+        File file7 = null;
+        us2.write(file7);
         
         System.out.println("write an empty json file");
         File file3 = new File("emptyfile.json");
-        us.write(file3);
-        us.write(file3);
+        us2.write(file3);
+        us2.write(file3);
         
         System.out.println("write an actual json file");
         File file4 = new File("test.json");
