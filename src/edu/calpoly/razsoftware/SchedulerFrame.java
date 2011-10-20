@@ -967,13 +967,13 @@ public class SchedulerFrame extends JFrame
             {
                 File SelectedFile = getSelectedFile();
 
-                if (!SelectedFile.getName().endsWith(FILE_EXTENSION))
+                if (!SelectedFile.getName().endsWith("."+FILE_EXTENSION))
                 {
                     try
                     {
                         SelectedFile =
                                 new File(SelectedFile.getCanonicalPath()
-                                        + FILE_EXTENSION);
+                                        +"."+ FILE_EXTENSION);
                     }
                     catch (IOException e)
                     {
