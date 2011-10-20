@@ -1,6 +1,6 @@
 package edu.calpoly.razsoftware;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -38,7 +38,8 @@ public class UserState
 
     /**
      * Creates a new UserState object from a given JSon file.
-     * @param file The JSon file to be read from
+     * @param file The JSon file to be read from, null if the UserState hasn't
+     * been saved yet
      * @throws IOException If the file is not found or can not be opened, an
      * IOException is thrown
      */
@@ -48,20 +49,23 @@ public class UserState
         Scanner s = new Scanner(file);
         taken = new HashSet<Course>();
         
-        // Add from a Course List, not from a JSon
-        
         while ( s.hasNextLine() ) {
             
             String str = s.nextLine();
-            Course c = gson.fromJson(str, Course.class);
+            
+            JsonParser jparse = new JsonParser();
+            JsonElement jelem = jparse.parse(str);
+            JsonObject json = jelem.getAsJsonObject();
+            String major = json.get("major").getAsString();
+            Integer number = json.get("number").getAsInt();
             
             // Look up the course from the Class List
-            Course c2 = cl.lookUp(c.getMajor().get(0), c.getNumber());
+            Course c2 = cl.lookUp(major, number);
             
             // Add Class List course so we are using the same objects, not
             // creating new ones.
             taken.add(c2);
-            
+          
         } // else we have an empty JSon file
         
         s.close();
@@ -91,8 +95,12 @@ public class UserState
             BufferedWriter bwriter = new BufferedWriter(new FileWriter(file));
         
             if ( taken != null ) {
-                for ( Course c : taken )
-                    bwriter.write(gson.toJson(c) + "\n");
+                for ( Course c : taken ) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("major", c.getMajor().get(0));
+                    json.addProperty("number", c.getNumber());
+                    bwriter.write(gson.toJson(json) + "\n");
+                }
             }
         
             bwriter.close();
