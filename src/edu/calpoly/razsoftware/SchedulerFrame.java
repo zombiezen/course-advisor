@@ -947,7 +947,7 @@ public class SchedulerFrame extends JFrame
                         JOptionPane
                                 .showConfirmDialog(
                                         this,
-                                        "The prerequisites are not fulfilled for this course\n are you sure you want to add?",
+                                        "You have not fulfilled the prerequisites for this course.\nAre you sure you want to add this to your schedule?",
                                         "Prerequisites not met",
                                         JOptionPane.YES_NO_OPTION,
                                         JOptionPane.QUESTION_MESSAGE);
