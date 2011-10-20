@@ -12,10 +12,13 @@ import java.util.Scanner;
 /**
  * Represents a current user's "state", which is the courses that he or she
  * has already completed.
- * @author dpanger
+ * @author RAZ Software
  */
 public class UserState
 {
+    /**
+     * The courses the user has taken.
+     */
     private Set<Course> taken;
 
     /**
@@ -37,9 +40,10 @@ public class UserState
     }
 
     /**
-     * Creates a new UserState object from a given JSon file.
-     * @param file The JSon file to be read from, null if the UserState hasn't
-     * been saved yet
+     * Creates a new UserState object from a given JSon file and a user's
+     * course list
+     * @param file The JSon file that holds the user's "state"
+     * @param cl The course list for the user.
      * @throws IOException If the file is not found or can not be opened, an
      * IOException is thrown
      */
@@ -72,7 +76,7 @@ public class UserState
     }
 
     /**
-     * Returns a Set of Courses that the user has completed.
+     * Gets the user's state.
      * @return a Set of Courses that the user has completed or null if the
      * user's state has not yet been set. 
      */
@@ -82,8 +86,7 @@ public class UserState
     }
 
     /**
-     * Writes the user's current "state", which is defined as the courses that
-     * he or she has completed, to the file that is passed in.
+     * Writes the user's current "state" to the file that is passed in.
      * @param file The file to write the current user's state to.
      * @throws IOException IOException is thrown if the file that is passed in 
      * is not found.
