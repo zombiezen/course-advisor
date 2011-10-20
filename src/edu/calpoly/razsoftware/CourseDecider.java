@@ -68,11 +68,15 @@ public class CourseDecider
                     });
 
             optionMap.remove(next.getKey());
-            final CourseOption opt = next.getValue().iterator().next();
-            fulfilled.add(opt);
-            for (Set<CourseOption> s : optionMap.values())
+            
+            if (!next.getValue().isEmpty())
             {
-                s.remove(opt);
+                final CourseOption opt = next.getValue().iterator().next();
+                fulfilled.add(opt);
+                for (Set<CourseOption> s : optionMap.values())
+                {
+                    s.remove(opt);
+                }
             }
         }
 
