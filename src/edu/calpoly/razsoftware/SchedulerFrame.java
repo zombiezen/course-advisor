@@ -1,5 +1,6 @@
 package edu.calpoly.razsoftware;
 
+import com.google.common.collect.ImmutableList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -41,8 +42,11 @@ import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -51,6 +55,113 @@ import javax.swing.table.TableRowSorter;
  */
 public class SchedulerFrame extends JFrame
 {
+    private class CourseListModel extends AbstractTableModel
+    {
+        private List<Course> sortedCatalog;
+        
+        public CourseListModel(CourseList clist)
+        {
+            sortedCatalog = ImmutableList.copyOf(clist.getCatalog());
+        }
+        
+        @Override
+        public int getRowCount()
+        {
+            return sortedCatalog.size();
+        }
+
+        @Override
+        public int getColumnCount()
+        {
+            return 2;
+        }
+
+        @Override
+        public String getColumnName(int columnIndex)
+        {
+            switch (columnIndex)
+            {
+                case 0:
+                    return "Passed";
+                case 1:
+                    return "Course";
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex)
+        {
+            switch (columnIndex)
+            {
+                case 0:
+                    return Boolean.class;
+                case 1:
+                    return String.class;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex)
+        {
+            switch (columnIndex)
+            {
+                case 0:
+                    return true;
+                case 1:
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex)
+        {
+            if (rowIndex > sortedCatalog.size())
+                return null;
+            
+            final Course requestedCourse = sortedCatalog.get(rowIndex);
+            
+            
+            switch (columnIndex)
+            {
+                case 0:
+                    return state.getTaken().contains(requestedCourse);
+                case 1:
+                    return requestedCourse.toString();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+        {
+            if (rowIndex > sortedCatalog.size())
+                return;
+            
+            final Course requestedCourse = sortedCatalog.get(rowIndex);
+            
+            switch (columnIndex)
+            {
+                case 0:
+                    if ((Boolean)aValue)
+                    {
+                        state.getTaken().add(requestedCourse);
+                    }
+                    else
+                    {
+                        state.getTaken().remove(requestedCourse);
+                    }
+                    break;
+            }
+        }
+    }
+    
     private static final String       FILE_EXTENSION      = ".us";
 
     private JMenuBar                  menuBar             = new JMenuBar();
@@ -69,27 +180,9 @@ public class SchedulerFrame extends JFrame
                                                                           "Courses Passed",
                                                                           SwingConstants.CENTER);
     private JTextField                passedFilter        = new JTextField();
-    private DefaultTableModel         passedModel         =
-                                                                  new DefaultTableModel(
-                                                                          new String[] {
-            "Passed", "Course"                                           }, 0)
-                                                                  {
-                                                                      @Override
-                                                                      public
-                                                                              Class
-                                                                              getColumnClass(
-                                                                                      int c)
-                                                                      {
-                                                                          return getValueAt(
-                                                                                  0,
-                                                                                  c)
-                                                                                  .getClass();
-                                                                      }
-                                                                  };
+    private CourseListModel                passedModel;
 
-    TableRowSorter<DefaultTableModel> passedSorter        =
-                                                                  new TableRowSorter<DefaultTableModel>(
-                                                                          passedModel);
+    TableRowSorter<CourseListModel> passedSorter;
     private JTable                    passedTable         = new JTable(
                                                                   passedModel);
     private JScrollPane               passedScroller      = new JScrollPane(
@@ -166,6 +259,8 @@ public class SchedulerFrame extends JFrame
     {
         System.out.println(getClass().getResourceAsStream("Cat.json"));
         list = new CourseList(getClass().getResourceAsStream("Cat.json"));
+        passedModel = new CourseListModel(list);
+        passedTable.setModel(passedModel);
         
         for(Course c:list.getCatalog()){
             System.out.println(c+" "+c.getUnits());
@@ -173,12 +268,6 @@ public class SchedulerFrame extends JFrame
         flowchart =
                 FlowchartReader.readFlowchart(
                         getClass().getResourceAsStream("FlowChart.json"), list);
-        for (Course c : list.getCatalog())
-        {
-            passedModel.addRow(new Object[] { Boolean.FALSE, c });
-        }
-
-        passedSorter.allRowsChanged();
 
     }
 
@@ -202,11 +291,12 @@ public class SchedulerFrame extends JFrame
         passedTable.getTableHeader().setReorderingAllowed(false);
         passedTable.getTableHeader().setResizingAllowed(false);
 
-        passedSorter.setRowFilter(new RowFilter<DefaultTableModel, Integer>()
+        passedSorter = new TableRowSorter<CourseListModel>(passedModel);
+        passedSorter.setRowFilter(new RowFilter<CourseListModel, Integer>()
         {
             public
                     boolean
-                    include(Entry<? extends DefaultTableModel, ? extends Integer> entry)
+                    include(Entry<? extends CourseListModel, ? extends Integer> entry)
             {
 
                 return (entry.getStringValue(1).toLowerCase()
@@ -793,19 +883,6 @@ public class SchedulerFrame extends JFrame
 
     }
 
-    private void updateUserState()
-    {
-        state.getTaken().clear();
-        for (int i = 0; i < passedModel.getRowCount(); i++)
-        {
-            if ((Boolean) passedModel.getValueAt(i, 0))
-            {
-                state.getTaken().add((Course) passedModel.getValueAt(i, 1));
-            }
-
-        }
-    }
-
     Set<Course>       both       = new TreeSet<Course>();
     Set<Course>       metArray   = new TreeSet<Course>();
     Set<Course>       noMetArray = new TreeSet<Course>();
@@ -818,7 +895,6 @@ public class SchedulerFrame extends JFrame
         {
             System.out.println("USer state is null");
         }
-        updateUserState();
 
         for (Course c : state.getTaken())
         {
@@ -921,13 +997,7 @@ public class SchedulerFrame extends JFrame
             {
                 state = new UserState(chooser.getSelectedFile(), list);
                 userStateFile = chooser.getSelectedFile();
-                for (int i = 0; i < passedModel.getRowCount(); i++)
-                {
-                    passedModel.setValueAt(
-                            state.getTaken().contains(
-                                    (Course) passedModel.getValueAt(i, 1)), i,
-                            0);
-                }
+                passedModel.fireTableDataChanged();
                 setTitle(userStateFile.getName());
             }
             catch (IOException ex)
@@ -1072,8 +1142,6 @@ public class SchedulerFrame extends JFrame
 
     private void saveUserState()
     {
-
-        updateUserState();
         if (userStateFile == null)
         {
             saveAsUserState();
