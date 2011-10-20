@@ -55,7 +55,7 @@ public class CatConv
 	public static void main(String[] args) throws IOException
 	{
                 InputStream is = CatConv.class.getResourceAsStream("Cat.txt");
-                File f = new File(args[0]);
+                File f = new File("/Users/michaelsvanbeek/Downloads/cat.txt");
 		Gson gson = new Gson();
 		Scanner s = new Scanner(f);
 		ArrayList<CatConvCourse> CatConvCourses = new ArrayList<CatConvCourse>();
