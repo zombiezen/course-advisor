@@ -1,6 +1,6 @@
 package edu.calpoly.razsoftware;
 
-import com.google.common.collect.ImmutableList;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +20,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -33,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -42,12 +41,11 @@ import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * 
@@ -58,12 +56,12 @@ public class SchedulerFrame extends JFrame
     private class CourseListModel extends AbstractTableModel
     {
         private List<Course> sortedCatalog;
-        
+
         public CourseListModel(CourseList clist)
         {
             sortedCatalog = ImmutableList.copyOf(clist.getCatalog());
         }
-        
+
         @Override
         public int getRowCount()
         {
@@ -123,10 +121,9 @@ public class SchedulerFrame extends JFrame
         {
             if (rowIndex > sortedCatalog.size())
                 return null;
-            
+
             final Course requestedCourse = sortedCatalog.get(rowIndex);
-            
-            
+
             switch (columnIndex)
             {
                 case 0:
@@ -143,13 +140,16 @@ public class SchedulerFrame extends JFrame
         {
             if (rowIndex > sortedCatalog.size())
                 return;
-            
+
             final Course requestedCourse = sortedCatalog.get(rowIndex);
-            
+
             switch (columnIndex)
             {
                 case 0:
-                    if ((Boolean)aValue)
+
+                    setSaved(false);
+                    setTitle();
+                    if ((Boolean) aValue)
                     {
                         state.getTaken().add(requestedCourse);
                     }
@@ -162,122 +162,168 @@ public class SchedulerFrame extends JFrame
             }
         }
     }
-    
-    private static final String       FILE_EXTENSION      = ".us";
 
-    private JMenuBar                  menuBar             = new JMenuBar();
-    private JMenu                     fileMenu            = new JMenu("File");
-    private JMenuItem                 openMenuItem        = new JMenuItem(
-                                                                  "Open");
-    private JMenuItem                 saveMenuItem        = new JMenuItem(
-                                                                  "Save");
-    private JMenuItem                 saveAsMenuItem      = new JMenuItem(
-                                                                  "Save As");
-    private JMenuItem                 quitMenuItem        = new JMenuItem(
-                                                                  "Quit");
-    private JMenu                     helpMenu            = new JMenu("Help");
-    private JLabel                    passedLabel         =
-                                                                  new JLabel(
-                                                                          "Courses Passed",
-                                                                          SwingConstants.CENTER);
-    private JTextField                passedFilter        = new JTextField();
-    private CourseListModel                passedModel;
+    private boolean                 saved               = false;
+    private CourseList              list;
+    private UserState               state               = new UserState();
+    // private CourseDecider.Result result;
+    private CourseDecider           decider             = new CourseDecider();
+    private Flowchart               flowchart;
+    private File                    userStateFile;
+
+    private static final String     FILE_EXTENSION      = ".us";
+    private static final String     APP_NAME            = "Course Advisor";
+
+    private JMenuBar                menuBar             = new JMenuBar();
+    private JMenu                   fileMenu            = new JMenu("File");
+    private JMenuItem               openMenuItem        = new JMenuItem("Open");
+    private JMenuItem               saveMenuItem        = new JMenuItem("Save");
+    private JMenuItem               saveAsMenuItem      = new JMenuItem(
+                                                                "Save As");
+    private JMenuItem               quitMenuItem        = new JMenuItem("Quit");
+    private JMenu                   helpMenu            = new JMenu("Help");
+    private JLabel                  passedLabel         =
+                                                                new JLabel(
+                                                                        "Courses Passed",
+                                                                        SwingConstants.CENTER);
+    private JTextField              passedFilter        = new JTextField();
+
+    private CourseListModel         passedModel;
 
     TableRowSorter<CourseListModel> passedSorter;
-    private JTable                    passedTable         = new JTable(
-                                                                  passedModel);
-    private JScrollPane               passedScroller      = new JScrollPane(
-                                                                  passedTable);
-    private JCheckBox                 uscpBox             = new JCheckBox(
-                                                                  "USCP Met");
-    private JCheckBox                 gwrBox              = new JCheckBox(
-                                                                  "GWR Met");
-    private JButton                   generateButton      = new JButton(
-                                                                  "Generate");
-    private JLabel                    requiredLabel       =
-                                                                  new JLabel(
-                                                                          "Courses Required",
-                                                                          SwingConstants.CENTER);
-    private final String              ALL_FILTER          = "All";
-    private final String              PREREQ_MET          = "Pre-Reqs Met";
-    private final String              PREREQ__NOT_MET     = "Pre-Reqs Not Met";
-    private JComboBox                 requiredComboBox    = new JComboBox(
-                                                                  new String[] {
-            ALL_FILTER, PREREQ_MET, PREREQ__NOT_MET              });
-    private JTextField                requiredFilter      = new JTextField();
-    DefaultListModel                  requiredModel       =
-                                                                  new DefaultListModel();
-    private JList                     requiredList        =
-                                                                  new JList(
-                                                                          requiredModel);
-    private JScrollPane               requiredScroller    = new JScrollPane(
-                                                                  requiredList);
-    private static final String       UNITS               = "Units";
-    private JLabel                    unitsSelecter       = new JLabel(UNITS);
-    private JTextField                unitsField          =
-                                                                  new JTextField(
-                                                                          "16");
-    private JButton                   addButton           = new JButton(">");
-    private JButton                   removeButton        = new JButton("<");
-    private final JButton             suggestButton       =
-                                                                  new JButton(
-                                                                          "Suggest Schedule");
-    private JLabel                    suggestedLabel      =
-                                                                  new JLabel(
-                                                                          "Suggested Schedule",
-                                                                          SwingConstants.CENTER);
-    DefaultListModel                  suggestedModel      =
-                                                                  new DefaultListModel();
-    private JList                     suggestedList       =
-                                                                  new JList(
-                                                                          suggestedModel);
-    private JScrollPane               suggestedScroller   =
-                                                                  new JScrollPane(
-                                                                          suggestedList);
-    private JLabel                    dynamicUnits        = new JLabel("0 "
-                                                                  + UNITS);
-    private JTextPane                 descriptionPane     = new JTextPane();
-    private JScrollPane               descriptionScroller =
-                                                                  new JScrollPane(
-                                                                          descriptionPane);
-    private JLabel                    nameInfo            = new JLabel("Name:");
-    private JLabel                    fuffilsInfo         = new JLabel(
-                                                                  "Pre Req");
-    JTextField                        nameLabel           = new JTextField();
-    JTextField                        FuffilsLabel        = new JTextField();
-    private JLabel                    descriptionInfo     =
-                                                                  new JLabel(
-                                                                          "Description");
+    private JTable                  passedTable         = new JTable(
+                                                                passedModel);
+    private JScrollPane             passedScroller      = new JScrollPane(
+                                                                passedTable);
+    private JLabel                  requiredLabel       =
+                                                                new JLabel(
+                                                                        "Courses Required",
+                                                                        SwingConstants.CENTER);
+    private final String            ALL_FILTER          = "All";
+    private final String            PREREQ_MET          = "Prerequisites Met";
+    private final String            PREREQ__NOT_MET     =
+                                                                "Prerequisite Not Met";
+    private JComboBox               requiredComboBox    = new JComboBox(
+                                                                new String[] {
+            ALL_FILTER, PREREQ_MET, PREREQ__NOT_MET            });
+    private JTextField              requiredFilter      = new JTextField();
+    DefaultListModel                requiredModel       =
+                                                                new DefaultListModel();
+    private JList                   requiredList        = new JList(
+                                                                requiredModel);
+    private JScrollPane             requiredScroller    = new JScrollPane(
+                                                                requiredList);
+    private static final String     UNITS               = "Units";
+    private JLabel                  unitsSelecter       = new JLabel(UNITS);
+    private JTextField              requestedUnitsField = new JTextField("16");
+    private JButton                 addButton           = new JButton(">");
+    private JButton                 removeButton        = new JButton("<");
 
-    private CourseList                list;
-    private UserState                 state               = new UserState();
-    // private CourseDecider.Result result;
-    private CourseDecider             decider             = new CourseDecider();
-    private Flowchart                 flowchart;
-    private File                      userStateFile       = null;
+    JButton                         clearButton         = new JButton("Clear");
 
-    private void loadCourseList()
+    private final JButton           suggestButton       = new JButton(
+                                                                "Autofill");
+    private JLabel                  suggestedLabel      =
+                                                                new JLabel(
+                                                                        "Suggested Schedule",
+                                                                        SwingConstants.CENTER);
+    DefaultListModel                suggestedModel      =
+                                                                new DefaultListModel();
+    private JList                   suggestedList       = new JList(
+                                                                suggestedModel);
+    private JScrollPane             suggestedScroller   = new JScrollPane(
+                                                                suggestedList);
+    private JLabel                  dynamicUnits        = new JLabel("0/");
+    private JLabel                  nameInfo            = new JLabel("Name:");
+    private final JLabel            unitsInfo           = new JLabel("Units:");
+    private JLabel                  fulfillsInfo        = new JLabel(
+                                                                "Fulfills:");
+    private final JLabel            preReqInfo          =
+                                                                new JLabel(
+                                                                        "Prerequisites:");
+    private JLabel                  descriptionInfo     = new JLabel(
+                                                                "Description:");
+    private final JTextPane         nameLabel           = new JTextPane();
+    private final JTextPane         unitsLabel          = new JTextPane();
+    private final JTextPane         fuffilsLabel        = new JTextPane();
+    private final JTextPane         prereqLabel         = new JTextPane();
+    private JTextPane               descriptionPane     = new JTextPane();
+    private JScrollPane             descriptionScroller =
+                                                                new JScrollPane(
+                                                                        descriptionPane);
+
+    void loadCourseList()
     {
         System.out.println(getClass().getResourceAsStream("Cat.json"));
         list = new CourseList(getClass().getResourceAsStream("Cat.json"));
+
         passedModel = new CourseListModel(list);
         passedTable.setModel(passedModel);
-        
-        for(Course c:list.getCatalog()){
-            System.out.println(c+" "+c.getUnits());
-        }
+
+        // for(Course c:list.getCatalog()){
+        // System.out.println(c+" "+c.getUnits());
+        //
+        // }
         flowchart =
                 FlowchartReader.readFlowchart(
                         getClass().getResourceAsStream("FlowChart.json"), list);
+        generateLists();
+
+    }
+
+    public void setTitle()
+    {
+        String title = APP_NAME;
+        if (userStateFile != null)
+        {
+            title +="- "+ userStateFile.getName();
+        }
+        if (!saved)
+        {
+            title += "*";
+        }
+
+        super.setTitle(title);
 
     }
 
     /** Creates new form SchedulerFrame */
     public SchedulerFrame()
     {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        setSaved(false);
+        prereqLabel.setFocusable(false);
+        prereqLabel.setEditable(false);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         loadCourseList();
         initComponents();
+    }
+
+    @Override
+    public void dispose()
+    {
+        if (!saved)
+        {
+            int choice =
+                    JOptionPane.showConfirmDialog(this,
+                            "You have unsaved changes, do you want to save?",
+                            "Save?", JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION)
+            {
+                saveUserState();
+                System.exit(0);
+            }
+            if (choice == JOptionPane.NO_OPTION)
+            {
+                System.exit(0);
+            }
+        }
+        else
+        {
+            System.exit(0);
+        }
+
     }
 
     /**
@@ -295,9 +341,8 @@ public class SchedulerFrame extends JFrame
         passedSorter = new TableRowSorter<CourseListModel>(passedModel);
         passedSorter.setRowFilter(new RowFilter<CourseListModel, Integer>()
         {
-            public
-                    boolean
-                    include(Entry<? extends CourseListModel, ? extends Integer> entry)
+            public boolean include(
+                    Entry<? extends CourseListModel, ? extends Integer> entry)
             {
 
                 return (entry.getStringValue(1).toLowerCase()
@@ -315,13 +360,13 @@ public class SchedulerFrame extends JFrame
                 passedSorter.allRowsChanged();
             }
         });
-        generateButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                generateLists();
-            }
-        });
+        // generateButton.addActionListener(new ActionListener()
+        // {
+        // public void actionPerformed(ActionEvent e)
+        // {
+        // generateLists();
+        // }
+        // });
 
         requiredComboBox.addActionListener(new ActionListener()
         {
@@ -368,17 +413,29 @@ public class SchedulerFrame extends JFrame
 
         nameLabel.setEditable(false);
         nameLabel.setFocusable(false);
-        FuffilsLabel.setEditable(false);
-        FuffilsLabel.setFocusable(false);
-        nameLabel.setBorder(null);
-        FuffilsLabel.setBorder(null);
+        fuffilsLabel.setEditable(false);
+        fuffilsLabel.setFocusable(false);
+        descriptionPane.setFocusable(false);
+        descriptionPane.setEditable(true);
+
+        unitsLabel.setBackground(null);
+        nameLabel.setBackground(null);
+        fuffilsLabel.setBackground(null);
+        prereqLabel.setBackground(null);
+        descriptionPane.setBackground(null);
+        descriptionScroller.setBackground(null);
+
+        unitsLabel.setBorder(descriptionScroller.getBorder());
+        nameLabel.setBorder(descriptionScroller.getBorder());
+        fuffilsLabel.setBorder(descriptionScroller.getBorder());
+        prereqLabel.setBorder(descriptionScroller.getBorder());
 
         requiredList.addListSelectionListener(l);
         suggestedList.addListSelectionListener(l);
         requiredList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         suggestedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        unitsField.addKeyListener(new KeyAdapter()
+        requestedUnitsField.addKeyListener(new KeyAdapter()
         {
 
             @Override
@@ -438,11 +495,32 @@ public class SchedulerFrame extends JFrame
                 saveAsUserState();
             }
         });
+        clearButton.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent actionevent)
+            {
+                clearSuggested();
+
+            }
+        });
         quitMenuItem.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                System.exit(0);
+                dispose();
+            }
+        });
+        helpMenu.addActionListener(new ActionListener()
+        {
+            
+            @Override
+            public void actionPerformed(ActionEvent actionevent)
+            {
+//                JOptionPane.showMessageDialog(this, obj, s, i)
+//                JOptionPane.showMessageDialog(this, ,"About", JOptionPane.PLAIN_MESSAGE);
+                
             }
         });
 
@@ -471,6 +549,12 @@ public class SchedulerFrame extends JFrame
         menuBar.add(helpMenu);
         setJMenuBar(menuBar);
 
+        clearButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent actionevent)
+            {}
+        });
+
         GroupLayout layout = new GroupLayout(getContentPane());
         layout.setHorizontalGroup(layout
                 .createParallelGroup(Alignment.LEADING)
@@ -480,71 +564,61 @@ public class SchedulerFrame extends JFrame
                                 .addGroup(
                                         layout.createParallelGroup(
                                                 Alignment.LEADING)
+                                                .addComponent(
+                                                        passedLabel,
+                                                        GroupLayout.PREFERRED_SIZE,
+                                                        156,
+                                                        GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(
+                                                        passedFilter,
+                                                        GroupLayout.PREFERRED_SIZE,
+                                                        156,
+                                                        GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(
+                                                        passedScroller,
+                                                        GroupLayout.PREFERRED_SIZE,
+                                                        156,
+                                                        GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addGroup(
+                                        layout.createParallelGroup(
+                                                Alignment.LEADING)
                                                 .addGroup(
                                                         layout.createSequentialGroup()
-                                                                .addGroup(
-                                                                        layout.createParallelGroup(
-                                                                                Alignment.LEADING,
-                                                                                false)
-                                                                                .addComponent(
-                                                                                        passedScroller,
-                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                        156,
-                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(
-                                                                                        passedLabel,
-                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                        156,
-                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(
-                                                                                        passedFilter,
-                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                        156,
-                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addComponent(
-                                                                                                        uscpBox)
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.UNRELATED)
-                                                                                                .addComponent(
-                                                                                                        generateButton)))
-                                                                .addPreferredGap(
-                                                                        ComponentPlacement.UNRELATED)
                                                                 .addGroup(
                                                                         layout.createParallelGroup(
                                                                                 Alignment.LEADING)
                                                                                 .addGroup(
                                                                                         layout.createSequentialGroup()
                                                                                                 .addComponent(
-                                                                                                        FuffilsLabel,
-                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                        241,
-                                                                                                        Short.MAX_VALUE)
+                                                                                                        preReqInfo,
+                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                        38,
+                                                                                                        GroupLayout.PREFERRED_SIZE)
                                                                                                 .addPreferredGap(
                                                                                                         ComponentPlacement.RELATED))
                                                                                 .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addComponent(
-                                                                                                        fuffilsInfo)
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.RELATED))
-                                                                                .addGroup(
+                                                                                        Alignment.TRAILING,
                                                                                         layout.createSequentialGroup()
                                                                                                 .addComponent(
                                                                                                         nameLabel,
                                                                                                         GroupLayout.DEFAULT_SIZE,
-                                                                                                        241,
+                                                                                                        245,
                                                                                                         Short.MAX_VALUE)
                                                                                                 .addPreferredGap(
                                                                                                         ComponentPlacement.RELATED))
                                                                                 .addGroup(
+                                                                                        Alignment.TRAILING,
                                                                                         layout.createSequentialGroup()
                                                                                                 .addComponent(
-                                                                                                        nameInfo)
+                                                                                                        prereqLabel,
+                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                        245,
+                                                                                                        Short.MAX_VALUE)
                                                                                                 .addPreferredGap(
                                                                                                         ComponentPlacement.RELATED))
                                                                                 .addGroup(
+                                                                                        Alignment.TRAILING,
                                                                                         layout.createSequentialGroup()
                                                                                                 .addGroup(
                                                                                                         layout.createParallelGroup(
@@ -578,66 +652,97 @@ public class SchedulerFrame extends JFrame
                                                                                                                 .addGroup(
                                                                                                                         layout.createSequentialGroup()
                                                                                                                                 .addComponent(
-                                                                                                                                        unitsField,
-                                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                                        30,
-                                                                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                                                                .addPreferredGap(
-                                                                                                                                        ComponentPlacement.RELATED)
-                                                                                                                                .addComponent(
-                                                                                                                                        unitsSelecter)
-                                                                                                                                .addPreferredGap(
-                                                                                                                                        ComponentPlacement.RELATED)
-                                                                                                                                .addComponent(
-                                                                                                                                        suggestButton)
-                                                                                                                                .addGap(2))
-                                                                                                                .addGroup(
-                                                                                                                        layout.createSequentialGroup()
-                                                                                                                                .addComponent(
                                                                                                                                         requiredScroller,
                                                                                                                                         GroupLayout.DEFAULT_SIZE,
                                                                                                                                         243,
                                                                                                                                         Short.MAX_VALUE)
                                                                                                                                 .addGap(2)))
-                                                                                                .addGap(0)))
-                                                                .addGroup(
-                                                                        layout.createParallelGroup(
-                                                                                Alignment.TRAILING)
+                                                                                                .addGap(0))
                                                                                 .addGroup(
+                                                                                        Alignment.TRAILING,
                                                                                         layout.createSequentialGroup()
-                                                                                                .addGroup(
-                                                                                                        layout.createParallelGroup(
-                                                                                                                Alignment.TRAILING)
-                                                                                                                .addComponent(
-                                                                                                                        removeButton)
-                                                                                                                .addComponent(
-                                                                                                                        descriptionInfo)
-                                                                                                                .addComponent(
-                                                                                                                        addButton))
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.UNRELATED)
                                                                                                 .addGroup(
                                                                                                         layout.createParallelGroup(
                                                                                                                 Alignment.LEADING)
                                                                                                                 .addComponent(
-                                                                                                                        suggestedLabel,
+                                                                                                                        unitsInfo,
                                                                                                                         GroupLayout.PREFERRED_SIZE,
-                                                                                                                        196,
+                                                                                                                        29,
                                                                                                                         GroupLayout.PREFERRED_SIZE)
                                                                                                                 .addComponent(
-                                                                                                                        descriptionScroller,
-                                                                                                                        Alignment.TRAILING,
+                                                                                                                        unitsLabel,
                                                                                                                         GroupLayout.DEFAULT_SIZE,
-                                                                                                                        230,
-                                                                                                                        Short.MAX_VALUE)
+                                                                                                                        98,
+                                                                                                                        Short.MAX_VALUE))
+                                                                                                .addGap(23)
+                                                                                                .addGroup(
+                                                                                                        layout.createParallelGroup(
+                                                                                                                Alignment.LEADING)
                                                                                                                 .addComponent(
-                                                                                                                        suggestedScroller,
+                                                                                                                        fulfillsInfo)
+                                                                                                                .addComponent(
+                                                                                                                        fuffilsLabel,
                                                                                                                         GroupLayout.DEFAULT_SIZE,
-                                                                                                                        230,
-                                                                                                                        Short.MAX_VALUE)))
+                                                                                                                        124,
+                                                                                                                        Short.MAX_VALUE))
+                                                                                                .addPreferredGap(
+                                                                                                        ComponentPlacement.RELATED)))
+                                                                .addGap(12)
+                                                                .addGroup(
+                                                                        layout.createParallelGroup(
+                                                                                Alignment.TRAILING)
                                                                                 .addComponent(
-                                                                                        dynamicUnits)))
-                                                .addComponent(gwrBox))
+                                                                                        removeButton)
+                                                                                .addComponent(
+                                                                                        addButton)))
+                                                .addComponent(nameInfo))
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addGroup(
+                                        layout.createParallelGroup(
+                                                Alignment.TRAILING)
+                                                .addComponent(
+                                                        descriptionScroller,
+                                                        GroupLayout.DEFAULT_SIZE,
+                                                        244, Short.MAX_VALUE)
+                                                .addGroup(
+                                                        Alignment.LEADING,
+                                                        layout.createSequentialGroup()
+                                                                .addComponent(
+                                                                        clearButton)
+                                                                .addPreferredGap(
+                                                                        ComponentPlacement.RELATED)
+                                                                .addComponent(
+                                                                        dynamicUnits,
+                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                        39,
+                                                                        Short.MAX_VALUE)
+                                                                .addPreferredGap(
+                                                                        ComponentPlacement.RELATED)
+                                                                .addComponent(
+                                                                        requestedUnitsField,
+                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                        30,
+                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        ComponentPlacement.RELATED)
+                                                                .addComponent(
+                                                                        unitsSelecter)
+                                                                .addGap(11)
+                                                                .addComponent(
+                                                                        suggestButton))
+                                                .addComponent(
+                                                        suggestedLabel,
+                                                        Alignment.LEADING,
+                                                        GroupLayout.PREFERRED_SIZE,
+                                                        196,
+                                                        GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(
+                                                        suggestedScroller,
+                                                        Alignment.LEADING,
+                                                        GroupLayout.DEFAULT_SIZE,
+                                                        244, Short.MAX_VALUE)
+                                                .addComponent(descriptionInfo,
+                                                        Alignment.LEADING))
                                 .addContainerGap()));
         layout.setVerticalGroup(layout
                 .createParallelGroup(Alignment.LEADING)
@@ -646,150 +751,182 @@ public class SchedulerFrame extends JFrame
                                 .addContainerGap()
                                 .addGroup(
                                         layout.createParallelGroup(
-                                                Alignment.BASELINE)
-                                                .addComponent(passedLabel)
-                                                .addComponent(requiredLabel)
-                                                .addComponent(suggestedLabel))
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addGroup(
-                                        layout.createParallelGroup(
-                                                Alignment.BASELINE)
-                                                .addComponent(
-                                                        requiredComboBox,
-                                                        GroupLayout.PREFERRED_SIZE,
-                                                        GroupLayout.DEFAULT_SIZE,
-                                                        GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(
-                                                        requiredFilter,
-                                                        GroupLayout.PREFERRED_SIZE,
-                                                        GroupLayout.DEFAULT_SIZE,
-                                                        GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(
-                                                        passedFilter,
-                                                        GroupLayout.PREFERRED_SIZE,
-                                                        GroupLayout.DEFAULT_SIZE,
-                                                        GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addGroup(
-                                        layout.createParallelGroup(
-                                                Alignment.TRAILING)
+                                                Alignment.LEADING)
                                                 .addGroup(
                                                         layout.createSequentialGroup()
                                                                 .addGroup(
                                                                         layout.createParallelGroup(
-                                                                                Alignment.TRAILING)
+                                                                                Alignment.BASELINE)
                                                                                 .addComponent(
-                                                                                        requiredScroller,
-                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                        212,
-                                                                                        Short.MAX_VALUE)
-                                                                                .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addGroup(
-                                                                                                        layout.createParallelGroup(
-                                                                                                                Alignment.TRAILING)
-                                                                                                                .addGroup(
-                                                                                                                        layout.createSequentialGroup()
-                                                                                                                                .addComponent(
-                                                                                                                                        addButton,
-                                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                                        103,
-                                                                                                                                        Short.MAX_VALUE)
-                                                                                                                                .addPreferredGap(
-                                                                                                                                        ComponentPlacement.RELATED)
-                                                                                                                                .addComponent(
-                                                                                                                                        removeButton,
-                                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                                        103,
-                                                                                                                                        Short.MAX_VALUE))
-                                                                                                                .addComponent(
-                                                                                                                        suggestedScroller,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        212,
-                                                                                                                        Short.MAX_VALUE))
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.RELATED)))
-                                                                .addGroup(
-                                                                        layout.createParallelGroup(
-                                                                                Alignment.LEADING)
-                                                                                .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addGap(4)
-                                                                                                .addGroup(
-                                                                                                        layout.createParallelGroup(
-                                                                                                                Alignment.BASELINE)
-                                                                                                                .addComponent(
-                                                                                                                        suggestButton)
-                                                                                                                .addComponent(
-                                                                                                                        unitsSelecter)
-                                                                                                                .addComponent(
-                                                                                                                        unitsField,
-                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        GroupLayout.PREFERRED_SIZE)))
-                                                                                .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.RELATED)
-                                                                                                .addComponent(
-                                                                                                        dynamicUnits)))
-                                                                .addPreferredGap(
-                                                                        ComponentPlacement.RELATED)
-                                                                .addGroup(
-                                                                        layout.createParallelGroup(
-                                                                                Alignment.LEADING)
-                                                                                .addGroup(
-                                                                                        layout.createSequentialGroup()
-                                                                                                .addGroup(
-                                                                                                        layout.createParallelGroup(
-                                                                                                                Alignment.BASELINE)
-                                                                                                                .addComponent(
-                                                                                                                        descriptionInfo)
-                                                                                                                .addComponent(
-                                                                                                                        nameInfo))
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.RELATED)
-                                                                                                .addComponent(
-                                                                                                        nameLabel,
-                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                                .addPreferredGap(
-                                                                                                        ComponentPlacement.RELATED)
-                                                                                                .addComponent(
-                                                                                                        fuffilsInfo))
+                                                                                        passedLabel)
                                                                                 .addComponent(
-                                                                                        descriptionScroller,
-                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                        121,
-                                                                                        GroupLayout.PREFERRED_SIZE)))
-                                                .addGroup(
-                                                        layout.createSequentialGroup()
-                                                                .addGroup(
-                                                                        layout.createParallelGroup(
-                                                                                Alignment.TRAILING)
+                                                                                        requiredLabel)
                                                                                 .addComponent(
-                                                                                        FuffilsLabel,
-                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(
-                                                                                        passedScroller,
-                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                        332,
-                                                                                        Short.MAX_VALUE))
+                                                                                        suggestedLabel))
                                                                 .addPreferredGap(
                                                                         ComponentPlacement.RELATED)
                                                                 .addGroup(
                                                                         layout.createParallelGroup(
                                                                                 Alignment.BASELINE)
                                                                                 .addComponent(
-                                                                                        uscpBox)
+                                                                                        requiredComboBox,
+                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                        GroupLayout.PREFERRED_SIZE)
                                                                                 .addComponent(
-                                                                                        generateButton))
-                                                                .addGap(5)))
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(gwrBox)));
+                                                                                        requiredFilter,
+                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(
+                                                                                        passedFilter,
+                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                        GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(
+                                                                        ComponentPlacement.RELATED)
+                                                                .addGroup(
+                                                                        layout.createParallelGroup(
+                                                                                Alignment.TRAILING)
+                                                                                .addGroup(
+                                                                                        layout.createSequentialGroup()
+                                                                                                .addGroup(
+                                                                                                        layout.createParallelGroup(
+                                                                                                                Alignment.TRAILING)
+                                                                                                                .addComponent(
+                                                                                                                        requiredScroller,
+                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                        242,
+                                                                                                                        Short.MAX_VALUE)
+                                                                                                                .addGroup(
+                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                .addGroup(
+                                                                                                                                        layout.createParallelGroup(
+                                                                                                                                                Alignment.TRAILING)
+                                                                                                                                                .addGroup(
+                                                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                                                .addComponent(
+                                                                                                                                                                        addButton,
+                                                                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                        118,
+                                                                                                                                                                        Short.MAX_VALUE)
+                                                                                                                                                                .addPreferredGap(
+                                                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                                                .addComponent(
+                                                                                                                                                                        removeButton,
+                                                                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                        118,
+                                                                                                                                                                        Short.MAX_VALUE))
+                                                                                                                                                .addComponent(
+                                                                                                                                                        suggestedScroller,
+                                                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                        242,
+                                                                                                                                                        Short.MAX_VALUE))
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)))
+                                                                                                .addGroup(
+                                                                                                        layout.createParallelGroup(
+                                                                                                                Alignment.LEADING)
+                                                                                                                .addGroup(
+                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                .addGap(4)
+                                                                                                                                .addComponent(
+                                                                                                                                        clearButton))
+                                                                                                                .addGroup(
+                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                .addGroup(
+                                                                                                                                        layout.createParallelGroup(
+                                                                                                                                                Alignment.BASELINE)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        dynamicUnits)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        requestedUnitsField,
+                                                                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        unitsSelecter)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        suggestButton))))
+                                                                                                .addGap(36)
+                                                                                                .addGroup(
+                                                                                                        layout.createParallelGroup(
+                                                                                                                Alignment.TRAILING,
+                                                                                                                false)
+                                                                                                                .addGroup(
+                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                .addComponent(
+                                                                                                                                        nameLabel,
+                                                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                                                        44,
+                                                                                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                .addGroup(
+                                                                                                                                        layout.createParallelGroup(
+                                                                                                                                                Alignment.BASELINE)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        fulfillsInfo)
+                                                                                                                                                .addComponent(
+                                                                                                                                                        unitsInfo))
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                .addGroup(
+                                                                                                                                        layout.createParallelGroup(
+                                                                                                                                                Alignment.BASELINE,
+                                                                                                                                                false)
+                                                                                                                                                .addGroup(
+                                                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                                                .addGap(1)
+                                                                                                                                                                .addComponent(
+                                                                                                                                                                        fuffilsLabel,
+                                                                                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                        GroupLayout.PREFERRED_SIZE))
+                                                                                                                                                .addComponent(
+                                                                                                                                                        unitsLabel,
+                                                                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                        21,
+                                                                                                                                                        GroupLayout.PREFERRED_SIZE))
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                .addComponent(
+                                                                                                                                        preReqInfo)
+                                                                                                                                .addPreferredGap(
+                                                                                                                                        ComponentPlacement.RELATED)
+                                                                                                                                .addComponent(
+                                                                                                                                        prereqLabel,
+                                                                                                                                        GroupLayout.PREFERRED_SIZE,
+                                                                                                                                        41,
+                                                                                                                                        GroupLayout.PREFERRED_SIZE))
+                                                                                                                .addGroup(
+                                                                                                                        layout.createSequentialGroup()
+                                                                                                                                .addComponent(
+                                                                                                                                        descriptionScroller)
+                                                                                                                                .addGap(2))))
+                                                                                .addComponent(
+                                                                                        passedScroller,
+                                                                                        Alignment.LEADING,
+                                                                                        GroupLayout.DEFAULT_SIZE,
+                                                                                        458,
+                                                                                        Short.MAX_VALUE))
+                                                                .addContainerGap())
+                                                .addGroup(
+                                                        Alignment.TRAILING,
+                                                        layout.createSequentialGroup()
+                                                                .addGroup(
+                                                                        layout.createParallelGroup(
+                                                                                Alignment.BASELINE)
+                                                                                .addComponent(
+                                                                                        descriptionInfo)
+                                                                                .addComponent(
+                                                                                        nameInfo))
+                                                                .addGap(180)))));
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] { nameLabel,
+                prereqLabel });
+        dynamicUnits.setHorizontalAlignment(SwingConstants.RIGHT);
         getContentPane().setLayout(layout);
 
         pack();
@@ -799,11 +936,34 @@ public class SchedulerFrame extends JFrame
 
     private void addButton()
     {
-        if (requiredList.getSelectedValue() != null)
+        Course c = (Course) requiredList.getSelectedValue();
+        if (c != null)
         {
-            suggestedModel.addElement(requiredList.getSelectedValue());
-            requiredModel.removeElement(requiredList.getSelectedValue());
-            updateUnitCount();
+            int choice = JOptionPane.YES_OPTION;
+            if (noMetArray.contains(c))
+            {
+                // TODO
+                choice =
+                        JOptionPane
+                                .showConfirmDialog(
+                                        this,
+                                        "The prerequisites are not fulfilled for this course\n are you sure you want to add?",
+                                        "Prerequisites not met",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE);
+                // JOptionPane.showMessageDialog(this, "NO",
+                // "The prereqs are not fulifled for this course",
+                // JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+
+            }
+            if (choice == JOptionPane.YES_OPTION)
+            {
+                suggestedModel.addElement(requiredList.getSelectedValue());
+                requiredModel.removeElement(requiredList.getSelectedValue());
+                updateUnitCount();
+                updateInfo(null, null);
+            }
+
         }
     }
 
@@ -814,47 +974,45 @@ public class SchedulerFrame extends JFrame
             requiredModel.addElement(suggestedList.getSelectedValue());
             suggestedModel.removeElement(suggestedList.getSelectedValue());
             updateUnitCount();
+            updateInfo(null, null);
         }
     }
 
-    private void updateUnitCount()
+    private int getSuggestedUnits()
     {
 
         int unitCount = 0;
 
-
-//        System.out.println(list.lookUp("MATH", 141).getUnits());
         for (int i = 0; i < suggestedModel.getSize(); i++)
         {
             if (suggestedModel.get(i) instanceof Course)
             {
-//                System.out.println(suggestedModel.get(i)+"is "+((Course) suggestedModel.get(i)).getUnits());
                 unitCount += ((Course) suggestedModel.get(i)).getUnits();
             }
         }
-        dynamicUnits.setText(unitCount + " " + UNITS);
+        return unitCount;
+    }
+
+    private void updateUnitCount()
+    {
+        dynamicUnits.setText(getSuggestedUnits() + "/");
 
     }
 
     private void updateRequiredList()
     {
-        // if (result == null)
-        // {
-        // return;
-        // }
         Set<Course> courses;
-        // System.out.println(requiredComboBox.getSelectedItem());
         if (requiredComboBox.getSelectedItem().equals(ALL_FILTER))
         {
-            courses = new HashSet<Course>(both);
+            courses = new TreeSet<Course>(both);
         }
         else if (requiredComboBox.getSelectedItem().equals(PREREQ_MET))
         {
-            courses = new HashSet<Course>(metArray);
+            courses = new TreeSet<Course>(metArray);
         }
         else if (requiredComboBox.getSelectedItem().equals(PREREQ__NOT_MET))
         {
-            courses = new HashSet<Course>(noMetArray);
+            courses = new TreeSet<Course>(noMetArray);
         }
         else
         {
@@ -863,19 +1021,10 @@ public class SchedulerFrame extends JFrame
         requiredModel.clear();
         for (Course c : courses)
         {
-            // System.out.println(c.toString()
-            // + "\t"
-            // + c.getName().toLowerCase()
-            // .contains(requiredFilter.getText().toLowerCase()));
             if (c.toString().toLowerCase()
                     .contains(requiredFilter.getText().toLowerCase()))
             {
-                if (suggestedModel.contains(c))
-                {
-                    // System.out.println(c +
-                    // "is already in the suggested list");
-                }
-                else
+                if (!suggestedModel.contains(c))
                 {
                     requiredModel.addElement(c);
                 }
@@ -892,16 +1041,6 @@ public class SchedulerFrame extends JFrame
     private void generateLists()
     {
         updateInfo(null, null);
-        if (state == null)
-        {
-            System.out.println("USer state is null");
-        }
-
-        for (Course c : state.getTaken())
-        {
-            System.out.println(c + " Is taken");
-
-        }
         CourseOptions = decider.decideClasses(state, flowchart);
 
         metArray.clear();
@@ -910,31 +1049,20 @@ public class SchedulerFrame extends JFrame
         {
             for (Course c : o.getOptions())
             {
-                if (c.preRecsMet(state.getTaken()))
+                if (!state.getTaken().contains(c))
                 {
-                    metArray.add(c);
-                }
-                else
-                {
-                    noMetArray.add(c);
+                    if (c.preRecsMet(state.getTaken()))
+                    {
+                        metArray.add(c);
+                    }
+                    else
+                    {
+                        noMetArray.add(c);
+                    }
                 }
             }
         }
-        //
-        // for (Course c : metArray)
-        // {
-        // System.out.println(c + " has prereqs met");
-        //
-        // }
-        // for (Course c : noMetArray)
-        // {
-        // System.out.println(c + " has prereqs not met");
-        //
-        // }
-        both = new HashSet<Course>();
-
-        // metArray = result.getPrerequisitesMet();
-        // noMetArray = result.getPrerequisitesNotMet();
+        both = new TreeSet<Course>();
         both.addAll(metArray);
         both.addAll(noMetArray);
         updateRequiredList();
@@ -951,19 +1079,23 @@ public class SchedulerFrame extends JFrame
         {
             descriptionPane.setText("");
             nameLabel.setText("");
-            FuffilsLabel.setText("");
+            fuffilsLabel.setText("");
+            prereqLabel.setText("");
+            unitsLabel.setText("");
             return;
 
         }
         descriptionPane.setText(selCourse.getDescription());
         nameLabel.setText(selCourse.getName());
+        fuffilsLabel.setText(option.getRequirement());
+        unitsLabel.setText(selCourse.getUnits() + " Units");
         if (selCourse.preRecsMet(state.getTaken()))
         {
-            FuffilsLabel.setText(option.getRequirement());
+            prereqLabel.setText("All of the prerequisites are met");
         }
         else
         {
-            FuffilsLabel.setText(selCourse.getPreRequisitesString());
+            prereqLabel.setText(selCourse.getPreRequisitesString());
 
         }
         descriptionPane.setCaretPosition(0);
@@ -999,7 +1131,8 @@ public class SchedulerFrame extends JFrame
                 state = new UserState(chooser.getSelectedFile(), list);
                 userStateFile = chooser.getSelectedFile();
                 passedModel.fireTableDataChanged();
-                setTitle(userStateFile.getName());
+                generateLists();
+                setSaved(true);
             }
             catch (IOException ex)
             {
@@ -1013,6 +1146,13 @@ public class SchedulerFrame extends JFrame
         else
         {
         }
+    }
+
+    public void setSaved(boolean saved)
+    {
+        this.saved = saved;
+        setTitle();
+
     }
 
     private void saveAsUserState()
@@ -1080,24 +1220,34 @@ public class SchedulerFrame extends JFrame
         }
     }
 
+    private void clearSuggested()
+    {
+
+        suggestedModel.removeAllElements();
+        updateUnitCount();
+        updateRequiredList();
+
+    }
+
     private void suggestSchedule()
     {
         if (CourseOptions == null || CourseOptions.size() == 0)
         {
             return;
         }
-        int maxUnits = Integer.parseInt(unitsField.getText());
+        System.out.println(requestedUnitsField.getText());
+        int maxUnits = Integer.parseInt(requestedUnitsField.getText());
 
-        int unitCount = 0;
+        int unitCount = getSuggestedUnits();
         ArrayList<CourseOption> list =
                 new ArrayList<CourseOption>(CourseOptions);
 
         Collections.sort(list);
-        List<Course> suggested = new ArrayList<Course>();
+        // List<Course> suggested = new ArrayList<Course>();
 
         for (CourseOption co : list)
         {
-            if (unitCount >= maxUnits)
+            if (unitCount > maxUnits)
             {
                 break;
             }
@@ -1105,38 +1255,17 @@ public class SchedulerFrame extends JFrame
 
             for (Course c : co.getOptions())
             {
-                System.out.println("\t" + c);
 
-                if (c.preRecsMet(state.getTaken()) && !suggested.contains(c)
-                        && unitCount + c.getUnits() < maxUnits)
+                if (c.preRecsMet(state.getTaken())
+                        && !suggestedModel.contains(c)
+                        && unitCount + c.getUnits() <= maxUnits)
                 {
-                    System.out.println("\t\tAdding");
-                    suggested.add(c);
+                    suggestedModel.add(suggestedModel.getSize(), c);
                     unitCount += c.getUnits();
                     break;
                 }
-                if (!c.preRecsMet(state.getTaken())){
-                    System.out.println("\t\tPrereqs not met");
-                    
-                }
-                if (suggested.contains(c))
-                {
-
-                    System.out.println("\t\tAlready in list");
-                }
-                if (unitCount + c.getUnits() > maxUnits)
-                {
-
-                    System.out.println("\t\tToo many units Current:"
-                            + unitCount + " trying to add" + c.getUnits());
-                }
 
             }
-        }
-        suggestedModel.removeAllElements();
-        for (Course c : suggested)
-        {
-            suggestedModel.addElement(c);
         }
         updateUnitCount();
     }
@@ -1146,10 +1275,14 @@ public class SchedulerFrame extends JFrame
         if (userStateFile == null)
         {
             saveAsUserState();
+
         }
         try
         {
             state.write(userStateFile);
+
+            setSaved(true);
+            setTitle();
         }
         catch (IOException ex)
         {
