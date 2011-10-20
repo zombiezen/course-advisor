@@ -157,6 +157,7 @@ public class SchedulerFrame extends JFrame
                     {
                         state.getTaken().remove(requestedCourse);
                     }
+                    generateLists();
                     break;
             }
         }
