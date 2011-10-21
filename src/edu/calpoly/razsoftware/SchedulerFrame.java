@@ -681,7 +681,7 @@ public class SchedulerFrame extends JFrame
                                             .addPreferredGap(ComponentPlacement.RELATED)
                                             .addComponent(prereqLabel, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createSequentialGroup()
-                                            .addComponent(descriptionScroller, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(descriptionScroller)
                                             .addGap(2))))
                                 .addComponent(passedScroller, GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
                             .addContainerGap())
