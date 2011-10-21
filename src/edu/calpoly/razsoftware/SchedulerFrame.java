@@ -96,7 +96,7 @@ public class SchedulerFrame extends JFrame
                 case 0:
                     return Boolean.class;
                 case 1:
-                    return String.class;
+                    return Course.class;
                 default:
                     return null;
             }
@@ -129,7 +129,8 @@ public class SchedulerFrame extends JFrame
                 case 0:
                     return state.getTaken().contains(requestedCourse);
                 case 1:
-                    return requestedCourse.toString();
+                    return requestedCourse;
+                            //.toString();
                 default:
                     return null;
             }
@@ -971,7 +972,7 @@ public class SchedulerFrame extends JFrame
         {
             // requiredModel.addElement(suggestedList.getSelectedValue());
             suggestedModel.removeElement(suggestedList.getSelectedValue());
-            generateLists();
+            updateRequiredList();
             updateUnitCount();
             updateInfo(null, null);
         }
