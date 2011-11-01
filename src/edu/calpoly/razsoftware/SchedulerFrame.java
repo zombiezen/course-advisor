@@ -177,7 +177,7 @@ public class SchedulerFrame extends JFrame
 
     private boolean                 saved               = false;
     private CourseList              list;
-    private UserState               state               = new UserState();
+    private CoursesTaken               state               = new CoursesTaken();
     private CourseDecider           decider             = new CourseDecider();
     private Flowchart               flowchart;
     private File                    userStateFile;
@@ -1059,7 +1059,7 @@ public class SchedulerFrame extends JFrame
         {
             try
             {
-                state = new UserState(chooser.getSelectedFile(), list);
+                state = new CoursesTaken(chooser.getSelectedFile(), list);
                 userStateFile = chooser.getSelectedFile();
                 passedModel.fireTableDataChanged();
                 generateLists();
