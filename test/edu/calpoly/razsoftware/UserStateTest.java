@@ -49,13 +49,13 @@ public class UserStateTest
     public void testWrite() throws Exception
     {
         System.out.println("test writing an initial User State");
-        File file = new File("/home/dpanger/NetBeansProjects/Cat.json");
+        File file = new File("Cat.json");
         FileInputStream fis = new FileInputStream(file);
 
         CourseList cl = new CourseList(fis);
         UserState us = new UserState(cl.getCatalog());
         
-        File file2 = new File("/home/dpanger/NetBeansProjects/CatTest.json");
+        File file2 = new File("CatTest.json");
         us.write(file2);
         
         System.out.println("test getting User State");
