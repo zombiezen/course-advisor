@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class CourseDecider
 {
-    public Set<CourseOption> decideClasses(UserState state, Flowchart flowchart)
+    public Set<CourseOption> decideClasses(CoursesTaken state, Flowchart flowchart)
     {
         final HashMap<Course, Set<CourseOption>> optionMap =
                 new HashMap<Course, Set<CourseOption>>(state.getTaken().size());

@@ -34,7 +34,7 @@ public class CourseDeciderTest
     @Test
     public void emptyCase()
     {
-        UserState state = new UserState();
+        CoursesTaken state = new CoursesTaken();
         Flowchart flowchart = new Flowchart();
 
         assertEquals(ImmutableSet.<CourseOption>of(),
@@ -47,7 +47,7 @@ public class CourseDeciderTest
         Flowchart flowchart = new Flowchart();
         CourseOption option101 = new CourseOption(cpe101, 1);
         flowchart.addOption(option101);
-        UserState state = new UserState(ImmutableSet.of(cpe101));
+        CoursesTaken state = new CoursesTaken(ImmutableSet.of(cpe101));
 
         assertEquals(ImmutableSet.<CourseOption>of(),
                      decider.decideClasses(state, flowchart));
@@ -61,7 +61,7 @@ public class CourseDeciderTest
         CourseOption option102 = new CourseOption(cpe102, 2);
         flowchart.addOption(option101);
         flowchart.addOption(option102);
-        UserState state = new UserState(ImmutableSet.of(cpe101));
+        CoursesTaken state = new CoursesTaken(ImmutableSet.of(cpe101));
 
         assertEquals(ImmutableSet.<CourseOption>of(option102),
                      decider.decideClasses(state, flowchart));
@@ -77,7 +77,7 @@ public class CourseDeciderTest
         flowchart.addOption(option101);
         flowchart.addOption(option102);
         flowchart.addOption(option103);
-        UserState state = new UserState(ImmutableSet.of(cpe101));
+        CoursesTaken state = new CoursesTaken(ImmutableSet.of(cpe101));
 
         assertEquals(ImmutableSet.<CourseOption>of(option102, option103),
                      decider.decideClasses(state, flowchart));
@@ -91,7 +91,7 @@ public class CourseDeciderTest
                                                ImmutableSet.of(cpe101, cpe102),
                                                true, 1);
         flowchart.addOption(option);
-        UserState state = new UserState(ImmutableSet.of(cpe101, cpe102));
+        CoursesTaken state = new CoursesTaken(ImmutableSet.of(cpe101, cpe102));
 
         assertEquals(ImmutableSet.<CourseOption>of(),
                      decider.decideClasses(state, flowchart));
