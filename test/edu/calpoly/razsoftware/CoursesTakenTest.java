@@ -1,7 +1,7 @@
 package edu.calpoly.razsoftware;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -49,8 +49,7 @@ public class CoursesTakenTest
     public void testWrite() throws Exception
     {
         System.out.println("test writing an initial User State");
-        File file = new File("Cat.json");
-        FileInputStream fis = new FileInputStream(file);
+        InputStream fis = CourseList.class.getResourceAsStream("Cat.json");
 
         CourseList cl = new CourseList(fis);
         CoursesTaken us = new CoursesTaken(cl.getCatalog());
