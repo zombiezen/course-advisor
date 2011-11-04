@@ -17,17 +17,31 @@ public class CourseList
     private Set<Course> catalog=new TreeSet<Course>();
 
     /**
+     * blank constructor
+     */
+    public CourseList()
+    {
+        catalog = new TreeSet<Course>();
+    }
+
+
+    /**
      * constructs a catalog off of a collection of courses
      * @param in 
      */
     public CourseList(Collection<Course> in)
     {
+        catalog = new TreeSet<Course>();
         for(Course c : in)
         {
             catalog.add(c);
         }
     }
-    
+
+    /**
+     * constructs a CourseList from a JSON input stream
+     * @param input the JSON input stream
+     */
     public CourseList(InputStream input)
     {
         Gson gson = new Gson();
@@ -45,6 +59,57 @@ public class CourseList
         }
         
         completePointers();
+    }
+
+    /**
+     * adds a single course into the set
+     * @param c the course
+     */
+    public void add(Course c)
+    {
+        catalog.add(c);
+    }
+
+    /**
+     * adds all courses in a collection
+     * @param C a collection of courses
+     */
+    public void addAll(Collection<Course> C)
+    {
+        for(Course c : C)
+        {
+            add(c);
+        }
+    }
+
+    /**
+     * removes a course from the set
+     * @param c the course to be removed
+     */
+    public void remove(Course c)
+    {
+        catalog.remove(c);
+    }
+
+
+    /**
+     * removes a collection of courses from the set
+     * @param C a collection of courses
+     */
+    public void removeAll(Collection<Course> C)
+    {
+        for(Course c : C)
+        {
+            remove(c);
+        }
+    }
+
+    /**
+     * clears the CourseList
+     */
+    public void clear()
+    {
+        catalog = new TreeSet<Course>();
     }
 
     public Set<Course> getCatalog() {
