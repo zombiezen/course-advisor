@@ -12,6 +12,10 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * acts as a list of easily referenceable courses that can be constructed from various sources
+ * @author aspurgin
+ */
 public class CourseList
 {
     private Set<Course> catalog=new TreeSet<Course>();
@@ -112,6 +116,10 @@ public class CourseList
         catalog = new TreeSet<Course>();
     }
 
+    /**
+     * gives a reference of the current catalog
+     * @return the catalog
+     */
     public Set<Course> getCatalog() {
         
         return this.catalog;
