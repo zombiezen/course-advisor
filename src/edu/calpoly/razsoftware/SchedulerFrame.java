@@ -176,7 +176,7 @@ public class SchedulerFrame extends JFrame
                                                                         + "Derek Panger\n";
 
     private static final String     LICENSE             =
-                                                                "\nCopyright:\nGson and Guava ©Goolge\nLicensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
+                                                                "\nGson: Copyright \u00a9 2008-2011 Google Inc.\nGuava: Copyright \u00a9 2010-2011 Google Inc.\nLicensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
 
     private boolean                 saved               = false;
     private CourseList              list;
