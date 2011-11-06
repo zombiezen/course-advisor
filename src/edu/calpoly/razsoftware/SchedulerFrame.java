@@ -1048,7 +1048,7 @@ public class SchedulerFrame extends JFrame
     private void generateLists()
     {
         updateInfo(null, null);
-        courseOptions = decider.decideClasses(state, flowchart);
+//        courseOptions = decider.decideClasses(state, flowchart);
 
         coursesPreReqMet.clear();
         coursesPreReqNotMet.clear();
