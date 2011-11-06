@@ -6,18 +6,15 @@ package edu.calpoly.razsoftware;
 
 import java.awt.Component;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.text.NumberFormat;
-import java.util.List;
 
-import javax.sound.midi.ControllerEventListener;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -30,13 +27,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * 
@@ -45,116 +40,6 @@ import com.google.common.collect.ImmutableList;
 public class SchedulerView extends JFrame
 {
    // OLD GUI CODE
-   private class CourseListModel extends AbstractTableModel
-   {
-      private List<Course> sortedCatalog;
-
-      public CourseListModel(CourseList clist, SchedulerController controller)
-      {
-         sortedCatalog = ImmutableList.copyOf(clist.getCatalog());
-      }
-
-      @Override
-      public int getRowCount()
-      {
-         return sortedCatalog.size();
-      }
-
-      @Override
-      public int getColumnCount()
-      {
-         return 2;
-      }
-
-      @Override
-      public String getColumnName(int columnIndex)
-      {
-         switch (columnIndex)
-         {
-            case 0:
-               return "Passed";
-            case 1:
-               return "Course";
-            default:
-               return null;
-         }
-      }
-
-      @Override
-      public Class<?> getColumnClass(int columnIndex)
-      {
-         switch (columnIndex)
-         {
-            case 0:
-               return Boolean.class;
-            case 1:
-               return Course.class;
-            default:
-               return null;
-         }
-      }
-
-      @Override
-      public boolean isCellEditable(int rowIndex, int columnIndex)
-      {
-         switch (columnIndex)
-         {
-            case 0:
-               return true;
-            case 1:
-               return false;
-            default:
-               return false;
-         }
-      }
-
-      @Override
-      public Object getValueAt(int rowIndex, int columnIndex)
-      {
-         if (rowIndex > sortedCatalog.size())
-            return null;
-
-         final Course requestedCourse = sortedCatalog.get(rowIndex);
-
-         switch (columnIndex)
-         {
-            case 0:
-               return state.getTaken().contains(requestedCourse);
-            case 1:
-               return requestedCourse;
-               // .toString();
-            default:
-               return null;
-         }
-      }
-
-      @Override
-      public void setValueAt(Object aValue, int rowIndex, int columnIndex)
-      {
-         if (rowIndex > sortedCatalog.size())
-            return;
-
-         final Course requestedCourse = sortedCatalog.get(rowIndex);
-
-         switch (columnIndex)
-         {
-            case 0:
-
-               // setSaved(false);
-               // setTitle();
-               if ((Boolean) aValue)
-               {
-                  state.getTaken().add(requestedCourse);
-               }
-               else
-               {
-                  state.getTaken().remove(requestedCourse);
-               }
-               // generateLists();
-               break;
-         }
-      }
-   }
 
    private static final String     FILE_EXTENSION      = "us";
    private static final String     APP_NAME            = "Course Advisor";
@@ -173,10 +58,10 @@ public class SchedulerView extends JFrame
                                                                    + "Licensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
 
    private boolean                 saved               = false;
-   private CourseList              list;
-   private CoursesTaken            state               = new CoursesTaken();
-   private CourseDecider           decider             = new CourseDecider();
-   private Flowchart               flowchart;
+   // private CourseList list;
+   // private CoursesTaken state = new CoursesTaken();
+   // private CourseDecider decider = new CourseDecider();
+   // private Flowchart flowchart;
    private File                    userStateFile;
 
    private JMenuBar                menuBar             = new JMenuBar();
@@ -194,12 +79,10 @@ public class SchedulerView extends JFrame
                                                                    SwingConstants.CENTER);
    private JTextField              passedFilter        = new JTextField();
 
-   private CourseListModel         passedModel;
+   private CourseTableModel         passedModel;
 
-   TableRowSorter<CourseListModel> passedSorter;
-   private JTable                  passedTable         =
-                                                             new JTable(
-                                                                   passedModel);
+   TableRowSorter<CourseTableModel> passedSorter;
+   private JTable                  passedTable         = new JTable();
    private JScrollPane             passedScroller      = new JScrollPane(
                                                              passedTable);
    private JLabel                  requiredLabel       =
@@ -623,6 +506,16 @@ public class SchedulerView extends JFrame
 
    public SchedulerView()
    {
+      
+      passedFilter.addKeyListener(new KeyAdapter()
+      {
+          @Override
+          public void keyReleased(KeyEvent e)
+          {
+              passedSorter.allRowsChanged();
+          }
+      });
+
       setDefaultCloseOperation(EXIT_ON_CLOSE);
       nameLabel.setEditable(false);
       nameLabel.setFocusable(false);
@@ -688,6 +581,7 @@ public class SchedulerView extends JFrame
       requiredList.addListSelectionListener(controller);
       suggestedList.addListSelectionListener(controller);
    }
+   
 
    /**
     * Returns the Course that is selected in the "Passed" pane
@@ -697,7 +591,7 @@ public class SchedulerView extends JFrame
    public Course getSelectedPassed()
    {
       return (Course) passedTable
-            .getValueAt(passedTable.getSelectedColumn(), 1);
+            .getValueAt(passedTable.getSelectedRow(),1);
    }
 
    /**
@@ -744,6 +638,27 @@ public class SchedulerView extends JFrame
       fulfillsLabel.setText("Need CourseOption");
       prereqLabel.setText(c.getPreRequisitesString());
       descriptionPane.setText(c.getDescription());
+
+   }
+
+   public void setTableModel(CourseTableModel m)
+   {
+      passedModel = m;
+//      System.out.println(m.getRowCount());
+
+      passedSorter = new TableRowSorter<CourseTableModel>(passedModel);
+      passedSorter.setRowFilter(new RowFilter<CourseTableModel, Integer>()
+      {
+         public boolean include(
+               Entry<? extends CourseTableModel, ? extends Integer> entry)
+         {
+
+            return (entry.getStringValue(1).toLowerCase().contains(passedFilter
+                  .getText().toLowerCase()));
+         }
+      });
+      passedTable.setRowSorter(passedSorter);
+      passedTable.setModel(passedModel);
 
    }
 }

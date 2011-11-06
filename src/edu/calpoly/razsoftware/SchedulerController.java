@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 
 /**
  * 
@@ -21,6 +22,9 @@ public class SchedulerController implements ActionListener,
    private CourseList    coursesTaken;
    private CourseList    schedule;
    private SchedulerView gui;
+   private Flowchart     chart;
+   private CourseList    catalog;
+   private CourseDecider decider;
 
    /**
     * Constructor
@@ -35,9 +39,15 @@ public class SchedulerController implements ActionListener,
    public SchedulerController(CourseList coursesTaken, CourseList schedule,
          SchedulerView gui)
    {
+      decider=new CourseDecider();
       this.coursesTaken = coursesTaken;
       this.schedule = schedule;
       this.gui = gui;
+      catalog = new CourseList(getClass().getResourceAsStream("Cat.json"));
+      chart =
+            FlowchartReader.readFlowchart(
+                  getClass().getResourceAsStream("FlowChart.json"), catalog);
+
    }
 
    /**
@@ -70,14 +80,22 @@ public class SchedulerController implements ActionListener,
     * Handles a check box being clicked in the GUI. Adds or removes the checked
     * Course as applicable.
     */
-   private void CheckBoxClicked()
+   void CheckBoxClicked()
    {
+      for (Course c : coursesTaken.getCatalog())
+      {
+         System.out.println(c);
+      }
       Course clickedCourse = gui.getSelectedPassed();
-
       if (coursesTaken.contains(clickedCourse))
+      {
          coursesTaken.remove(clickedCourse);
+      }
       else
+      {
          coursesTaken.add(clickedCourse);
+      }
+//      decider.decideClasses(coursesTaken, chart);
 
       gui.repaint();
    }
@@ -147,6 +165,11 @@ public class SchedulerController implements ActionListener,
       // int unitsToFill = gui.getScheduleUnits() - schedule.getUnits();
 
       // auto-fill logic
+   }
+
+   public CourseList getCatalog()
+   {
+      return catalog;
    }
 
 }

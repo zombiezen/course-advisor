@@ -45,12 +45,19 @@ public class Main
                .log(java.util.logging.Level.SEVERE, null, ex);
       }
 
+      CourseList catalog = new CourseList();
+      CourseList coursesTaken = new CourseList();
+      CourseList suggestedSchedule = new CourseList();
+
       // new SchedulerFrame().setVisible(true);
 
       SchedulerView view = new SchedulerView();
-
       SchedulerController controller =
-            new SchedulerController(new CourseList(), new CourseList(), view);
+            new SchedulerController(coursesTaken, suggestedSchedule, view);
+
+      CourseTableModel m = new CourseTableModel(coursesTaken, controller,controller.getCatalog());
+      view.setTableModel(m);
+
       view.setController(controller);
       view.setVisible(true);
 
