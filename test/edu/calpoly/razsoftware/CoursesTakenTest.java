@@ -52,7 +52,7 @@ public class CoursesTakenTest
         InputStream fis = CourseList.class.getResourceAsStream("Cat.json");
 
         CourseList cl = new CourseList(fis);
-        CoursesTaken us = new CoursesTaken(cl.getCatalog());
+        CoursesTaken us = new CoursesTaken(cl.getCourses());
         
         File file2 = new File("CatTest.json");
         us.write(file2);
