@@ -35,7 +35,7 @@ public class CourseDecider
 
       for (CourseOption req : sectionReqs)
       {
-         final Set<Course> options = ImmutableSet.copyOf(req.getOptions());
+         final Set<Course> options = ImmutableSet.copyOf(req.getFulfillmentOptions());
          final Set<Course> isect = Sets.intersection(taken, options);
 
          if (!isect.isEmpty() && !req.isMutuallyExclusive())
@@ -108,7 +108,7 @@ public class CourseDecider
       Set<Course> required = new HashSet<Course>();
       for (CourseOption o : unfulfilled)
       {
-         required.addAll(o.getOptions());
+         required.addAll(o.getFulfillmentOptions());
       }
       return required;
    }

@@ -10,8 +10,8 @@ import java.util.TreeSet;
 public class CourseOption 
 //implements Comparable<CourseOption>
 {
-    private String      requirement;
-    private Set<Course> options;
+    private String      requirementName;
+    private Set<Course> fulfillmentOptions;
     private boolean     mutuallyExclusive;
     private int         quarter;
 
@@ -22,9 +22,9 @@ public class CourseOption
      */
     public CourseOption(Course onlyCourse, int quarterToTake)
     {
-        this.requirement = onlyCourse.toString();
-        this.options = new TreeSet<Course>();
-        this.options.add(onlyCourse);
+        this.requirementName = onlyCourse.toString();
+        this.fulfillmentOptions = new TreeSet<Course>();
+        this.fulfillmentOptions.add(onlyCourse);
         this.mutuallyExclusive = true;
         this.quarter = quarterToTake;
     }
@@ -39,8 +39,8 @@ public class CourseOption
     public CourseOption(String name, Set<Course> options,
             boolean mutuallyExclusive, int quarterToTake)
     {
-        this.requirement = name;
-        this.options = options;
+        this.requirementName = name;
+        this.fulfillmentOptions = options;
         this.mutuallyExclusive = mutuallyExclusive;
         this.quarter = quarterToTake;
     }
@@ -58,9 +58,9 @@ public class CourseOption
      * 
      * @return Gives the courses that can fulfill the requirement
      */
-    public Set<Course> getOptions()
+    public Set<Course> getFulfillmentOptions()
     {
-        return options;
+        return fulfillmentOptions;
     }
 
     /**
@@ -69,7 +69,7 @@ public class CourseOption
      */
     public String getRequirement()
     {
-        return requirement;
+        return requirementName;
     }
 
     /**
@@ -86,9 +86,9 @@ public class CourseOption
     {
         String req = "";
 
-        if (options.size() > 0)
+        if (fulfillmentOptions.size() > 0)
         {
-            for (Course c : options)
+            for (Course c : fulfillmentOptions)
                 req += c.toString() + " or ";
 
             req = req.substring(0, req.length() - 4);
