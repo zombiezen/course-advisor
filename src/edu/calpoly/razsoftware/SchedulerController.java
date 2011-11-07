@@ -7,10 +7,10 @@ package edu.calpoly.razsoftware;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.Set;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 
 /**
  * 
@@ -19,13 +19,14 @@ import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 public class SchedulerController implements ActionListener,
       ListSelectionListener
 {
-   private CourseList    coursesTaken;
-   private CourseList    coursesRequired;
-   private CourseList    schedule;
-   private SchedulerView gui;
-   private Flowchart     chart;
-   private CourseList    catalog;
-   private CourseDecider decider;
+   private CourseList        coursesTaken;
+   private CourseList        coursesRequired;
+   private CourseList        schedule;
+   private Set<CourseOption> unfulfilledOptions;
+   private SchedulerView     gui;
+   private Flowchart         chart;
+   private CourseList        catalog;
+   private CourseDecider     decider;
 
    /**
     * Constructor
@@ -42,7 +43,7 @@ public class SchedulerController implements ActionListener,
    {
       this.coursesRequired = coursesRequired;
 
-      decider = new CourseDecider(coursesRequired);
+      decider = new CourseDecider();
 
       this.coursesTaken = coursesTaken;
       this.schedule = schedule;
@@ -104,7 +105,9 @@ public class SchedulerController implements ActionListener,
       {
          coursesTaken.add(clickedCourse);
       }
-      decider.decideClasses(coursesTaken, chart);
+      unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
+      coursesRequired.clear();
+      coursesRequired.addAll(decider.getRequiredCourses(unfulfilledOptions));
 
       gui.repaint();
    }
@@ -172,8 +175,7 @@ public class SchedulerController implements ActionListener,
    private void autoFillSechdule()
    {
       System.out.println("AutoFill");
-      if (decider.getUnfulfilledOptions() == null
-            || decider.getUnfulfilledOptions().size() == 0)
+      if (unfulfilledOptions == null || unfulfilledOptions.isEmpty())
       {
          return;
       }
@@ -188,7 +190,7 @@ public class SchedulerController implements ActionListener,
       }
          
 
-         for (CourseOption co : decider.getUnfulfilledOptions())
+         for (CourseOption co : unfulfilledOptions)
          {
             System.out.println(co.getQuarter()+" "+co.getRequirement());
             if (unitCount > maxUnits)
