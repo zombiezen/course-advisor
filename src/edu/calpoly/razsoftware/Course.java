@@ -14,6 +14,14 @@ public class Course implements Comparable<Course>
     private Set<Set<Course>> preRequisites;
     private Set<Set<Course>> coRequisites;
 
+    /**
+     * Used to construct a course
+     * @param major The course tag for the major
+     * @param number The course number
+     * @param units The number of units the course is worth
+     * @param name The name of the course
+     * @param description The description of the course
+     */
     public Course(List<String> major, int number, int units, String name, String description)
     {
         this.major = major;
@@ -31,6 +39,12 @@ public class Course implements Comparable<Course>
         return this.toString().compareTo(c.toString());
     }
     
+    /**
+     * Used to check if the course exists
+     * @param dept Which major department the course is in
+     * @param num The number for the class
+     * @return returns true if the course exists, otherwise false
+     */
     public boolean isClass(String dept, int num)
     {
         if(num == number)
@@ -41,6 +55,11 @@ public class Course implements Comparable<Course>
         return false;
     }
     
+    /**
+     * Used to check if the prereqs for a class has been met
+     * @param coursesTaken The courses the user has taken
+     * @return returns true if the prerecs have been met, otherwise false
+     */
     public boolean preRecsMet(Set<Course> coursesTaken)
     {
         boolean preRecMet = false;
@@ -74,36 +93,64 @@ public class Course implements Comparable<Course>
         return coRequisites;
     }
     
+    /**
+     * Sets which courses should be taken in conjuction with the course
+     * @param in The set of courses needed to be taken together
+     */
     public void setCoRequisites(Set<Set<Course>> in)
     {
         coRequisites = in;
     }
     
+    /**
+     * Gets the name of a course
+     * @return Returns a string with the name of a course
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Gets the description of a course
+     * @return returns a string with the description of the course
+     */
     public String getDescription()
     {
         return description;
     }
 
+    /**
+     * Gets the major the course falls under
+     * @return Returns the majors the course falls under
+     */
     public List<String> getMajor()
     {
         return major;
     }
 
+    /**
+     * Returns the number that goes before the major tag
+     * @return Returns an int with the number of the course
+     */
     public int getNumber()
     {
         return number;
     }
 
+    /**
+     * Gets the set of prerequisites for a course
+     * @return returns a set with the prerequisites
+     */
     public Set<Set<Course>> getPreRequisites()
     {
         return preRequisites;
     }
     
+    /**
+     * Gets the prereqs in the form of a string
+     * @return The prereqs in the form of a string
+     */
     public String getPreRequisitesString()
     {
         String preRecStr = "";
@@ -123,11 +170,19 @@ public class Course implements Comparable<Course>
         return preRecStr;
     }
     
+    /**
+     * Sets the prereqs according to the input
+     * @param in The prereqs for a course
+     */
     public void setPreRequisites(Set<Set<Course>> in)
     {
         preRequisites = in;
     }
 
+    /**
+     * Gets the units of a course
+     * @return an Int with the amount of units a course is worth
+     */
     public int getUnits()
     {
         return units;
