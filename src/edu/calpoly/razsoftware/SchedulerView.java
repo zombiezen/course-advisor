@@ -574,7 +574,10 @@ public class SchedulerView extends JFrame
       suggestButton.setActionCommand("Autofill");
 
    }
-
+   /**
+    * Associates the given controller with the buttons in this window
+    * @param controller The controller for this view
+    */
    public void setController(SchedulerController controller)
    {
       addButton.addActionListener(controller);
@@ -625,13 +628,13 @@ public class SchedulerView extends JFrame
       return Integer.parseInt(requestedUnitsField.getText());
    }
 
-   //
-   // /**
-   // * Fills the "Info" section with the info of the parameter Course
-   // *
-   // * @param Course
-   // * course to display
-   // */
+   
+    /**
+    * Fills the "Info" section with the info of the parameter Course
+    *
+    * @param Course
+    * course to display
+    */
    public void setInfo(Course c)
    {
       nameLabel.setText(c.getName());
@@ -641,7 +644,12 @@ public class SchedulerView extends JFrame
       descriptionPane.setText(c.getDescription());
 
    }
-
+   /**
+    * Associates the model with the different panes in this window
+    * @param tableModel The model the is displayed in the JTable
+    * @param coursesRequired The list of classes required to fulfill the graduation requirement
+    * @param coursesSuggested The suggested schedule that is displayed in the last column
+    */
    public void setSources(CourseTableModel tableModel, final CourseList coursesRequired, CourseList coursesSuggested)
    {
       passedSorter = new TableRowSorter<CourseTableModel>(tableModel);
