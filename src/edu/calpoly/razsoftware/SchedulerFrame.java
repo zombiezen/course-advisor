@@ -406,7 +406,7 @@ public class SchedulerFrame extends JFrame
                         CourseOption option = null;
                         for (CourseOption o : courseOptions)
                         {
-                            if (o.getOptions().contains(selected))
+                            if (o.getFulfillmentOptions().contains(selected))
                             {
                                 option = o;
                             }
@@ -1054,7 +1054,7 @@ public class SchedulerFrame extends JFrame
         coursesPreReqNotMet.clear();
         for (CourseOption o : courseOptions)
         {
-            for (Course c : o.getOptions())
+            for (Course c : o.getFulfillmentOptions())
             {
                 if (!state.getTaken().contains(c))
                 {
@@ -1153,7 +1153,7 @@ public class SchedulerFrame extends JFrame
                 break;
             }
 
-            for (Course c : co.getOptions())
+            for (Course c : co.getFulfillmentOptions())
             {
                 if (c.preRecsMet(state.getTaken())
                         && !suggestedModel.contains(c)

@@ -200,7 +200,7 @@ public class SchedulerController implements ActionListener,
                break;
             }
 
-            for (Course c : co.getOptions())
+            for (Course c : co.getFulfillmentOptions())
             {
                System.out.println("\t"+c);
                if (c.preRecsMet(coursesTaken.getCourses()) && !coursesTaken.contains(c)

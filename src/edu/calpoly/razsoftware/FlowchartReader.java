@@ -56,7 +56,7 @@ public class FlowchartReader
         {
             HashSet<Course> tmpCourseList = new HashSet<Course>();
             CourseOption co = gson.fromJson(s.nextLine(), CourseOption.class);
-            for(Course c : co.getOptions())
+            for(Course c : co.getFulfillmentOptions())
             {
                 Course course = courses.lookUp(c.getMajor().get(0), c.getNumber());
                 if(course != null)
@@ -88,7 +88,7 @@ public class FlowchartReader
 
         for(CourseOption co : fc.getSectionReqs())
         {
-            for(Course c : co.getOptions())
+            for(Course c : co.getFulfillmentOptions())
             {
                 System.out.println(gson.toJson(c));
             }
