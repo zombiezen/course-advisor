@@ -11,17 +11,20 @@ import java.util.TreeSet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+/**
+ * A class that computes the course options remaining to be fulfilled.
+ * 
+ * @author rlight
+ */
 public class CourseDecider
 {
-   private CourseList        required;
-   private Set<CourseOption> unfulfilled;
-
-   public CourseDecider(CourseList required)
-   {
-      this.required = required;
-   }
-
-   public void decideClasses(CourseList state, Flowchart flowchart)
+   /**
+    * Computes the course options remaining to be fulfilled.
+    * 
+    * @param state The list of courses that have already been taken.
+    * @param flowchart The flowchart that specifies 
+    */
+   public Set<CourseOption> decideClasses(CourseList state, Flowchart flowchart)
    {
       final HashMap<Course, Set<CourseOption>> optionMap =
             new HashMap<Course, Set<CourseOption>>(state.getCourses().size());
@@ -32,8 +35,6 @@ public class CourseDecider
 
       for (CourseOption req : sectionReqs)
       {
-         System.out.println("Req: "+req.getRequirement());
-         
          final Set<Course> options = ImmutableSet.copyOf(req.getOptions());
          final Set<Course> isect = Sets.intersection(taken, options);
 
@@ -91,21 +92,24 @@ public class CourseDecider
             }
          }
       }
-      unfulfilled = new HashSet<CourseOption>(sectionReqs);
+      Set<CourseOption> unfulfilled = new HashSet<CourseOption>(sectionReqs);
       unfulfilled.removeAll(fulfilled);
-      required.clear();
+      return unfulfilled;
+   }
+   
+   /**
+    * Returns the set of courses that can fulfill a set of course options.
+    * 
+    * @param unfulfilled The unfulfilled course options
+    * @return The set of courses that can fulfill a set of course options.
+    */
+   public Set<Course> getRequiredCourses(Set<CourseOption> unfulfilled)
+   {
+      Set<Course> required = new HashSet<Course>();
       for (CourseOption o : unfulfilled)
       {
          required.addAll(o.getOptions());
       }
-   }
-
-   /**
-    * Accessor to the set of unfulfilled requirements
-    * @return the set of unfulfilled requirements so the controller can suggest a schedule
-    */
-   Set<CourseOption> getUnfulfilledOptions()
-   {
-      return unfulfilled;
+      return required;
    }
 }
