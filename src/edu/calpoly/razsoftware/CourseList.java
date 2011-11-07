@@ -1,16 +1,18 @@
 package edu.calpoly.razsoftware;
 
-import com.google.gson.Gson;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import javax.swing.AbstractListModel;
+import javax.swing.event.ListDataListener;
+
+import com.google.gson.Gson;
 
 /**
  * acts as a list of easily referenceable courses that can be constructed from
@@ -18,9 +20,9 @@ import java.util.logging.Logger;
  * 
  * @author aspurgin
  */
-public class CourseList
+public class CourseList extends AbstractListModel
 {
-   private Set<Course> catalog = new TreeSet<Course>();
+   private Set<Course> catalog;
 
    /**
     * blank constructor
@@ -37,11 +39,12 @@ public class CourseList
     */
    public CourseList(Collection<Course> in)
    {
-      catalog = new TreeSet<Course>();
+      this();
       for (Course c : in)
       {
          catalog.add(c);
       }
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -52,6 +55,7 @@ public class CourseList
     */
    public CourseList(InputStream input)
    {
+      this();
       Gson gson = new Gson();
       Scanner s = null;
 
@@ -90,6 +94,7 @@ public class CourseList
    public void add(Course c)
    {
       catalog.add(c);
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -104,6 +109,7 @@ public class CourseList
       {
          add(c);
       }
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -115,6 +121,7 @@ public class CourseList
    public void remove(Course c)
    {
       catalog.remove(c);
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -129,6 +136,8 @@ public class CourseList
       {
          remove(c);
       }
+
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -137,6 +146,8 @@ public class CourseList
    public void clear()
    {
       catalog = new TreeSet<Course>();
+
+      this.fireContentsChanged(this, 0, catalog.size());
    }
 
    /**
@@ -144,7 +155,7 @@ public class CourseList
     * 
     * @return the catalog
     */
-   public Set<Course> getCatalog()
+   public Set<Course> getCourses()
    {
 
       return this.catalog;
@@ -252,5 +263,61 @@ public class CourseList
          }
       }
       return null;
+   }
+
+   /**
+    * Allow the Course List to be used to represent both a filtered and and un-filtered list
+    * @returns the correct length depending on the type of list 
+    */
+   @Override
+   public int getSize()
+   {
+      if (filtered == null)
+      {
+         return catalog.size();
+      }
+      else
+         return filtered.size();
+   }
+
+   List<Course> filtered;
+
+   /**
+    * Allow the Course List to be used to represent both a filtered and and un-filtered list
+    * @param i the index of the element to return
+    * @returns the correct element depending on the type of list
+    */
+   @Override
+   public Object getElementAt(int i)
+   {
+      if (filtered == null)
+      {
+         return catalog.toArray()[i];
+      }
+      else
+         return filtered.get(i);
+
+   }
+
+   /**
+    * Filters the Courses that don't match the given string out of
+    * the list that this model presents to it's listeners
+    * @param text The text to filter by
+    */
+   public void filterList(String text)
+   {
+      filtered = new ArrayList<Course>();
+      if (text != "")
+      {
+         for (Course c : catalog)
+         {
+            if (c.toString().toLowerCase().contains(text.toLowerCase()))
+            {
+               filtered.add(c);
+            }
+         }
+      }
+      this.fireContentsChanged(this, 0, filtered.size());
+
    }
 }

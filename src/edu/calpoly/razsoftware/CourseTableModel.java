@@ -6,6 +6,12 @@ import javax.swing.table.AbstractTableModel;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * An table model that accesses a backend model to display the values in the cells
+ * It also delegates the changing of the data to a seperate controller class
+ * @author Daniel
+ *
+ */
 class CourseTableModel extends AbstractTableModel
 {
    private List<Course> sortedCatalog;
@@ -16,7 +22,7 @@ class CourseTableModel extends AbstractTableModel
    {
       this.controller = controller;
       sortedCatalog =
-            ImmutableList.copyOf(catalog.getCatalog());
+            ImmutableList.copyOf(catalog.getCourses());
       this.state = state;
    }
 
@@ -88,7 +94,6 @@ class CourseTableModel extends AbstractTableModel
             return state.contains(requestedCourse);
          case 1:
             return requestedCourse;
-            // .toString();
          default:
             return null;
       }

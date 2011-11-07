@@ -6,6 +6,7 @@
 package edu.calpoly.razsoftware;
 
 import javax.swing.UIManager;
+import javax.swing.event.ListDataListener;
 
 /**
  * 
@@ -45,18 +46,22 @@ public class Main
                .log(java.util.logging.Level.SEVERE, null, ex);
       }
 
-      CourseList catalog = new CourseList();
       CourseList coursesTaken = new CourseList();
+      CourseList coursesRequired = new CourseList();
+
       CourseList suggestedSchedule = new CourseList();
 
-      // new SchedulerFrame().setVisible(true);
-
       SchedulerView view = new SchedulerView();
-      SchedulerController controller =
-            new SchedulerController(coursesTaken, suggestedSchedule, view);
 
-      CourseTableModel m = new CourseTableModel(coursesTaken, controller,controller.getCatalog());
-      view.setTableModel(m);
+      SchedulerController controller =
+            new SchedulerController(coursesTaken, coursesRequired,
+                  suggestedSchedule, view);
+
+      CourseTableModel m =
+            new CourseTableModel(coursesTaken, controller,
+                  controller.getCatalog());
+      view.setSources(m, coursesRequired,suggestedSchedule);
+      
 
       view.setController(controller);
       view.setVisible(true);

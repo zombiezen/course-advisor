@@ -2,6 +2,7 @@ package edu.calpoly.razsoftware;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Flowchart
 {
@@ -14,7 +15,8 @@ public class Flowchart
 
     public Flowchart(Set<CourseOption> sectionReqs)
     {
-        this.sectionReqs = new HashSet<CourseOption>(sectionReqs);
+       this();
+        this.sectionReqs.addAll(sectionReqs);
     }
 
     public Set<CourseOption> getSectionReqs()
