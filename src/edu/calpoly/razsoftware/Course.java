@@ -3,7 +3,11 @@ package edu.calpoly.razsoftware;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-
+/**
+ * Represents a course the user can take
+ * 
+ * 
+ */
 public class Course implements Comparable<Course>
 {
     private List<String> major;
