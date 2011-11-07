@@ -55,7 +55,9 @@ public class SchedulerController implements ActionListener,
       chart =
             FlowchartReader.readFlowchart(
                   getClass().getResourceAsStream("FlowChart.json"), catalog);
-      decider.decideClasses(coursesTaken, chart);
+      unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
+      this.coursesRequired.clear();
+      this.coursesRequired.addAll(decider.getRequiredCourses(unfulfilledOptions));
 
 
    }
