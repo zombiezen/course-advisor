@@ -3,7 +3,8 @@ package edu.calpoly.razsoftware;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class CourseOption implements Comparable<CourseOption>
+public class CourseOption 
+//implements Comparable<CourseOption>
 {
     private String      requirement;
     private Set<Course> options;
@@ -64,18 +65,18 @@ public class CourseOption implements Comparable<CourseOption>
         return req;
     }
 
-    @Override
-    public int compareTo(CourseOption o)
-    {
-        if (quarter == o.quarter)
-        {
-            return 0;
-        }
-        else if (quarter < o.quarter)
-        {
-            return -1;
-        }
-        return 1;
-        // return 0;
-    }
+//    @Override
+//    public int compareTo(CourseOption o)
+//    {
+//        if (quarter == o.quarter)
+//        {
+//            return 0;
+//        }
+//        else if (quarter < o.quarter)
+//        {
+//            return -1;
+//        }
+//        return 1;
+//        // return 0;
+//    }
 }

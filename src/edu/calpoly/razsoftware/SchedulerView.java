@@ -9,7 +9,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 
+import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -31,6 +33,7 @@ import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
+import javax.swing.event.ListDataListener;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -41,103 +44,101 @@ public class SchedulerView extends JFrame
 {
    // OLD GUI CODE
 
-   private static final String     FILE_EXTENSION      = "us";
-   private static final String     APP_NAME            = "Course Advisor";
-   private static final String     VERSION             = "v1.0";
-   private static final String     AUTHORS             =
-                                                             "\nAdam Spurgin\n"
-                                                                   + "Ross Light\n"
-                                                                   + "Michael Van Beek\n"
-                                                                   + "Daniel Johnson\n"
-                                                                   + "Thomas Wong\n"
-                                                                   + "Derek Panger\n";
+   private static final String      FILE_EXTENSION      = "us";
+   private static final String      APP_NAME            = "Course Advisor";
+   private static final String      VERSION             = "v1.0";
+   private static final String      AUTHORS             =
+                                                              "\nAdam Spurgin\n"
+                                                                    + "Ross Light\n"
+                                                                    + "Michael Van Beek\n"
+                                                                    + "Daniel Johnson\n"
+                                                                    + "Thomas Wong\n"
+                                                                    + "Derek Panger\n";
 
-   private static final String     LICENSE             =
-                                                             "\nGson: Copyright \u00a9 2008-2011 Google Inc.\n"
-                                                                   + "Guava: Copyright \u00a9 2010-2011 Google Inc.\n"
-                                                                   + "Licensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
+   private static final String      LICENSE             =
+                                                              "\nGson: Copyright \u00a9 2008-2011 Google Inc.\n"
+                                                                    + "Guava: Copyright \u00a9 2010-2011 Google Inc.\n"
+                                                                    + "Licensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
 
-   private boolean                 saved               = false;
+   private boolean                  saved               = false;
    // private CourseList list;
    // private CoursesTaken state = new CoursesTaken();
    // private CourseDecider decider = new CourseDecider();
    // private Flowchart flowchart;
-   private File                    userStateFile;
+   private File                     userStateFile;
 
-   private JMenuBar                menuBar             = new JMenuBar();
-   private JMenu                   fileMenu            = new JMenu("File");
-   private JMenuItem               openMenuItem        = new JMenuItem("Open");
-   private JMenuItem               saveMenuItem        = new JMenuItem("Save");
-   private JMenuItem               saveAsMenuItem      = new JMenuItem(
-                                                             "Save As");
-   private JMenuItem               quitMenuItem        = new JMenuItem("Quit");
-   private JMenu                   helpMenu            = new JMenu("Help");
-   private JMenuItem               aboutMenuItem       = new JMenuItem("About");
-   private JLabel                  passedLabel         =
-                                                             new JLabel(
-                                                                   "Courses Passed",
-                                                                   SwingConstants.CENTER);
-   private JTextField              passedFilter        = new JTextField();
+   private JMenuBar                 menuBar             = new JMenuBar();
+   private JMenu                    fileMenu            = new JMenu("File");
+   private JMenuItem                openMenuItem        = new JMenuItem("Open");
+   private JMenuItem                saveMenuItem        = new JMenuItem("Save");
+   private JMenuItem                saveAsMenuItem      = new JMenuItem(
+                                                              "Save As");
+   private JMenuItem                quitMenuItem        = new JMenuItem("Quit");
+   private JMenu                    helpMenu            = new JMenu("Help");
+   private JMenuItem                aboutMenuItem       =
+                                                              new JMenuItem(
+                                                                    "About");
+   private JLabel                   passedLabel         =
+                                                              new JLabel(
+                                                                    "Courses Passed",
+                                                                    SwingConstants.CENTER);
+   private JTextField               passedFilter        = new JTextField();
 
-   private CourseTableModel         passedModel;
+//   private CourseTableModel         passedModel;
 
    TableRowSorter<CourseTableModel> passedSorter;
-   private JTable                  passedTable         = new JTable();
-   private JScrollPane             passedScroller      = new JScrollPane(
-                                                             passedTable);
-   private JLabel                  requiredLabel       =
-                                                             new JLabel(
-                                                                   "Courses Required",
-                                                                   SwingConstants.CENTER);
-   private final String            ALL_FILTER          = "All";
-   private final String            PREREQ_MET          = "Prerequisites Met";
-   private final String            PREREQ__NOT_MET     = "Prerequisite Not Met";
-   private JComboBox               requiredComboBox    = new JComboBox(
-                                                             new String[] {
-         ALL_FILTER, PREREQ_MET, PREREQ__NOT_MET            });
-   private JTextField              requiredFilter      = new JTextField();
-   DefaultListModel                requiredModel       = new DefaultListModel();
-   private JList                   requiredList        = new JList(
-                                                             requiredModel);
-   private JScrollPane             requiredScroller    = new JScrollPane(
-                                                             requiredList);
-   private static final String     UNITS               = "Units";
-   private JLabel                  unitsSelecter       = new JLabel(UNITS);
-   private JTextField              requestedUnitsField = new JTextField("16");
-   private JButton                 addButton           = new JButton(">");
-   private JButton                 removeButton        = new JButton("<");
+   private JTable                   passedTable         = new JTable();
+   private JScrollPane              passedScroller      = new JScrollPane(
+                                                              passedTable);
+   private JLabel                   requiredLabel       =
+                                                              new JLabel(
+                                                                    "Courses Required",
+                                                                    SwingConstants.CENTER);
+   private final String             ALL_FILTER          = "All";
+   private final String             PREREQ_MET          = "Prerequisites Met";
+   private final String             PREREQ__NOT_MET     =
+                                                              "Prerequisite Not Met";
+   private JComboBox                requiredComboBox    = new JComboBox(
+                                                              new String[] {
+         ALL_FILTER, PREREQ_MET, PREREQ__NOT_MET             });
+   private JTextField               requiredFilter      = new JTextField();
+//   DefaultListModel                 requiredModel       =
+//                                                              new DefaultListModel();
+   private JList                    requiredList        = new JList();
+   private JScrollPane              requiredScroller    = new JScrollPane(requiredList);
+   private static final String      UNITS               = "Units";
+   private JLabel                   unitsSelecter       = new JLabel(UNITS);
+   private JTextField               requestedUnitsField = new JTextField("16");
+   private JButton                  addButton           = new JButton(">");
+   private JButton                  removeButton        = new JButton("<");
 
-   JButton                         clearButton         = new JButton("Clear");
+   JButton                          clearButton         = new JButton("Clear");
 
-   private final JButton           suggestButton       =
-                                                             new JButton(
-                                                                   "Autofill");
-   private JLabel                  suggestedLabel      =
-                                                             new JLabel(
-                                                                   "Suggested Schedule",
-                                                                   SwingConstants.CENTER);
-   DefaultListModel                suggestedModel      = new DefaultListModel();
-   private JList                   suggestedList       = new JList(
-                                                             suggestedModel);
-   private JScrollPane             suggestedScroller   = new JScrollPane(
-                                                             suggestedList);
-   private JLabel                  dynamicUnits        = new JLabel("0/");
-   private JLabel                  nameInfo            = new JLabel("Name:");
-   private final JLabel            unitsInfo           = new JLabel("Units:");
-   private JLabel                  fulfillsInfo        =
-                                                             new JLabel(
-                                                                   "Fulfills:");
-   private final JLabel            preReqInfo          = new JLabel(
-                                                             "Prerequisites:");
-   private JLabel                  descriptionInfo     = new JLabel(
-                                                             "Description:");
-   private final JTextPane         nameLabel           = new JTextPane();
-   private final JTextPane         unitsLabel          = new JTextPane();
-   private final JTextPane         fulfillsLabel       = new JTextPane();
-   private final JTextPane         prereqLabel         = new JTextPane();
-   private JTextPane               descriptionPane     = new JTextPane();
-   private JScrollPane             descriptionScroller = new JScrollPane(
-                                                             descriptionPane);
+   private final JButton            suggestButton       = new JButton(
+                                                              "Autofill");
+   private JLabel                   suggestedLabel      =
+                                                              new JLabel(
+                                                                    "Suggested Schedule",
+                                                                    SwingConstants.CENTER);
+   private JList                    suggestedList       = new JList();
+   private JScrollPane              suggestedScroller   = new JScrollPane(
+                                                              suggestedList);
+   private JLabel                   dynamicUnits        = new JLabel("0/");
+   private JLabel                   nameInfo            = new JLabel("Name:");
+   private final JLabel             unitsInfo           = new JLabel("Units:");
+   private JLabel                   fulfillsInfo        = new JLabel(
+                                                              "Fulfills:");
+   private final JLabel             preReqInfo          = new JLabel(
+                                                              "Prerequisites:");
+   private JLabel                   descriptionInfo     = new JLabel(
+                                                              "Description:");
+   private final JTextPane          nameLabel           = new JTextPane();
+   private final JTextPane          unitsLabel          = new JTextPane();
+   private final JTextPane          fulfillsLabel       = new JTextPane();
+   private final JTextPane          prereqLabel         = new JTextPane();
+   private JTextPane                descriptionPane     = new JTextPane();
+   private JScrollPane              descriptionScroller = new JScrollPane(
+                                                              descriptionPane);
 
    // ...
 
@@ -504,17 +505,19 @@ public class SchedulerView extends JFrame
       setMinimumSize(getPreferredSize());
    }
 
+   
    public SchedulerView()
    {
-      
+
       passedFilter.addKeyListener(new KeyAdapter()
       {
-          @Override
-          public void keyReleased(KeyEvent e)
-          {
-              passedSorter.allRowsChanged();
-          }
+         @Override
+         public void keyReleased(KeyEvent e)
+         {
+            passedSorter.allRowsChanged();
+         }
       });
+
 
       setDefaultCloseOperation(EXIT_ON_CLOSE);
       nameLabel.setEditable(false);
@@ -581,7 +584,6 @@ public class SchedulerView extends JFrame
       requiredList.addListSelectionListener(controller);
       suggestedList.addListSelectionListener(controller);
    }
-   
 
    /**
     * Returns the Course that is selected in the "Passed" pane
@@ -590,8 +592,7 @@ public class SchedulerView extends JFrame
     */
    public Course getSelectedPassed()
    {
-      return (Course) passedTable
-            .getValueAt(passedTable.getSelectedRow(),1);
+      return (Course) passedTable.getValueAt(passedTable.getSelectedRow(), 1);
    }
 
    /**
@@ -641,12 +642,9 @@ public class SchedulerView extends JFrame
 
    }
 
-   public void setTableModel(CourseTableModel m)
+   public void setSources(CourseTableModel tableModel, final CourseList coursesRequired, CourseList coursesSuggested)
    {
-      passedModel = m;
-//      System.out.println(m.getRowCount());
-
-      passedSorter = new TableRowSorter<CourseTableModel>(passedModel);
+      passedSorter = new TableRowSorter<CourseTableModel>(tableModel);
       passedSorter.setRowFilter(new RowFilter<CourseTableModel, Integer>()
       {
          public boolean include(
@@ -658,7 +656,20 @@ public class SchedulerView extends JFrame
          }
       });
       passedTable.setRowSorter(passedSorter);
-      passedTable.setModel(passedModel);
 
+      passedTable.setModel(tableModel);
+
+      requiredList.setModel(coursesRequired);
+      requiredFilter.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyReleased(KeyEvent e)
+         {
+            coursesRequired.filterList(requiredFilter.getText());
+         }
+     });
+
+      suggestedList.setModel(coursesSuggested);
    }
+
 }

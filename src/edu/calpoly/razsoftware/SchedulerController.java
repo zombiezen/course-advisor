@@ -20,6 +20,7 @@ public class SchedulerController implements ActionListener,
       ListSelectionListener
 {
    private CourseList    coursesTaken;
+   private CourseList    coursesRequired;
    private CourseList    schedule;
    private SchedulerView gui;
    private Flowchart     chart;
@@ -36,24 +37,32 @@ public class SchedulerController implements ActionListener,
     * @param gui
     *           a SchedulerView to pull selections from
     */
-   public SchedulerController(CourseList coursesTaken, CourseList schedule,
-         SchedulerView gui)
+   public SchedulerController(CourseList coursesTaken,
+         CourseList coursesRequired, CourseList schedule, SchedulerView gui)
    {
-      decider=new CourseDecider();
+      this.coursesRequired = coursesRequired;
+
+      decider = new CourseDecider(coursesRequired);
+
       this.coursesTaken = coursesTaken;
       this.schedule = schedule;
       this.gui = gui;
       catalog = new CourseList(getClass().getResourceAsStream("Cat.json"));
+      
+
+      
       chart =
             FlowchartReader.readFlowchart(
                   getClass().getResourceAsStream("FlowChart.json"), catalog);
+      decider.decideClasses(coursesTaken, chart);
+
 
    }
 
    /**
     * Action Preformed method from ActionListener
     * 
-    * @param
+    * @param e The event to analyze
     */
    public void actionPerformed(ActionEvent e)
    {
@@ -82,7 +91,7 @@ public class SchedulerController implements ActionListener,
     */
    void CheckBoxClicked()
    {
-      for (Course c : coursesTaken.getCatalog())
+      for (Course c : coursesTaken.getCourses())
       {
          System.out.println(c);
       }
@@ -95,7 +104,7 @@ public class SchedulerController implements ActionListener,
       {
          coursesTaken.add(clickedCourse);
       }
-//      decider.decideClasses(coursesTaken, chart);
+      decider.decideClasses(coursesTaken, chart);
 
       gui.repaint();
    }
@@ -162,11 +171,55 @@ public class SchedulerController implements ActionListener,
     */
    private void autoFillSechdule()
    {
-      // int unitsToFill = gui.getScheduleUnits() - schedule.getUnits();
+      System.out.println("AutoFill");
+      if (decider.getUnfulfilledOptions() == null
+            || decider.getUnfulfilledOptions().size() == 0)
+      {
+         return;
+      }
 
-      // auto-fill logic
+      int maxUnits = gui.getScheduleUnits();
+      //
+      int unitCount = 0;
+
+      for (Course c : schedule.getCourses())
+      {
+         unitCount+=c.getUnits();
+      }
+         
+
+         for (CourseOption co : decider.getUnfulfilledOptions())
+         {
+            System.out.println(co.getQuarter()+" "+co.getRequirement());
+            if (unitCount > maxUnits)
+            {
+               break;
+            }
+
+            for (Course c : co.getOptions())
+            {
+               System.out.println("\t"+c);
+               if (c.preRecsMet(coursesTaken.getCourses()) && !coursesTaken.contains(c)
+                     && unitCount + c.getUnits() <= maxUnits)
+               {
+                  System.out.println("\t\t"+c);
+                  if (!coursesTaken.contains(c)&&!schedule.contains(c))
+                  {
+                     System.out.println("\t\t\tAdd: "+c);
+                     schedule.add(c);
+                     unitCount += c.getUnits();
+                     break;
+                  }
+               }
+
+            }
+         }
    }
 
+   /**
+    * Accessor to the catalog of courses
+    * @return the catalog of courses that was loaded
+    */
    public CourseList getCatalog()
    {
       return catalog;

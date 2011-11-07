@@ -59,7 +59,7 @@ public class SchedulerFrame extends JFrame
 
         public CourseListModel(CourseList clist)
         {
-            sortedCatalog = ImmutableList.copyOf(clist.getCatalog());
+            sortedCatalog = ImmutableList.copyOf(clist.getCourses());
         }
 
         @Override
@@ -181,7 +181,7 @@ public class SchedulerFrame extends JFrame
     private boolean                 saved               = false;
     private CourseList              list;
     private CoursesTaken            state               = new CoursesTaken();
-    private CourseDecider           decider             = new CourseDecider();
+//    private CourseDecider           decider             = new CourseDecider();
     private Flowchart               flowchart;
     private File                    userStateFile;
 
@@ -1144,7 +1144,7 @@ public class SchedulerFrame extends JFrame
         ArrayList<CourseOption> list =
                 new ArrayList<CourseOption>(courseOptions);
 
-        Collections.sort(list);
+//        Collections.sort(list);
 
         for (CourseOption co : list)
         {
