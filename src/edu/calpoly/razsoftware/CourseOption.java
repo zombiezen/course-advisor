@@ -3,7 +3,10 @@ package edu.calpoly.razsoftware;
 import java.util.Set;
 import java.util.TreeSet;
 
-
+/**
+ * Represents the different courses that can be taken to fulfill a requirement
+ * 
+ */
 public class CourseOption 
 //implements Comparable<CourseOption>
 {
