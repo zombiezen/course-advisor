@@ -3,6 +3,7 @@ package edu.calpoly.razsoftware;
 import java.util.Set;
 import java.util.TreeSet;
 
+
 public class CourseOption 
 //implements Comparable<CourseOption>
 {
@@ -11,6 +12,11 @@ public class CourseOption
     private boolean     mutuallyExclusive;
     private int         quarter;
 
+    /**
+     * 
+     * @param onlyCourse
+     * @param quarterToTake 
+     */
     public CourseOption(Course onlyCourse, int quarterToTake)
     {
         this.requirement = onlyCourse.toString();
@@ -20,6 +26,13 @@ public class CourseOption
         this.quarter = quarterToTake;
     }
 
+    /**
+     * 
+     * @param name
+     * @param options 
+     * @param mutuallyExclusive
+     * @param quarterToTake
+     */
     public CourseOption(String name, Set<Course> options,
             boolean mutuallyExclusive, int quarterToTake)
     {
@@ -29,21 +42,37 @@ public class CourseOption
         this.quarter = quarterToTake;
     }
 
+    /**
+     * 
+     * @return Checks if course fulfills multiple requirements
+     */
     public boolean isMutuallyExclusive()
     {
         return mutuallyExclusive;
     }
 
+    /**
+     * 
+     * @return Gives the courses that can fulfill the requirement
+     */
     public Set<Course> getOptions()
     {
         return options;
     }
 
+    /**
+     * 
+     * @return Gives a string for requirements to fulfill prereqs for a course
+     */
     public String getRequirement()
     {
         return requirement;
     }
 
+    /**
+     * 
+     * @return Gives the quarter in which the class should be taken
+     */
     public int getQuarter()
     {
         return quarter;
