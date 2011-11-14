@@ -6,12 +6,15 @@ package edu.calpoly.razsoftware;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.jws.Oneway;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -22,14 +25,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * 
- * @author michaelsvanbeek
+ * @author michaelsvanbeek, Daniel Johnson
  */
-public class SchedulerController implements ActionListener,
+public class SchedulerController extends KeyAdapter implements ActionListener,
         ListSelectionListener
 {
 
     private static final String kFileExtension   = "us";
     private static final String kApplicationName = "Course Advisor";
+    public static final String  ALL_FILTER       = "All";
+    public static final String  PREREQ_MET       = "Prerequisites Met";
+    public static final String  PREREQ__NOT_MET  = "Prerequisite Not Met";
 
     private CourseList          coursesTaken;
     private CourseList          coursesRequired;
@@ -76,7 +82,7 @@ public class SchedulerController implements ActionListener,
     }
 
     /**
-     * Action Preformed method from ActionListener
+     * Action Performed method from ActionListener
      * 
      * @param e
      *            The event to analyze
@@ -118,6 +124,21 @@ public class SchedulerController implements ActionListener,
         {
             quit();
         }
+        else if (e.getActionCommand().equals("Required Combo"))
+        {
+            filterRequired();
+        }
+    }
+
+    /**
+     * Key released from KeyAdapter, responds when the user types something in
+     * the required list filer
+     */
+    @Override
+    public void keyReleased(KeyEvent keyevent)
+    {
+        filterRequired();
+
     }
 
     /**
@@ -213,7 +234,7 @@ public class SchedulerController implements ActionListener,
         // try
         // {
         // state.write(savedFile);
-         setSaved(true);
+        setSaved(true);
         // }
         // catch (IOException ex)
         // {
@@ -318,27 +339,41 @@ public class SchedulerController implements ActionListener,
     @Override
     public void valueChanged(ListSelectionEvent e)
     {
-
+        Course selected = null;
+        CourseOption option = null;
         if (e.getSource() instanceof JList)
         {
             JList selectedList = (JList) e.getSource();
             if (selectedList.getSelectedValue() instanceof Course)
             {
-                Course selected = (Course) selectedList.getSelectedValue();
-                CourseOption option = null;
-                // for (CourseOption o : courseOptions)
-                // {
-                // if (o.getOptions().contains(selected))
-                // {
-                // option = o;
-                // }
-                // }
-                // updateInfo(selected, option);
-                gui.setInfo(selected);
+                selected = (Course) selectedList.getSelectedValue();
+                for (CourseOption o : unfulfilledOptions)
+                {
+                    if (o.getFulfillmentOptions().contains(selected))
+                    {
+                        option = o;
+                    }
+                }
+
             }
         }
-
-        gui.repaint();
+        else
+        {
+            selected = gui.getSelectedPassed();
+            for (CourseOption o : chart.getSectionReqs())
+            {
+                System.out.println(o.getFulfillmentOptions());
+                if (o.getFulfillmentOptions().contains(selected))
+                {
+                    option = o;
+                }
+            }
+        }
+        if (selected != null)
+        {
+            gui.setInfo(selected, option);
+            gui.repaint();
+        }
     }
 
     /**
@@ -427,4 +462,31 @@ public class SchedulerController implements ActionListener,
         return catalog;
     }
 
+    private void filterRequired()
+    {
+        String preReq = gui.getRequiredCombo();
+        String filterText = gui.getRequiredFilter();
+        coursesRequired.filterList(filterText);
+        List<Course> filteredCourses =
+                new ArrayList<Course>(coursesRequired.filtered);
+        for (Course c : coursesRequired.filtered)
+        {
+            if (c.preRecsMet(coursesTaken.getCourses()))
+            {
+                if (preReq.equals(PREREQ__NOT_MET))
+                {
+                    filteredCourses.remove(c);
+                }
+            }
+            else
+            {
+                if (preReq.equals(PREREQ_MET))
+                {
+                    filteredCourses.remove(c);
+                }
+            }
+        }
+        coursesRequired.filtered.clear();
+        coursesRequired.filtered.addAll(filteredCourses);
+    }
 }
