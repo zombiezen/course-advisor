@@ -6,14 +6,12 @@ package edu.calpoly.razsoftware;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -24,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -34,12 +33,13 @@ import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 /**
  * 
- * @author michaelsvanbeek
+ * @author michaelsvanbeek, Daniel Johnson
  */
 public class SchedulerView extends JFrame
 {
@@ -60,13 +60,6 @@ public class SchedulerView extends JFrame
                                                                  "\nGson: Copyright \u00a9 2008-2011 Google Inc.\n"
                                                                          + "Guava: Copyright \u00a9 2010-2011 Google Inc.\n"
                                                                          + "Licensed under Apache License 2.0\nhttp://www.apache.org/licenses/LICENSE-2.0";
-
-    private boolean                  saved               = false;
-    // private CourseList list;
-    // private CoursesTaken state = new CoursesTaken();
-    // private CourseDecider decider = new CourseDecider();
-    // private Flowchart flowchart;
-    private File                     userStateFile;
 
     private JMenuBar                 menuBar             = new JMenuBar();
     private JMenu                    fileMenu            = new JMenu("File");
@@ -90,8 +83,6 @@ public class SchedulerView extends JFrame
                                                                          SwingConstants.CENTER);
     private JTextField               passedFilter        = new JTextField();
 
-    // private CourseTableModel passedModel;
-
     TableRowSorter<CourseTableModel> passedSorter;
     private JTable                   passedTable         = new JTable();
     private JScrollPane              passedScroller      = new JScrollPane(
@@ -100,16 +91,12 @@ public class SchedulerView extends JFrame
                                                                  new JLabel(
                                                                          "Courses Required",
                                                                          SwingConstants.CENTER);
-    private final String             ALL_FILTER          = "All";
-    private final String             PREREQ_MET          = "Prerequisites Met";
-    private final String             PREREQ__NOT_MET     =
-                                                                 "Prerequisite Not Met";
+
     private JComboBox                requiredComboBox    = new JComboBox(
                                                                  new String[] {
-            ALL_FILTER, PREREQ_MET, PREREQ__NOT_MET             });
+            SchedulerController.ALL_FILTER, SchedulerController.PREREQ_MET,
+            SchedulerController.PREREQ__NOT_MET                 });
     private JTextField               requiredFilter      = new JTextField();
-    // DefaultListModel requiredModel =
-    // new DefaultListModel();
     private JList                    requiredList        = new JList();
     private JScrollPane              requiredScroller    = new JScrollPane(
                                                                  requiredList);
@@ -119,7 +106,7 @@ public class SchedulerView extends JFrame
     private JButton                  addButton           = new JButton(">");
     private JButton                  removeButton        = new JButton("<");
 
-    JButton                          clearButton         = new JButton("Clear");
+    private JButton                  clearButton         = new JButton("Clear");
 
     private final JButton            suggestButton       = new JButton(
                                                                  "Autofill");
@@ -541,6 +528,16 @@ public class SchedulerView extends JFrame
             }
         });
 
+        aboutMenuItem.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                displayAboutInfo();
+            }
+        });
+
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         nameLabel.setEditable(false);
         nameLabel.setFocusable(false);
@@ -585,6 +582,7 @@ public class SchedulerView extends JFrame
         saveMenuItem.setActionCommand("Save");
         saveAsMenuItem.setActionCommand("Save As");
         quitMenuItem.setActionCommand("Quit");
+        requiredComboBox.setActionCommand("Required Combo");
 
         fileMenu.add(openMenuItem);
         fileMenu.add(saveMenuItem);
@@ -620,6 +618,20 @@ public class SchedulerView extends JFrame
         saveMenuItem.addActionListener(controller);
         saveAsMenuItem.addActionListener(controller);
         quitMenuItem.addActionListener(controller);
+
+        requiredFilter.addKeyListener(controller);
+        requiredComboBox.addActionListener(controller);
+        passedTable.getSelectionModel().addListSelectionListener(controller);
+//        passedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+//        {
+//            
+//            @Override
+//            public void valueChanged(ListSelectionEvent listselectionevent)
+//            {System.out.println("hello");
+//                
+//            }
+//        });
+
     }
 
     /**
@@ -653,6 +665,27 @@ public class SchedulerView extends JFrame
     }
 
     /**
+     * Returns the current selected item in the required comboBox
+     * 
+     * @return The text that is visible in the required combo box
+     */
+    public String getRequiredCombo()
+    {
+        return (String) requiredComboBox.getSelectedItem();
+    }
+
+    /**
+     * Returns the text currently typed in the required filter
+     * 
+     * @return The text that is visible in the required filter
+     */
+    public String getRequiredFilter()
+    {
+        return requiredFilter.getText();
+
+    }
+
+    /**
      * Returns the number of units in the units to take box
      * 
      * @return int the number of units in the units to take box
@@ -665,14 +698,20 @@ public class SchedulerView extends JFrame
     /**
      * Fills the "Info" section with the info of the parameter Course
      * 
+     * @param option
+     * 
      * @param Course
      *            course to display
      */
-    public void setInfo(Course c)
+    public void setInfo(Course c, CourseOption option)
     {
         nameLabel.setText(c.getName());
         unitsLabel.setText(Integer.toString(c.getUnits()));
-        fulfillsLabel.setText("Need CourseOption");
+        if(option!=null){
+        fulfillsLabel.setText(option.getRequirement());
+        }else{
+            fulfillsLabel.setText("");
+        }
         prereqLabel.setText(c.getPreRequisitesString());
         descriptionPane.setText(c.getDescription());
 
@@ -708,16 +747,17 @@ public class SchedulerView extends JFrame
         passedTable.setModel(tableModel);
 
         requiredList.setModel(coursesRequired);
-        requiredFilter.addKeyListener(new KeyAdapter()
-        {
-            @Override
-            public void keyReleased(KeyEvent e)
-            {
-                coursesRequired.filterList(requiredFilter.getText());
-            }
-        });
 
         suggestedList.setModel(coursesSuggested);
+    }
+
+    /**
+     * Pops up a window that displays information about the application
+     */
+    private void displayAboutInfo()
+    {
+        JOptionPane.showMessageDialog(this, APP_NAME + " " + VERSION + "\n"
+                + AUTHORS + LICENSE, "About", JOptionPane.PLAIN_MESSAGE);
     }
 
 }
