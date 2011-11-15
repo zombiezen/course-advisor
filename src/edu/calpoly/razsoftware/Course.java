@@ -172,8 +172,11 @@ public class Course implements Comparable<Course>
                     preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
                 }
                 preRecStr += " or ";
-            }
+            } 
+            if (preRecStr.length() != 0)
+            {
             preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
+            }
         
         
         return preRecStr;
