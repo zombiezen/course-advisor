@@ -147,6 +147,20 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private void quit()
     {
+        if (checkSaved() != JOptionPane.CANCEL_OPTION)
+        {
+            System.exit(0);
+        }
+
+    }
+
+    /**
+     * Prompts the user to save any changes they have made since the last save
+     * 
+     * @return the choice the user made
+     */
+    private int checkSaved()
+    {
         if (!saved)
         {
             int choice =
@@ -157,17 +171,10 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             if (choice == JOptionPane.YES_OPTION)
             {
                 saveUserState();
-                System.exit(0);
             }
-            if (choice == JOptionPane.NO_OPTION)
-            {
-                System.exit(0);
-            }
+            return choice;
         }
-        else
-        {
-            System.exit(0);
-        }
+        return JOptionPane.YES_OPTION;
 
     }
 
@@ -183,19 +190,22 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private void loadCoursesTaken()
     {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(saveLoadFilter);
-        int choice = chooser.showOpenDialog(gui);
-        if (choice == JFileChooser.APPROVE_OPTION)
+        if (checkSaved() != JOptionPane.CANCEL_OPTION)
         {
-            /*
-             * try { //
-             * coursesTaken.load(chooser.getSelectedFile()getCatalog()); //
-             * userStateFile = chooser.getSelectedFile(); // setSaved(true); }
-             * catch (IOException ex) {
-             * Logger.getLogger(SchedulerFrame.class.getName()).log(
-             * Level.SEVERE, null, ex); }
-             */
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileFilter(saveLoadFilter);
+            int choice = chooser.showOpenDialog(gui);
+            if (choice == JFileChooser.APPROVE_OPTION)
+            {
+                /*
+                 * try { //
+                 * coursesTaken.load(chooser.getSelectedFile()getCatalog()); //
+                 * userStateFile = chooser.getSelectedFile(); // setSaved(true);
+                 * } catch (IOException ex) {
+                 * Logger.getLogger(SchedulerFrame.class.getName()).log(
+                 * Level.SEVERE, null, ex); }
+                 */
+            }
         }
 
     }
@@ -382,7 +392,42 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private void addToSchedule()
     {
-        schedule.add(gui.getSelectedRequired());
+        Course selectedCourse = gui.getSelectedRequired();
+        // schedule.add();
+
+        int choice = JOptionPane.YES_OPTION;
+
+        if (!selectedCourse.preRecsMet(coursesTaken.getCourses()))
+        {
+            choice =
+                    JOptionPane
+                            .showConfirmDialog(
+                                    gui,
+                                    "You have not fulfilled the prerequisites for this course.\nAre you sure you want to add this to your schedule?",
+                                    "Prerequisites not met",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+
+        }
+        if (choice == JOptionPane.YES_OPTION)
+        {
+            schedule.add(selectedCourse);
+            updateUnitCount();
+        }
+
+    }
+
+    /**
+     * update the unit count for the suggested schedule column
+     */
+    private void updateUnitCount()
+    {
+        int count = 0;
+        for (Course c : schedule.getCourses())
+        {
+            count += c.getUnits();
+        }
+        gui.updateUnitCount(count);
     }
 
 /**
@@ -392,6 +437,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     private void removeFromSchedule()
     {
         schedule.remove(gui.getSelectedSchedule());
+        updateUnitCount();
     }
 
     /**
@@ -400,6 +446,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     private void clearSchedule()
     {
         schedule.clear();
+        updateUnitCount();
     }
 
     /**
@@ -450,6 +497,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
 
             }
         }
+        updateUnitCount();
     }
 
     /**

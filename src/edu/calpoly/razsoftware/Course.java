@@ -10,11 +10,11 @@ import java.util.HashSet;
  */
 public class Course implements Comparable<Course>
 {
-    private List<String> major;
-    private int number;
-    private int units;
-    private String name;
-    private String description;
+    private List<String>     major;
+    private int              number;
+    private int              units;
+    private String           name;
+    private String           description;
     private Set<Set<Course>> preRequisites;
     private Set<Set<Course>> coRequisites;
 
@@ -26,7 +26,8 @@ public class Course implements Comparable<Course>
      * @param name The name of the course
      * @param description The description of the course
      */
-    public Course(List<String> major, int number, int units, String name, String description)
+    public Course(List<String> major, int number, int units, String name,
+            String description)
     {
         this.major = major;
         this.number = number;
@@ -165,7 +166,11 @@ public class Course implements Comparable<Course>
             {
                 for(Course t : s)
                     preRecStr += t.toString() + "&";
-                preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+                }
+                if (preRecStr.length() != 0)
+                {
+                    preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+                }
                 preRecStr += " or ";
             }
             preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
