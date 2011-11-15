@@ -547,6 +547,8 @@ public class SchedulerView extends JFrame
         descriptionPane.setFocusable(false);
         unitsLabel.setEditable(false);
         unitsLabel.setFocusable(false);
+        prereqLabel.setEditable(false);
+        prereqLabel.setFocusable(false);
 
         unitsLabel.setBackground(null);
         nameLabel.setBackground(null);
@@ -622,15 +624,16 @@ public class SchedulerView extends JFrame
         requiredFilter.addKeyListener(controller);
         requiredComboBox.addActionListener(controller);
         passedTable.getSelectionModel().addListSelectionListener(controller);
-//        passedTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-//        {
-//            
-//            @Override
-//            public void valueChanged(ListSelectionEvent listselectionevent)
-//            {System.out.println("hello");
-//                
-//            }
-//        });
+        // passedTable.getSelectionModel().addListSelectionListener(new
+        // ListSelectionListener()
+        // {
+        //
+        // @Override
+        // public void valueChanged(ListSelectionEvent listselectionevent)
+        // {System.out.println("hello");
+        //
+        // }
+        // });
 
     }
 
@@ -707,9 +710,12 @@ public class SchedulerView extends JFrame
     {
         nameLabel.setText(c.getName());
         unitsLabel.setText(Integer.toString(c.getUnits()));
-        if(option!=null){
-        fulfillsLabel.setText(option.getRequirement());
-        }else{
+        if (option != null)
+        {
+            fulfillsLabel.setText(option.getRequirement());
+        }
+        else
+        {
             fulfillsLabel.setText("");
         }
         prereqLabel.setText(c.getPreRequisitesString());
@@ -749,6 +755,18 @@ public class SchedulerView extends JFrame
         requiredList.setModel(coursesRequired);
 
         suggestedList.setModel(coursesSuggested);
+    }
+
+    /**
+     * Updates the count of the dynamic unit count label to the given value
+     * 
+     * @param count
+     *            the new unit count in the suggested schedule column;
+     */
+    public void updateUnitCount(int count)
+    {
+
+        dynamicUnits.setText(count + "/");
     }
 
     /**
