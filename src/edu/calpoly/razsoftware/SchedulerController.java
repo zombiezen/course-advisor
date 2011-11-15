@@ -338,7 +338,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
         coursesRequired.clear();
         coursesRequired.addAll(decider.getRequiredCourses(unfulfilledOptions));
-
+        filterRequired();
         gui.repaint();
     }
 
