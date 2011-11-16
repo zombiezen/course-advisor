@@ -640,7 +640,14 @@ public class SchedulerView extends JFrame
      */
     public Course getSelectedPassed()
     {
-        return (Course) passedTable.getValueAt(passedTable.getSelectedRow(), 1);
+        int selectedRow = passedTable.getSelectedRow();
+        Course selectedCourse = null;
+        if (selectedRow != -1)
+        {
+            selectedCourse = (Course) passedTable.getValueAt(selectedRow, 1);
+        }
+        System.out.println(selectedRow);
+        return selectedCourse;
     }
 
     /**
@@ -697,26 +704,34 @@ public class SchedulerView extends JFrame
     /**
      * Fills the "Info" section with the info of the parameter Course
      * 
-     * @param option
-     * 
      * @param Course
      *            course to display
+     * @param option
+     *          The CourseOption,if it exists, that corresponds to given course
      */
     public void setInfo(Course c, CourseOption option)
     {
-        nameLabel.setText(c.getName());
-        unitsLabel.setText(Integer.toString(c.getUnits()));
-        if (option != null)
-        {
-            fulfillsLabel.setText(option.getRequirement());
+        String name="";
+        String units="";
+        String fulfills="";
+        String prereq="";
+        String description="";
+        if(c!=null){
+            name=c.getName();
+            units=Integer.toString(c.getUnits());
+            if (option != null)
+            {
+                fulfills=option.getRequirement();
+            }
+            prereq=c.getPreRequisitesString();
+            description=c.getDescription();
         }
-        else
-        {
-            fulfillsLabel.setText("");
-        }
-        prereqLabel.setText(c.getPreRequisitesString());
-        descriptionPane.setText(c.getDescription());
 
+        nameLabel.setText(name);
+        unitsLabel.setText(units);
+        fulfillsLabel.setText(fulfills);
+        prereqLabel.setText(prereq);
+        descriptionPane.setText(description);
     }
 
     /**

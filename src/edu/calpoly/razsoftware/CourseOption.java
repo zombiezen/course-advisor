@@ -8,7 +8,6 @@ import java.util.TreeSet;
  * 
  */
 public class CourseOption 
-//implements Comparable<CourseOption>
 {
     private String      requirementName;
     private Set<Course> fulfillmentOptions;
@@ -96,19 +95,4 @@ public class CourseOption
 
         return req;
     }
-
-//    @Override
-//    public int compareTo(CourseOption o)
-//    {
-//        if (quarter == o.quarter)
-//        {
-//            return 0;
-//        }
-//        else if (quarter < o.quarter)
-//        {
-//            return -1;
-//        }
-//        return 1;
-//        // return 0;
-//    }
 }
