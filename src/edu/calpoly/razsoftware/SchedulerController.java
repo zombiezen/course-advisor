@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -435,18 +437,14 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             selected = gui.getSelectedPassed();
             for (CourseOption o : chart.getSectionReqs())
             {
-                System.out.println(o.getFulfillmentOptions());
                 if (o.getFulfillmentOptions().contains(selected))
                 {
                     option = o;
                 }
             }
         }
-        if (selected != null)
-        {
             gui.setInfo(selected, option);
             gui.repaint();
-        }
     }
 
     /**
@@ -533,9 +531,19 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             unitCount += c.getUnits();
         }
 
-        for (CourseOption co : unfulfilledOptions)
+        List<CourseOption> unfulfilled=new ArrayList<CourseOption>(unfulfilledOptions);
+        Collections.sort(unfulfilled, new Comparator<CourseOption>()
         {
-            System.out.println(co.getQuarter() + " " + co.getRequirement());
+
+            @Override
+            public int compare(CourseOption o1, CourseOption o2)
+            {
+                return new Integer(o1.getQuarter()).compareTo(o2.getQuarter());
+            }
+        });
+        
+        for (CourseOption co : unfulfilled)
+        {
             if (unitCount > maxUnits)
             {
                 break;
@@ -543,15 +551,12 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
 
             for (Course c : co.getFulfillmentOptions())
             {
-                System.out.println("\t" + c);
                 if (c.preRecsMet(coursesTaken.getCourses())
                         && !coursesTaken.contains(c)
                         && unitCount + c.getUnits() <= maxUnits)
                 {
-                    System.out.println("\t\t" + c);
                     if (!coursesTaken.contains(c) && !schedule.contains(c))
                     {
-                        System.out.println("\t\t\tAdd: " + c);
                         schedule.add(c);
                         unitCount += c.getUnits();
                         break;
