@@ -1,19 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.calpoly.razsoftware;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.jws.Oneway;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -25,7 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * 
- * @author michaelsvanbeek, Daniel Johnson
+ * @author michaelsvanbeek, Daniel Johnson, Derek Panger
  */
 public class SchedulerController extends KeyAdapter implements ActionListener,
         ListSelectionListener
@@ -197,15 +204,42 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             int choice = chooser.showOpenDialog(gui);
             if (choice == JFileChooser.APPROVE_OPTION)
             {
-                /*
-                 * try { //
-                 * coursesTaken.load(chooser.getSelectedFile()getCatalog()); //
-                 * userStateFile = chooser.getSelectedFile(); // setSaved(true);
-                 * } catch (IOException ex) {
-                 * Logger.getLogger(SchedulerFrame.class.getName()).log(
-                 * Level.SEVERE, null, ex); }
-                 */
+                Gson gson = new Gson();
+                Scanner s = null;
+                try
+                {
+                    s = new Scanner(chooser.getSelectedFile());
+                }
+                catch ( FileNotFoundException e )
+                {
+                    e.printStackTrace();
+                }
+                
+                if ( s != null )
+                {
+                    this.coursesTaken.clear();
+        
+                    while ( s.hasNextLine() ) 
+                    {
+            
+                        String str = s.nextLine();
+            
+                        Course course = gson.fromJson(str, Course.class);
+                        coursesTaken.add(course);
+          
+                    } // else we have an empty JSon file
+        
+                    s.close();
+                }
+                
+                decider = new CourseDecider();
+                unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
+                this.coursesRequired.clear();
+                this.coursesRequired.addAll(decider
+                    .getRequiredCourses(unfulfilledOptions));
             }
+            
+            gui.repaint();
         }
 
     }
@@ -241,17 +275,33 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             saveAsUserState();
 
         }
-        // try
-        // {
-        // state.write(savedFile);
-        setSaved(true);
-        // }
-        // catch (IOException ex)
-        // {
-        // Logger.getLogger(SchedulerFrame.class.getName()).log(Level.SEVERE,
-        // null, ex);
-        // }
-
+        else
+        {
+            try
+            {
+                if ( coursesTaken != null ) 
+                {
+                    Gson gson = new Gson();
+                    BufferedWriter bwriter = new BufferedWriter(new FileWriter(savedFile));
+                    
+                    Set<Course> courses = coursesTaken.getCourses();
+                
+                    for ( Course c : courses )
+                    {
+                        bwriter.write(gson.toJson(c));
+                        bwriter.write("\n");
+                    }
+                    
+                    setSaved(true);
+                    bwriter.close();
+                }
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(SchedulerFrame.class.getName()).log(Level.SEVERE,
+                                                                 null, ex);
+            }
+        }
     }
 
     /**
