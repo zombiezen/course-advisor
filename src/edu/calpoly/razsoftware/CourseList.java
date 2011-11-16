@@ -136,6 +136,7 @@ public class CourseList extends AbstractListModel
       {
          remove(c);
       }
+      filtered=null;
 
       this.fireContentsChanged(this, 0, catalog.size());
    }
@@ -146,6 +147,7 @@ public class CourseList extends AbstractListModel
    public void clear()
    {
       catalog = new TreeSet<Course>();
+      filtered=null;
 
       this.fireContentsChanged(this, 0, catalog.size());
    }
