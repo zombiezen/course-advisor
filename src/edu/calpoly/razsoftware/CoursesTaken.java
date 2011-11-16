@@ -94,11 +94,14 @@ public class CoursesTaken
     public void write(File file) throws IOException
     {
         Gson gson = new Gson();
-        if ( file != null ) {
+        if ( file != null ) 
+        {
             BufferedWriter bwriter = new BufferedWriter(new FileWriter(file));
         
-            if ( taken != null ) {
-                for ( Course c : taken ) {
+            if ( taken != null ) 
+            {
+                for ( Course c : taken ) 
+                {
                     JsonObject json = new JsonObject();
                     json.addProperty("major", c.getMajor().get(0));
                     json.addProperty("number", c.getNumber());
