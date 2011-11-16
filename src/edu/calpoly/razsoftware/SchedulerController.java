@@ -53,7 +53,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     private CourseList          catalog;
     private CourseDecider       decider;
 
-    private boolean             saved            = false;
+    private boolean             saved            = true;
     private File                savedFile;
 
     /**
@@ -85,6 +85,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         this.coursesRequired.clear();
         this.coursesRequired.addAll(decider
                 .getRequiredCourses(unfulfilledOptions));
+        setSaved(true);
 
     }
 
@@ -225,18 +226,30 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
                         String str = s.nextLine();
             
                         Course course = gson.fromJson(str, Course.class);
-                        coursesTaken.add(course);
+                        coursesTaken.add(catalog.lookUp(course.getMajor().get(0), course.getNumber()));
           
                     } // else we have an empty JSon file
         
                     s.close();
                 }
-                
-                decider = new CourseDecider();
                 unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
                 this.coursesRequired.clear();
                 this.coursesRequired.addAll(decider
                     .getRequiredCourses(unfulfilledOptions));
+                
+                System.out.println("WHAT the HECk");
+                for(Course c: coursesTaken.getCourses()){
+                    System.out.println(c);
+                    
+                }
+                
+                for(Course c:decider.getRequiredCourses(unfulfilledOptions)){
+                    if(coursesTaken.contains(c)){
+                        System.out.println(c);
+                    }
+                }
+                setSaved(true);
+                filterRequired();
             }
             
             gui.repaint();
