@@ -15,7 +15,7 @@ import javax.swing.event.ListDataListener;
 import com.google.gson.Gson;
 
 /**
- * acts as a list of easily referenceable courses that can be constructed from
+ * represents a list of easily referenceable courses that can be constructed from
  * various sources
  * 
  * @author aspurgin
@@ -25,7 +25,7 @@ public class CourseList extends AbstractListModel
    private Set<Course> catalog;
 
    /**
-    * blank constructor
+    * blank constructor, initializes the inner set as a treeset
     */
    public CourseList()
    {
@@ -34,16 +34,18 @@ public class CourseList extends AbstractListModel
 
    /**
     * constructs a catalog off of a collection of courses
-    * 
-    * @param in
+    * @param in collection of courses
     */
    public CourseList(Collection<Course> in)
    {
       this();
+      //FOR every course in the collection
       for (Course c : in)
       {
+          //add course to the catalog
          catalog.add(c);
       }
+      // signal the controller
       this.fireContentsChanged(this, 0, catalog.size());
    }
 
@@ -110,8 +112,10 @@ public class CourseList extends AbstractListModel
     */
    public void addAll(Collection<Course> C)
    {
+      //FOR each Course in the collection
       for (Course c : C)
       {
+         //add the course to the list
          add(c);
       }
       this.fireContentsChanged(this, 0, catalog.size());
@@ -137,8 +141,10 @@ public class CourseList extends AbstractListModel
     */
    public void removeAll(Collection<Course> C)
    {
+       //FOR each Course in the collection
       for (Course c : C)
       {
+          //remove the course from the list
          remove(c);
       }
       filtered=null;
@@ -188,12 +194,12 @@ public class CourseList extends AbstractListModel
          // IF the course has prerequisites
          if (preR != null)
          {
-            // FOR each set of courses in the prerequisites of the course
+            // FOR each 'or' set of courses in the prerequisites of the course
             for (Set<Course> sc : preR)
             {
                // INITIALIZE sub to the empty set
                HashSet<Course> sub = new HashSet<Course>();
-               // FOR each course in the set of courses
+               // FOR each course in the set of 'or' courses
                for (Course c1 : sc)
                {
                   // INITIALIZE found to false
@@ -201,30 +207,47 @@ public class CourseList extends AbstractListModel
                   // FOR each course in coursearray
                   for (Course lookup : coursearray)
                   {
-                     // TODO
+                     // IF the coursenumber of the current course does not equal
+                     // the Course number of the currently looked up course THEN
                      if (lookup.getNumber() != c.getNumber()
                            && lookup.getNumber() == c1.getNumber())
                      {
+                        //FOR every major String in the lookup course
                         for (String s : lookup.getMajor())
                         {
+                           //IF the course to be looked up contains the string 
+                           //from the lookup course THEN
                            if (c1.getMajor().contains(s))
                            {
+                              //add lookup to sub
                               sub.add(lookup);
+                              //SET found to TRUE
                               found = true;
                               break;
                            }
+                           //ENDIF
                         }
+                        //ENDFOR
                      }
+                     //ENDIF
+                     
+                     //IF found is true
                      if (found == true)
                         break;
+                     //ENDIF
                   }
+                  //ENDFOR
                }
+               //ENDFOR
                newPreR.add(sub);
             }
+            //ENDFOR
          } // ENDIF
          c.setPreRequisites(newPreR);
 
          /* workin with the coreqs */
+         
+         //pseudocode is same as above section, just working with different part
          Set<Set<Course>> coR = c.getCoRequisites();
          Set<Set<Course>> newCoR = new HashSet<Set<Course>>();
          if (preR != null)
@@ -270,17 +293,24 @@ public class CourseList extends AbstractListModel
     */
    public Course lookUp(String major, int number)
    {
+      //FOR each item in the catalog
       for (Course c : catalog.toArray(new Course[catalog.size()]))
       {
+          //IF the number matches the desired number THEN
          if (c.getNumber() == number)
          {
+           //FOR every major in that course
             for (String s : c.getMajor())
             {
+                //IF the major is the same as the lookup THEM
                if (major.equalsIgnoreCase(s))
                   return c;
             }
+            //ENDFOR
          }
+         //ENDIF
       }
+      //ENDFOR
       return null;
    }
 
@@ -291,12 +321,15 @@ public class CourseList extends AbstractListModel
    @Override
    public int getSize()
    {
+      //IF filtered is null THEN
       if (filtered == null)
       {
          return catalog.size();
       }
+      //ELSE
       else
          return filtered.size();
+      //ENDIF
    }
 
    List<Course> filtered;
@@ -309,12 +342,15 @@ public class CourseList extends AbstractListModel
    @Override
    public Object getElementAt(int i)
    {
+      //IF filtered is null
       if (filtered == null)
       {
          return catalog.toArray()[i];
       }
+      //ELSE
       else
          return filtered.get(i);
+      //ENDIF
 
    }
 
@@ -325,17 +361,25 @@ public class CourseList extends AbstractListModel
     */
    public void filterList(String text)
    {
+      //INITIALIZE filtered as new list
       filtered = new ArrayList<Course>();
+      //IF text is not empty
       if (text != "")
       {
+         //FOR every course in the catalog
          for (Course c : catalog)
          {
+            //IF the course contains the text, THEN
             if (c.toString().toLowerCase().contains(text.toLowerCase()))
             {
+               //add c to the filtered list
                filtered.add(c);
             }
+            //ENDIF
          }
+         //ENDFOR
       }
+      //ENDIF
       this.fireContentsChanged(this, 0, filtered.size());
 
    }
