@@ -91,4 +91,20 @@
         <delete file="${store.dir}/temp_final.jar"/>
 
     </target>
+    
+        <!--
+                =================
+                CHECKSTYLE SECTION 
+                =================
+     -->
+    <target description="Run checkstyle on src directory." name="checkstyle">
+        <taskdef resource="checkstyletask.properties"
+    classpath="lib/308checks.jar;lib/checkstyle-all-4.4.jar"/>
+        <checkstyle config="nbproject/308style.xml">
+            <!-- Don't check IDE generated gui classes-->
+            <fileset dir="src/edu/calpoly/razsoftware" includes="**/*.java"
+            excludes="**/SwingPlayer.java **/AboutBox.java **/HelpDialog.java"/>
+        </checkstyle>
+    </target>
+    
 </project>
