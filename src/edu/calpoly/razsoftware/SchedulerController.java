@@ -360,7 +360,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             }
             catch (IOException ex)
             {
-                Logger.getLogger(SchedulerFrame.class.getName()).log(
+                Logger.getLogger(SchedulerView.class.getName()).log(
                         Level.SEVERE, null, ex);
             }
         }// ENDIF
