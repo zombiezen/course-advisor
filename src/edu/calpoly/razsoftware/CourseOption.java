@@ -83,15 +83,22 @@ public class CourseOption
     @Override
     public String toString()
     {
+        // INITIALIZE req to the empty string
         String req = "";
 
+        // IF the set of fulfillment is not empty THEN
         if (fulfillmentOptions.size() > 0)
         {
+            // FOR each course in the set of fulfillment options
             for (Course c : fulfillmentOptions)
+                // CONCATENATE the course's string representation with " or "
+                // and req
                 req += c.toString() + " or ";
+            // ENDFOR
 
+            // REMOVE the last " or " from the string
             req = req.substring(0, req.length() - 4);
-        }
+        } // ENDIF
 
         return req;
     }
