@@ -49,29 +49,43 @@ public class FlowchartReader
 
     public static Flowchart readFlowchart(InputStream iStream, CourseList courses)
     {
+        // INITIALIZE the set of course options to the empty set
         HashSet<CourseOption> options = new HashSet<CourseOption>();
+        // CREATE new scanner
         Scanner s = new Scanner(iStream);
         
+        // WHILE the input has another line DO
         while(s.hasNextLine())
         {
+            // INITIALIZE tmpCourseList to the empty set
             HashSet<Course> tmpCourseList = new HashSet<Course>();
+            // PARSE a course option and store it as co
             CourseOption co = gson.fromJson(s.nextLine(), CourseOption.class);
+            // FOR each course in co
             for(Course c : co.getFulfillmentOptions())
             {
+                // FIND the course with the major and number parsed
                 Course course = courses.lookUp(c.getMajor().get(0), c.getNumber());
+                // IF there is a course with the major and number parsed THEN
                 if(course != null)
                 {
+                    // ADD the course to tmpCourseList
                     tmpCourseList.add(course);
                 }
                 else
                 {
+                    // LOG the failure to find the course
                     System.out.println("could not find course " + c.getMajor().get(0) + " " + c.getNumber());
-                }
-            }
+                } // ENDIF
+            } // ENDFOR
+
+            // CREATE a course option that uses the referenced objects
             co = new CourseOption(co.getRequirement(), tmpCourseList, co.isMutuallyExclusive(), co.getQuarter());
             System.out.println("--");
+            // ADD co to the course options set
             options.add(co);
         }
+        // CREATE a new flowchart from the course options set
         return new Flowchart(options);
     }
 
