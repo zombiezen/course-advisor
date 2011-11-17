@@ -52,26 +52,27 @@ public class CoursesTaken
         Gson gson = new Gson();
         Scanner s = new Scanner(file);
         taken = new HashSet<Course>();
-        
-        while ( s.hasNextLine() ) {
-            
+
+        while (s.hasNextLine())
+        {
+
             String str = s.nextLine();
-            
+
             JsonParser jparse = new JsonParser();
             JsonElement jelem = jparse.parse(str);
             JsonObject json = jelem.getAsJsonObject();
             String major = json.get("major").getAsString();
             Integer number = json.get("number").getAsInt();
-            
+
             // Look up the course from the Class List
             Course c2 = cl.lookUp(major, number);
-            
+
             // Add Class List course so we are using the same objects, not
             // creating new ones.
             taken.add(c2);
-          
+
         } // else we have an empty JSon file
-        
+
         s.close();
     }
 
@@ -94,13 +95,13 @@ public class CoursesTaken
     public void write(File file) throws IOException
     {
         Gson gson = new Gson();
-        if ( file != null ) 
+        if (file != null)
         {
             BufferedWriter bwriter = new BufferedWriter(new FileWriter(file));
-        
-            if ( taken != null ) 
+
+            if (taken != null)
             {
-                for ( Course c : taken ) 
+                for (Course c : taken)
                 {
                     JsonObject json = new JsonObject();
                     json.addProperty("major", c.getMajor().get(0));
@@ -108,7 +109,7 @@ public class CoursesTaken
                     bwriter.write(gson.toJson(json) + "\n");
                 }
             }
-        
+
             bwriter.close();
         }
     }
