@@ -51,10 +51,16 @@ public class Course implements Comparable<Course>
      */
     public boolean isClass(String dept, int num)
     {
+        // IF num = the course's number THEN
         if(num == number)
+            // FOR each of the course's majors
             for(String s : major)
+                // IF the major is equal to dept (case-insensitive) THEN
                 if(s.toUpperCase().equals(dept.toUpperCase()))
                     return true;
+                // ENDIF
+            // ENDFOR
+        // ENDIF
         
         return false;
     }
@@ -66,26 +72,37 @@ public class Course implements Comparable<Course>
      */
     public boolean preRecsMet(Set<Course> coursesTaken)
     {
+        // INITIALIZE preRecMet to false
         boolean preRecMet = false;
+        // IF the set of prerequisites is not empty THEN
         if(preRequisites != null && preRequisites.size() > 0)
         {
+            // FOR each set of courses in the set of prerequisites
             for(Set<Course> s : preRequisites)
             {
+                // SET preRecMet to true
                 preRecMet = true;
+                // FOR each course in the set of courses
                 for(Course t : s)
+                    // IF the set of courses taken does not contain the course
+                    // THEN
                     if(!coursesTaken.contains(t))
+                        // SET preRecMet to false
                         preRecMet = false;
+                    // ENDIF
             
+                // IF preRecMet THEN
                 if(preRecMet)
                     return true;
-            }
+                // ENDIF
+            } // ENDFOR
             
             return false;
         }
         else 
         {
             return true;
-        }
+        } // ENDIF
     }
 
     /**
@@ -157,26 +174,37 @@ public class Course implements Comparable<Course>
      */
     public String getPreRequisitesString()
     {
+        // INITIALIZE preRecStr to the empty string
         String preRecStr = "";
         
+        // IF the set of prerequisites is not empty THEN
         if(preRequisites.size() > 0)
         {
+            // FOR each set of courses in the set of prerequisites
             for(Set<Course> s : preRequisites)
             {
+                // FOR each course in the set of courses
                 for(Course t : s)
+                    // CONCATENATE the name of the course and an ampersand to
+                    // preRecStr
                     preRecStr += t.toString() + "&";
-                }
-                if (preRecStr.length() != 0)
-                {
-                    preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
-                }
-                preRecStr += " or ";
-            } 
+                // ENDFOR
+            } // ENDFOR
+            // IF preRecStr is not an empty string THEN
             if (preRecStr.length() != 0)
             {
+                // REMOVE the last character of preRecStr
+                preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+            } // ENDIF
+            // CONCATENATE " or " with preRecStr
+            preRecStr += " or ";
+        } 
+        // IF preRecStr is not an empty string THEN
+        if (preRecStr.length() != 0)
+        {
+            // REMOVE the last " or " from preRecStr
             preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
-            }
-        
+        } // ENDIF
         
         return preRecStr;
     }
