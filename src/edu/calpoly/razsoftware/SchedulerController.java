@@ -1,9 +1,5 @@
 package edu.calpoly.razsoftware;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -19,11 +15,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.jws.Oneway;
+
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -32,8 +26,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.google.gson.Gson;
+
 /**
- * 
+ * This class represents all of the logic necessary to 
+ * modify the model correctly depending on the users actions
  * @author michaelsvanbeek, Daniel Johnson, Derek Panger
  */
 public class SchedulerController extends KeyAdapter implements ActionListener,
@@ -42,9 +39,21 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
 
     private static final String kFileExtension   = "us";
     private static final String kApplicationName = "Course Advisor";
-    public static final String  ALL_FILTER       = "All";
-    public static final String  PREREQ_MET       = "Prerequisites Met";
-    public static final String  PREREQ__NOT_MET  = "Prerequisite Not Met";
+    /**
+     * The choice the user selects when they would like to see all of the
+     * required classes
+     */
+    public static final String  kAllFilter       = "All";
+    /**
+     * The choice the user selects when they would like to see required classes
+     * with prerequisites met
+     */
+    public static final String  kPrereqMet       = "Prerequisites Met";
+    /**
+     * The choice the user selects when they would like to see required classes
+     * with prerequisites not met
+     */
+    public static final String  kPrereqNotMet    = "Prerequisite Not Met";
 
     private CourseList          coursesTaken;
     private CourseList          coursesRequired;
@@ -63,6 +72,8 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      * 
      * @param coursesTaken
      *            a CourseList of Courses that have been taken
+     * @param coursesRequired
+     *            The courseOptions the user must fulfill to graduate
      * @param schedule
      *            a CourseList of Courses that are in your schedule
      * @param gui
@@ -99,50 +110,72 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     public void actionPerformed(ActionEvent e)
     {
+        // IF the user wants to add a course to the suggested list
         if (e.getActionCommand().equals("Add Course"))
         {
             addToSchedule();
         }
+        // ELSEIF the user wants to remove a course from the suggested list
         else if (e.getActionCommand().equals("Remove Course"))
         {
             removeFromSchedule();
-
         }
+        // ELSEIF the user wants to clear the suggested list
         else if (e.getActionCommand().equals("Clear Suggested"))
         {
             clearSchedule();
         }
+        // ELSEIF the user wants to Autofill the suggested list
         else if (e.getActionCommand().equals("Autofill"))
         {
-            autoFillSechdule();
+            int maxUnits = gui.getScheduleUnits();
+            int unitCount = 0;
+            // FOR each course already in the suggested schedule
+            for (Course scheduledCourse : schedule.getCourses())
+            {
+                // add the units value
+                unitCount += scheduledCourse.getUnits();
+            }
+            autoFillSechdule(maxUnits - unitCount);
         }
 
         // the menu actions
+
+        // ELSEIF the user wants to Open a saved file
         else if (e.getActionCommand().equals("Open"))
         {
             loadCoursesTaken();
         }
+        // ELSEIF the user wants to Save their progress
         else if (e.getActionCommand().equals("Save"))
         {
             saveUserState();
         }
+        // ELSEIF the user wants to Save their progress and give it a name
         else if (e.getActionCommand().equals("Save As"))
         {
             saveAsUserState();
         }
+        // ELSEIF the user wants to quit the application
         else if (e.getActionCommand().equals("Quit"))
         {
             quit();
         }
+        // ELSEIF the user has changed the combobox filter for the required
+        // classes
         else if (e.getActionCommand().equals("Required Combo"))
         {
             filterRequired();
         }
+        // ENDIF
     }
 
     /**
      * Key released from KeyAdapter, responds when the user types something in
      * the required list filer
+     * 
+     * @param keyevent
+     *            The event to analyze
      */
     @Override
     public void keyReleased(KeyEvent keyevent)
@@ -157,10 +190,11 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private void quit()
     {
+        // IF the user didn't accidently click the exit button
         if (checkSaved() != JOptionPane.CANCEL_OPTION)
         {
             System.exit(0);
-        }
+        }// ENDIF
 
     }
 
@@ -171,20 +205,23 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private int checkSaved()
     {
+        int choice = JOptionPane.YES_OPTION;
+        // IF the application has been changed since the last save
         if (!saved)
         {
-            int choice =
+            // prompt the user to save their progress
+            choice =
                     JOptionPane.showConfirmDialog(gui,
                             "You have unsaved changes, do you want to save?",
                             "Save?", JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
+            // IF the user wasnts to save be sure to save
             if (choice == JOptionPane.YES_OPTION)
             {
                 saveUserState();
-            }
-            return choice;
-        }
-        return JOptionPane.YES_OPTION;
+            }// ENDIF
+        }// ENDIF
+        return choice;
 
     }
 
@@ -192,68 +229,67 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      * A filter that only displays the files with the extension that can be
      * loaded as a list of courses taken
      */
-    FileFilter saveLoadFilter = new FileNameExtensionFilter("User State",
-                                      kFileExtension);
+    private final FileFilter kSaveLoadFilter = new FileNameExtensionFilter(
+                                                     "User State",
+                                                     kFileExtension);
 
     /**
      * Loads the file that the user chooses as the new list of Courses Taken
      */
     private void loadCoursesTaken()
     {
+        // IF the user didn't accidently click the load button
         if (checkSaved() != JOptionPane.CANCEL_OPTION)
         {
+            // prompt the user for the file to load
             JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(saveLoadFilter);
+            chooser.setFileFilter(kSaveLoadFilter);
             int choice = chooser.showOpenDialog(gui);
+            // If the user gives a file to load
             if (choice == JFileChooser.APPROVE_OPTION)
             {
                 Gson gson = new Gson();
-                Scanner s = null;
+                Scanner fileReader = null;
                 try
                 {
-                    s = new Scanner(chooser.getSelectedFile());
+                    fileReader = new Scanner(chooser.getSelectedFile());
                 }
-                catch ( FileNotFoundException e )
+                catch (FileNotFoundException e)
                 {
                     e.printStackTrace();
                 }
-                
-                if ( s != null )
+                // IF there wasn't an error opening the file
+                if (fileReader != null)
                 {
+                    // Clear the list of courses taken and add the ones from the
+                    // file
                     this.coursesTaken.clear();
-        
-                    while ( s.hasNextLine() ) 
+                    // WHILE there is another course to read from the file
+                    // read it and add it to the list
+                    while (fileReader.hasNextLine())
                     {
-            
-                        String str = s.nextLine();
-            
+                        String str = fileReader.nextLine();
                         Course course = gson.fromJson(str, Course.class);
-                        coursesTaken.add(catalog.lookUp(course.getMajor().get(0), course.getNumber()));
-          
-                    } // else we have an empty JSon file
-        
-                    s.close();
-                }
+                        coursesTaken.add(catalog.lookUp(course.getMajor()
+                                .get(0), course.getNumber()));
+
+                    }// ENDWHILE
+
+                    fileReader.close();
+                }// ENDIF
+
+                // else we have an empty JSon file
+
+                // Reset the list of required classes after the load
                 unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
                 this.coursesRequired.clear();
                 this.coursesRequired.addAll(decider
-                    .getRequiredCourses(unfulfilledOptions));
-                
-                System.out.println("WHAT the HECk");
-                for(Course c: coursesTaken.getCourses()){
-                    System.out.println(c);
-                    
-                }
-                
-                for(Course c:decider.getRequiredCourses(unfulfilledOptions)){
-                    if(coursesTaken.contains(c)){
-                        System.out.println(c);
-                    }
-                }
+                        .getRequiredCourses(unfulfilledOptions));
+                savedFile = chooser.getSelectedFile();
                 setSaved(true);
                 filterRequired();
             }
-            
+
             gui.repaint();
         }
 
@@ -267,14 +303,18 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     {
         this.saved = saved;
         String title = kApplicationName;
+        // IF there is currently a file the user is working with
         if (savedFile != null)
         {
+            // add the file's name to the title
             title += " - " + savedFile.getName();
-        }
+        }// ENDIF
+         // IF the application has been changed since the last save
         if (!saved)
         {
+            // Add a notifier to the title
             title += "*";
-        }
+        }// ENDIF
 
         gui.setTitle(title);
 
@@ -285,38 +325,45 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      */
     private void saveUserState()
     {
+        // IF the user is trying to save without having a file to back the save
         if (savedFile == null)
         {
+            // Prompt the user for a file
             saveAsUserState();
 
         }
+        // ELSE there is a file to back the save
         else
         {
             try
             {
-                if ( coursesTaken != null ) 
+                // only save if the user has taken courses
+                if (coursesTaken != null)
                 {
                     Gson gson = new Gson();
-                    BufferedWriter bwriter = new BufferedWriter(new FileWriter(savedFile));
-                    
+                    BufferedWriter bwriter =
+                            new BufferedWriter(new FileWriter(savedFile));
+
                     Set<Course> courses = coursesTaken.getCourses();
-                
-                    for ( Course c : courses )
+
+                    // FOR each course the user has take
+                    for (Course taken : courses)
                     {
-                        bwriter.write(gson.toJson(c));
+                        // Save it to the file
+                        bwriter.write(gson.toJson(taken));
                         bwriter.write("\n");
-                    }
-                    
+                    }// ENDFOR
+
                     setSaved(true);
                     bwriter.close();
                 }
             }
             catch (IOException ex)
             {
-                Logger.getLogger(SchedulerFrame.class.getName()).log(Level.SEVERE,
-                                                                 null, ex);
+                Logger.getLogger(SchedulerFrame.class.getName()).log(
+                        Level.SEVERE, null, ex);
             }
-        }
+        }// ENDIF
     }
 
     /**
@@ -329,75 +376,76 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
             @Override
             public void approveSelection()
             {
-                File SelectedFile = getSelectedFile();
-
-                if (!SelectedFile.getName().endsWith("." + kFileExtension))
+                File selectedFile = getSelectedFile();                
+                //IF the selected file doen't have the correct extension
+                if (!selectedFile.getName().endsWith("." + kFileExtension))
                 {
-                    try
-                    {
-                        SelectedFile =
-                                new File(SelectedFile.getCanonicalPath() + "."
-                                        + kFileExtension);
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (SelectedFile.exists() && !SelectedFile.equals(savedFile))
+                   
+                        //append the extension onto the name
+                    selectedFile = new File(selectedFile.getPath() + "." 
+                        + kFileExtension);
+                    
+                }//ENDIF
+                //If the user is overwriting a already existing file
+                if (selectedFile.exists() && !selectedFile.equals(savedFile))
                 {
-                    int overWrite =
-                            JOptionPane
-                                    .showConfirmDialog(
-                                            this,
-                                            getSelectedFile().getName()
-                                                    + " already exists.\nDo you want to replace it?",
-                                            "Confirm Save As",
-                                            JOptionPane.YES_NO_CANCEL_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE);
+                    int overWrite = JOptionPane.showConfirmDialog(this,
+                                    getSelectedFile().getName()
+                                    +" already exists.\nDo you want to replace it?",
+                                    "Confirm Save As",
+                                    JOptionPane.YES_NO_CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+                    //IF the user wants to overwrite
                     if (overWrite == JOptionPane.OK_OPTION)
                     {
-                        savedFile = SelectedFile;
+                        //save the file
+                        savedFile = selectedFile;
                         super.approveSelection();
-                    }
+                    }//ELSEIF the user wants to cancel
                     else if (overWrite == JOptionPane.CANCEL_OPTION)
                     {
+                        //cancel the save
                         super.cancelSelection();
                     }
                     return;
-                }
+                }//ELSE the file does not exist
                 else
                 {
-                    savedFile = SelectedFile;
+                    savedFile = selectedFile;
                     super.approveSelection();
-                }
+                }//ENDIF
 
             }
         };
-        chooser.setFileFilter(saveLoadFilter);
+        chooser.setFileFilter(kSaveLoadFilter);
         chooser.setSelectedFile(savedFile);
         int choice = chooser.showSaveDialog(gui);
+        //IF the user wants to save
         if (choice == JFileChooser.APPROVE_OPTION)
         {
+            //save their state
             saveUserState();
-        }
+        }//END IF
     }
 
     /**
      * Handles a check box being clicked in the GUI. Adds or removes the checked
      * Course as applicable.
      */
-    void CheckBoxClicked()
+    void checkBoxClicked()
     {
         setSaved(false);
         Course clickedCourse = gui.getSelectedPassed();
+        // If the user has taken the course they are clicking on
         if (coursesTaken.contains(clickedCourse))
         {
+            // remove it from their state
             coursesTaken.remove(clickedCourse);
         }
+        // If the user has not taken the course they are clicking on
         else
         {
+            // add it from their state
             coursesTaken.add(clickedCourse);
         }
         unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
@@ -410,41 +458,51 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     /**
      * Handles a row being selected in the GUI. Determines what row was selected
      * and displays that course's info in the GUI info pane
+     * 
+     * @param e
+     *            the event to analyze
      */
     @Override
     public void valueChanged(ListSelectionEvent e)
     {
         Course selected = null;
         CourseOption option = null;
+        // IF the user clicked in one of the two lists
         if (e.getSource() instanceof JList)
         {
             JList selectedList = (JList) e.getSource();
+            // IF the item clicked on was a course
             if (selectedList.getSelectedValue() instanceof Course)
             {
                 selected = (Course) selectedList.getSelectedValue();
-                for (CourseOption o : unfulfilledOptions)
+                // For each option in unfulfilledOptions
+                for (CourseOption unfulfilled : unfulfilledOptions)
                 {
-                    if (o.getFulfillmentOptions().contains(selected))
+                    // IF the course the user clicked on fulfills this option
+                    if (unfulfilled.getFulfillmentOptions().contains(selected))
                     {
-                        option = o;
-                    }
-                }
-
-            }
+                        option = unfulfilled;
+                    }// ENDIF
+                }// ENDFOR
+            }// ENDIF
         }
+        // ELSE the usr clicked in the table
         else
         {
             selected = gui.getSelectedPassed();
-            for (CourseOption o : chart.getSectionReqs())
+            // For each option in the flowchart
+            for (CourseOption flowchartOption : chart.getSectionReqs())
             {
-                if (o.getFulfillmentOptions().contains(selected))
+                // IF the course the user clicked on fulfills this option
+                if (flowchartOption.getFulfillmentOptions().contains(selected))
                 {
-                    option = o;
-                }
-            }
-        }
-            gui.setInfo(selected, option);
-            gui.repaint();
+                    option = flowchartOption;
+                }// ENDIF
+            }// ENDFOR
+        }// ENDIF
+         // update the gui
+        gui.setInfo(selected, option);
+        gui.repaint();
     }
 
     /**
@@ -458,18 +516,21 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
 
         int choice = JOptionPane.YES_OPTION;
 
+        // IF the user has not fulfilled the prereqs for the course they are
+        // trying to add
         if (!selectedCourse.preRecsMet(coursesTaken.getCourses()))
         {
-            choice =
-                    JOptionPane
-                            .showConfirmDialog(
-                                    gui,
-                                    "You have not fulfilled the prerequisites for this course.\nAre you sure you want to add this to your schedule?",
-                                    "Prerequisites not met",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE);
+            // Verify they really want to add it to their schedule
+            choice = JOptionPane.showConfirmDialog(
+                            gui,
+                            "You have not fulfilled the prerequisites for this course.\n"
+                            +"Are you sure you want to add this to your schedule?",
+                            "Prerequisites not met",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
 
         }
+        // IF the user wants to add the course, add it
         if (choice == JOptionPane.YES_OPTION)
         {
             schedule.add(selectedCourse);
@@ -484,9 +545,11 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     private void updateUnitCount()
     {
         int count = 0;
-        for (Course c : schedule.getCourses())
+        // FOR each course in the schedule
+        for (Course scheduledCourse : schedule.getCourses())
         {
-            count += c.getUnits();
+            // add the number of units it is worth
+            count += scheduledCourse.getUnits();
         }
         gui.updateUnitCount(count);
     }
@@ -513,58 +576,56 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     /**
      * Handles the "AutoFill" button being pressed. Uses our autofill algorithm
      * to fill it.
+     * 
+     * @param unitsToAdd
+     *            the max number of units to add to the suggested list
      */
-    private void autoFillSechdule()
+    private void autoFillSechdule(int unitsToAdd)
     {
-        System.out.println("AutoFill");
-        if (unfulfilledOptions == null || unfulfilledOptions.isEmpty())
+        //IF the user has fulfilled all of the requirements
+        if (unfulfilledOptions.isEmpty())
         {
             return;
-        }
+        }//ENDIF
 
-        int maxUnits = gui.getScheduleUnits();
-        //
-        int unitCount = 0;
-
-        for (Course c : schedule.getCourses())
-        {
-            unitCount += c.getUnits();
-        }
-
-        List<CourseOption> unfulfilled=new ArrayList<CourseOption>(unfulfilledOptions);
+        //Sort the CourseOption depending on the quarter they are suggested
+        List<CourseOption> unfulfilled = new ArrayList<CourseOption>(unfulfilledOptions);
         Collections.sort(unfulfilled, new Comparator<CourseOption>()
         {
-
             @Override
             public int compare(CourseOption o1, CourseOption o2)
             {
                 return new Integer(o1.getQuarter()).compareTo(o2.getQuarter());
             }
         });
-        
+        //FOR each CourseOption
         for (CourseOption co : unfulfilled)
         {
-            if (unitCount > maxUnits)
+            //If there is still room in the schedule
+            if (unitsToAdd > 0)
             {
-                break;
-            }
-
-            for (Course c : co.getFulfillmentOptions())
-            {
-                if (c.preRecsMet(coursesTaken.getCourses())
-                        && !coursesTaken.contains(c)
-                        && unitCount + c.getUnits() <= maxUnits)
+                boolean courseFound = false;
+                //for each course in the CourseOption
+                for (Course optionCourse : co.getFulfillmentOptions())
                 {
-                    if (!coursesTaken.contains(c) && !schedule.contains(c))
+                    //IF a course hasn't been found for this option
+                    //the course has all of the prereqs met,
+                    //they have not already taken it,
+                    //it is a small enough unit count//
+                    //and it isn't already in the list
+                    if (!courseFound&&optionCourse.preRecsMet(coursesTaken.getCourses())
+                            && !coursesTaken.contains(optionCourse)
+                            && +optionCourse.getUnits() <= unitsToAdd
+                            && !schedule.contains(optionCourse))
                     {
-                        schedule.add(c);
-                        unitCount += c.getUnits();
-                        break;
-                    }
-                }
-
-            }
-        }
+                        courseFound = true;
+                        //Add it to the suggested schedule
+                        schedule.add(optionCourse);
+                        unitsToAdd-=optionCourse.getUnits();                    
+                    }//ENDIF    
+                }//ENDFOR
+            }//ENDIF
+        }//ENDFOR
         updateUnitCount();
     }
 
@@ -578,6 +639,10 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         return catalog;
     }
 
+    /**
+     * Filters the courses in the required column depending on the combo box
+     * selection
+     */
     private void filterRequired()
     {
         String preReq = gui.getRequiredCombo();
@@ -585,23 +650,30 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         coursesRequired.filterList(filterText);
         List<Course> filteredCourses =
                 new ArrayList<Course>(coursesRequired.filtered);
-        for (Course c : coursesRequired.filtered)
+        // FOR each course in the required list
+        for (Course requiredCourse : coursesRequired.filtered)
         {
-            if (c.preRecsMet(coursesTaken.getCourses()))
+            // IF the prereqs are met for the course
+            if (requiredCourse.preRecsMet(coursesTaken.getCourses()))
             {
-                if (preReq.equals(PREREQ__NOT_MET))
+                // IF the user only wants to see classes with prereqs not met
+                if (preReq.equals(kPrereqNotMet))
                 {
-                    filteredCourses.remove(c);
+                    // remove the course
+                    filteredCourses.remove(requiredCourse);
                 }
             }
+            // ELSE the prereqs are not me for the course
             else
             {
-                if (preReq.equals(PREREQ_MET))
+                // IF the user only wants to see classes with prereqs met
+                if (preReq.equals(kPrereqMet))
                 {
-                    filteredCourses.remove(c);
+                    // remove the course
+                    filteredCourses.remove(requiredCourse);
                 }
             }
-        }
+        }// ENDFOR
         coursesRequired.filtered.clear();
         coursesRequired.filtered.addAll(filteredCourses);
     }
