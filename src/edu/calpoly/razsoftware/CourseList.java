@@ -61,15 +61,20 @@ public class CourseList extends AbstractListModel
 
       s = new Scanner(input);
 
+      // WHILE input has another line DO
       while (s.hasNextLine())
       {
+         // PARSE a course from the current line
          Course addMe = gson.fromJson(s.nextLine(), Course.class);
+         // IF the list does not have a course with the major and number THEN
          if (lookUp(addMe.getMajor().get(0), addMe.getNumber()) == null)
          {
+            // ADD the course to the list
             catalog.add(addMe);
-         }
-      }
+         } // ENDIF
+      } // ENDWHILE
 
+      // DETERMINE references for prerequisites
       completePointers();
    }
 
@@ -170,22 +175,33 @@ public class CourseList extends AbstractListModel
     */
    private void completePointers()
    {
+      // INITIALIZE coursearray to the contents of the course list
       Course[] coursearray = new Course[0];
       coursearray = catalog.toArray(coursearray);
+      // FOR each course in coursearray
       for (Course c : coursearray)
       {
-         /* workin with the prereqs */
+         // GET the prerequisites of the course
          Set<Set<Course>> preR = c.getPreRequisites();
+         // INITIALIZE newPreR to the empty set
          Set<Set<Course>> newPreR = new HashSet<Set<Course>>();
+         // IF the course has prerequisites
          if (preR != null)
+         {
+            // FOR each set of courses in the prerequisites of the course
             for (Set<Course> sc : preR)
             {
+               // INITIALIZE sub to the empty set
                HashSet<Course> sub = new HashSet<Course>();
+               // FOR each course in the set of courses
                for (Course c1 : sc)
                {
+                  // INITIALIZE found to false
                   boolean found = false;
+                  // FOR each course in coursearray
                   for (Course lookup : coursearray)
                   {
+                     // TODO
                      if (lookup.getNumber() != c.getNumber()
                            && lookup.getNumber() == c1.getNumber())
                      {
@@ -205,6 +221,7 @@ public class CourseList extends AbstractListModel
                }
                newPreR.add(sub);
             }
+         } // ENDIF
          c.setPreRequisites(newPreR);
 
          /* workin with the coreqs */
