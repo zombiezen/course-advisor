@@ -22,7 +22,8 @@ public class CourseDecider
     * Computes the course options remaining to be fulfilled.
     * 
     * @param state The list of courses that have already been taken.
-    * @param flowchart The flowchart that specifies 
+     * @param flowchart The flowchart that specifies
+     * @return Returns the courses that need to be taken 
     */
    public Set<CourseOption> decideClasses(CourseList state, Flowchart flowchart)
    {
