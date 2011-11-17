@@ -6,7 +6,6 @@ import java.util.HashSet;
 /**
  * Represents a course the user can take
  * 
- * 
  */
 public class Course implements Comparable<Course>
 {
@@ -19,7 +18,7 @@ public class Course implements Comparable<Course>
     private Set<Set<Course>> coRequisites;
 
     /**
-     * Used to construct a course
+     * Constructs a new Course used to represent a course the user can take
      * @param major The course tag for the major
      * @param number The course number
      * @param units The number of units the course is worth

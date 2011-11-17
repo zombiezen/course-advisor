@@ -13,7 +13,7 @@ public class Flowchart
     private Set<CourseOption> sectionReqs;
 
     /**
-     * Constructor for Flowchart
+     * Used to Construct a Flowchart that represents the classes a user can take
      */
     public Flowchart()
     {
