@@ -27,39 +27,66 @@ public class CourseDecider
     */
    public Set<CourseOption> decideClasses(CourseList state, Flowchart flowchart)
    {
+      // INITIALIZE the mapping of courses to the options it can fulfill to an
+      // empty map
       final HashMap<Course, Set<CourseOption>> optionMap =
             new HashMap<Course, Set<CourseOption>>(state.getCourses().size());
+      // INITIALIZE the set of courses taken to the user's list of taken courses
       final ImmutableSet<Course> taken =
             ImmutableSet.copyOf(state.getCourses());
+      // INITIALIZE the set of section requirements to the flowchart's section
+      // requirements
       final Set<CourseOption> sectionReqs = flowchart.getSectionReqs();
+      // INITIALIZE the set of fulfilled course options to the empty set
       final Set<CourseOption> fulfilled = new HashSet<CourseOption>();
 
+      // FOR each requirement in the flowchart's section requirements
       for (CourseOption req : sectionReqs)
       {
-         final Set<Course> options = ImmutableSet.copyOf(req.getFulfillmentOptions());
+         final Set<Course> options = ImmutableSet.copyOf(
+               req.getFulfillmentOptions());
+         // COMPUTE the intersection of the taken courses with the courses that
+         // can fulfill the current course option.
          final Set<Course> isect = Sets.intersection(taken, options);
 
+         // IF the intersection set is not empty and the requirement is not
+         // mutually exclusive THEN
          if (!isect.isEmpty() && !req.isMutuallyExclusive())
          {
+            // ADD the course option to the set of fullfilled course options
             fulfilled.add(req);
          }
          else
          {
+            // FOR each course in the intersection
             for (Course course : isect)
             {
+               // RETRIEVE the set of course options the course can fulfill from
+               // the mapping
                Set<CourseOption> optionSet = optionMap.get(course);
+
+               // IF there is no set in the mapping THEN
                if (optionSet == null)
                {
+                  // CREATE a new set of course options
                   optionSet = new HashSet<CourseOption>();
+                  // ADD the set of course options into the mapping
                   optionMap.put(course, optionSet);
                }
+
+               // ADD the course option to the set of options the course can
+               // fulfill
                optionSet.add(req);
             }
          }
-      }
+      } // ENDFOR
 
+      // WHILE the mapping of courses to course options it can fulfill is not
+      // empty DO
       while (!optionMap.isEmpty())
       {
+         // FIND the course with the least number of course options it can
+         // fulfill.
          final Map.Entry<Course, Set<CourseOption>> next =
                Collections.min(optionMap.entrySet(),
                      new Comparator<Map.Entry<Course, Set<CourseOption>>>()
@@ -81,19 +108,32 @@ public class CourseDecider
                         }
                      });
 
+         // REMOVE the course from the mapping
          optionMap.remove(next.getKey());
 
+         // IF the set of course options the course can fulfill is not empty
+         // THEN
          if (!next.getValue().isEmpty())
          {
+            // GET the first course option the course can fulfill
             final CourseOption opt = next.getValue().iterator().next();
+            // ADD the course option to the set of fulfilled courses
             fulfilled.add(opt);
+            // FOR each set of course options in the mapping
             for (Set<CourseOption> s : optionMap.values())
             {
+               // REMOVE the course option from the other set of course options
+               // in the mapping
                s.remove(opt);
-            }
-         }
-      }
+            } // ENDFOR
+         } // ENDIF
+      } // ENDWHILE
+      
+      // INITIALIZE the set of unfulfilled course options to the set of course
+      // options in the flowchart
       Set<CourseOption> unfulfilled = new HashSet<CourseOption>(sectionReqs);
+      // REMOVE the set of fulfilled course options from the set of unfulfilled
+      // course options
       unfulfilled.removeAll(fulfilled);
       return unfulfilled;
    }
@@ -106,11 +146,15 @@ public class CourseDecider
     */
    public Set<Course> getRequiredCourses(Set<CourseOption> unfulfilled)
    {
+      // INITIALIZE the set of required courses to the empty set
       Set<Course> required = new HashSet<Course>();
+
+      // FOR each course option in the set of unfulfilled course options
       for (CourseOption o : unfulfilled)
       {
+         // ADD the set of courses that can fulfill the option
          required.addAll(o.getFulfillmentOptions());
-      }
+      } // ENDFOR
       return required;
    }
 }
