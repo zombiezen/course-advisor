@@ -46,23 +46,35 @@ public class Main
                     .log(java.util.logging.Level.SEVERE, null, ex);
         }
 
+        // CREATE an empty list of courses taken
         CourseList coursesTaken = new CourseList();
+
+        // CREATE an empty list of courses required
         CourseList coursesRequired = new CourseList();
 
+        // CREATE an empty list of courses in the suggested schedule
         CourseList suggestedSchedule = new CourseList();
 
+        // CREATE a scheduler view
         SchedulerView view = new SchedulerView();
 
+        // CREATE a controller that is connected to the model and the view
         SchedulerController controller =
                 new SchedulerController(coursesTaken, coursesRequired,
                         suggestedSchedule, view);
 
+        // CREATE a table model for the list of courses taken
         CourseTableModel tableModel =
                 new CourseTableModel(coursesTaken, controller,
                         controller.getCatalog());
+
+        // SET the view's data sources to the lists
         view.setSources(tableModel, coursesRequired, suggestedSchedule);
 
+        // SET the view's controller to the created controller
         view.setController(controller);
+
+        // DISPLAY the view
         view.setVisible(true);
 
     }
