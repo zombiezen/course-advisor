@@ -278,6 +278,9 @@ public class SchedulerFrame extends JFrame
 
     }
 
+    /**
+     * Sets the Title
+     */
     public void setTitle()
     {
         String title = APP_NAME;
@@ -1175,6 +1178,7 @@ public class SchedulerFrame extends JFrame
     /**
      * Updates the global saved variable and changes the title of the window to
      * show that it is saved
+     * @param saved Shows true if the state has been saved
      */
     public void setSaved(boolean saved)
     {
