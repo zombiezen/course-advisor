@@ -152,6 +152,25 @@ public class CourseList extends AbstractListModel
 
         this.fireContentsChanged(this, 0, courses.size());
     }
+   
+   /**
+    * If Course clicked is in the set, it is removed, else it is added
+    * 
+    * @param clicked Course to toggle
+    */
+   
+   public void toggle(Course clicked)
+   {
+       //IF course is in the set
+       if(contains(clicked))
+       {
+           remove(clicked);
+       }
+       else
+       {
+           add(clicked);
+       }
+   }
 
     /**
      * clears the CourseList
