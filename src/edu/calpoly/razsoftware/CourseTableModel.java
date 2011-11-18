@@ -43,25 +43,31 @@ class CourseTableModel extends AbstractTableModel
     @Override
     public String getColumnName(int columnIndex)
     {
+        //CASE column number
         switch (columnIndex)
         {
+            //the title is Passed
             case 0:
                 return "Passed";
+                //the title is Course
             case 1:
                 return "Course";
             default:
                 return null;
-        }
+        }//ENDCASE
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex)
     {
+        //CASE column number
         switch (columnIndex)
         {
+            //the type is boolean
             case 0:
                 return Boolean.class;
             case 1:
+                //the type is Course
                 return Course.class;
             default:
                 return null;
@@ -71,10 +77,13 @@ class CourseTableModel extends AbstractTableModel
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex)
     {
+        //CASE column number
         switch (columnIndex)
         {
+            //Booleans are editable
             case 0:
                 return true;
+                //Courses are not editable
             case 1:
                 return false;
             default:
@@ -85,15 +94,21 @@ class CourseTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
+        //IF trying to get something past the end of the table
         if (rowIndex > sortedCatalog.size())
+        {
             return null;
+        }//ENDIF
 
         final Course requestedCourse = (Course) sortedCatalog.get(rowIndex);
 
+        //CASE column number
         switch (columnIndex)
         {
+            //return true if the user has taken the course
             case 0:
                 return state.contains(requestedCourse);
+                //return the name of the course
             case 1:
                 return requestedCourse;
             default:
@@ -104,14 +119,21 @@ class CourseTableModel extends AbstractTableModel
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex)
     {
+        //IF trying to set something past the end of the table
         if (rowIndex > sortedCatalog.size())
+        {
             return;
+        }
 
+        //CASE column number
         switch (columnIndex)
         {
+            //mark the course as clicked
             case 0:
                 controller.checkBoxClicked();
                 break;
+            default:
+                //do nothing
         }
     }
 }

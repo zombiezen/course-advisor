@@ -4,47 +4,63 @@
  */
 package edu.calpoly.razsoftware;
 
-import com.google.gson.Gson;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+
 /**
- *
+ * A utility application to change the CVS flowchart to a json file
+ * 
  * @author adam
  */
 public class FlowchartCsvToJsonConverter
 {
-    public static void main(String[] args) throws FileNotFoundException, IOException
+    /**
+     * Runs the application to convert the CVS file
+     * 
+     * @param args
+     *            the command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException
     {
         Gson gson = new Gson();
-        File f = new File("FlowChart.csv");
-        File fo = new File("FlowChart.json");
-        Scanner s = new Scanner(f);
-        FileWriter fw = new FileWriter(fo);
-        
-        while(s.hasNextLine())
+        File csvInput = new File("FlowChart.csv");
+        File jsonOutput = new File("FlowChart.json");
+        Scanner csvReader = new Scanner(csvInput);
+        FileWriter jsonWriter = new FileWriter(jsonOutput);
+
+        // WHILE there is another line in the file
+        while (csvReader.hasNextLine())
         {
-            String[] tokens = s.nextLine().split(",");
+            // parse the line
+            String[] tokens = csvReader.nextLine().split(",");
+            // assign the correct fields to the CourseOption
             String req = tokens[0];
             int quarter = Integer.valueOf(tokens[1]);
-            boolean mutex = (tokens[2].contains("TR")) ? true:false;
+            boolean mutex = tokens[2].contains("TR");
             HashSet<Course> options = new HashSet<Course>();
-            for(int i=3; i<tokens.length; i++)
+            //FOR each course available for the option
+            for (int i = 3; i < tokens.length; i++)
             {
+                //Parse the courses and add it to the options
                 ArrayList<String> tmplst = new ArrayList<String>();
                 tmplst.add(tokens[i].split(" ")[0]);
-                Course c = new Course(tmplst, Integer.valueOf(tokens[i].split(" ")[1]), 0, "NA", "NA");
-                options.add(c);
+                Course createdCourse =
+                        new Course(tmplst,
+                                Integer.valueOf(tokens[i].split(" ")[1]), 0,
+                                "NA", "NA");
+                options.add(createdCourse);
             }
             CourseOption co = new CourseOption(req, options, mutex, quarter);
-            fw.append(gson.toJson(co) + "\n");
-        }
-        fw.close();
-        s.close();
+            jsonWriter.append(gson.toJson(co) + "\n");
+        }// ENDWHILE
+        jsonWriter.close();
+        csvReader.close();
     }
 }

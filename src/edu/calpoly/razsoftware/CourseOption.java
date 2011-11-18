@@ -15,9 +15,9 @@ public class CourseOption
     private int         quarter;
 
     /**
-     * 
-     * @param onlyCourse
-     * @param quarterToTake 
+     * Constructs an new option that only holds one course
+     * @param onlyCourse the course in this option
+     * @param quarterToTake the quarter the flowchart recommends for the course
      */
     public CourseOption(Course onlyCourse, int quarterToTake)
     {
@@ -29,11 +29,11 @@ public class CourseOption
     }
 
     /**
-     * 
-     * @param name
-     * @param options 
-     * @param mutuallyExclusive
-     * @param quarterToTake
+     * Constructs a new option that holds multiple courses
+     * @param name The name of the requirement
+     * @param options the courses that can fulfill this requirement
+     * @param mutuallyExclusive does this fulfills multiple requirements or not
+     * @param quarterToTake the quarter the flowchart recommends for the course
      */
     public CourseOption(String name, Set<Course> options,
             boolean mutuallyExclusive, int quarterToTake)
@@ -45,7 +45,7 @@ public class CourseOption
     }
 
     /**
-     * 
+     * Accessor to mutuallyExclusive
      * @return Checks if course fulfills multiple requirements
      */
     public boolean isMutuallyExclusive()
@@ -54,7 +54,7 @@ public class CourseOption
     }
 
     /**
-     * 
+     * Accesssor to the courses that can fulfill the requirement
      * @return Gives the courses that can fulfill the requirement
      */
     public Set<Course> getFulfillmentOptions()
@@ -63,7 +63,7 @@ public class CourseOption
     }
 
     /**
-     * 
+     * Accesssor to the name of the requirement
      * @return Gives a string for requirements to fulfill prereqs for a course
      */
     public String getRequirement()
@@ -72,7 +72,7 @@ public class CourseOption
     }
 
     /**
-     * 
+     * Accesssor to the suggested quarter
      * @return Gives the quarter in which the class should be taken
      */
     public int getQuarter()
@@ -80,6 +80,9 @@ public class CourseOption
         return quarter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString()
     {
@@ -90,11 +93,12 @@ public class CourseOption
         if (fulfillmentOptions.size() > 0)
         {
             // FOR each course in the set of fulfillment options
-            for (Course c : fulfillmentOptions)
+            for (Course fulfilmentCourse : fulfillmentOptions)
+            {
                 // CONCATENATE the course's string representation with " or "
                 // and req
-                req += c.toString() + " or ";
-            // ENDFOR
+                req += fulfilmentCourse.toString() + " or ";
+            }// ENDFOR
 
             // REMOVE the last " or " from the string
             req = req.substring(0, req.length() - 4);

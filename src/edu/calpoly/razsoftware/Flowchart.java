@@ -2,7 +2,6 @@ package edu.calpoly.razsoftware;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Represents the Flowchart for a user
@@ -17,7 +16,7 @@ public class Flowchart
      */
     public Flowchart()
     {
-        sectionReqs = new HashSet();
+        sectionReqs = new HashSet<CourseOption>();
     }
 
     /**
@@ -41,7 +40,7 @@ public class Flowchart
 
     /**
      * Adds a course Option to the requirements of a section
-     * @param newOption
+     * @param newOption the option to add to this flowchart
      */
     public void addOption(CourseOption newOption)
     {

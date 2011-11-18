@@ -37,6 +37,9 @@ public class Course implements Comparable<Course>
         coRequisites = new HashSet<Set<Course>>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(Course c)
     {
@@ -53,14 +56,18 @@ public class Course implements Comparable<Course>
     {
         // IF num = the course's number THEN
         if(num == number)
+        {
             // FOR each of the course's majors
-            for(String s : major)
+            for(String majorString : major)
+            {
                 // IF the major is equal to dept (case-insensitive) THEN
-                if(s.toUpperCase().equals(dept.toUpperCase()))
+                if(majorString.toUpperCase().equals(dept.toUpperCase()))
+                {
                     return true;
-                // ENDIF
-            // ENDFOR
-        // ENDIF
+                }// ENDIF
+            }// ENDFOR
+        }// ENDIF
+                
         
         return false;
     }
@@ -78,22 +85,27 @@ public class Course implements Comparable<Course>
         if(preRequisites != null && preRequisites.size() > 0)
         {
             // FOR each set of courses in the set of prerequisites
-            for(Set<Course> s : preRequisites)
+            for(Set<Course> courseSet : preRequisites)
             {
                 // SET preRecMet to true
                 preRecMet = true;
                 // FOR each course in the set of courses
-                for(Course t : s)
+                for(Course prereqCourse : courseSet)
+                {
                     // IF the set of courses taken does not contain the course
                     // THEN
-                    if(!coursesTaken.contains(t))
+                    if(!coursesTaken.contains(prereqCourse))
+                    {
                         // SET preRecMet to false
                         preRecMet = false;
-                    // ENDIF
+                    }// ENDIF
+                }
             
                 // IF preRecMet THEN
                 if(preRecMet)
+                {
                     return true;
+                }
                 // ENDIF
             } // ENDFOR
             
@@ -181,14 +193,15 @@ public class Course implements Comparable<Course>
         if(preRequisites.size() > 0)
         {
             // FOR each set of courses in the set of prerequisites
-            for(Set<Course> s : preRequisites)
+            for(Set<Course> prereqSet : preRequisites)
             {
                 // FOR each course in the set of courses
-                for(Course t : s)
+                for(Course prereqCourse : prereqSet)
+                {
                     // CONCATENATE the name of the course and an ampersand to
                     // preRecStr
-                    preRecStr += t.toString() + "&";
-                // ENDFOR
+                    preRecStr += prereqCourse.toString() + "&";
+                }// ENDFOR
             } // ENDFOR
             // IF preRecStr is not an empty string THEN
             if (preRecStr.length() != 0)
@@ -227,6 +240,9 @@ public class Course implements Comparable<Course>
         return units;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString()
     {
