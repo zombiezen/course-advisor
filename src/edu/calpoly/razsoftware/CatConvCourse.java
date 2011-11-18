@@ -21,9 +21,9 @@ public class CatConvCourse
     private List<String> major;
     private int number;
     private int units;
-    private String description;//list of lists for possiblities
+    private String description; //list of lists for possiblities
                                                 //outside or, inside and
-    private String name = "";// pre or co ^^
+    private String name = ""; // pre or co ^^
     private Set<Set<CatConvCourse>> preRequisites;
     private Set<Set<CatConvCourse>> coRequisites;
    
@@ -32,12 +32,12 @@ public class CatConvCourse
     */
     public CatConvCourse()
     {
-       major = new ArrayList<String>();
-       number = 0;
-       units = 0;
-       description = new String("");
-       preRequisites = new HashSet<Set<CatConvCourse>>();
-       coRequisites = new HashSet<Set<CatConvCourse>>();
+        major = new ArrayList<String>();
+        number = 0;
+        units = 0;
+        description = new String("");
+        preRequisites = new HashSet<Set<CatConvCourse>>();
+        coRequisites = new HashSet<Set<CatConvCourse>>();
     }
    
    /**
@@ -49,17 +49,19 @@ public class CatConvCourse
     {
        //IF the class of this course does not equal the class of the object
         if(this.getClass() != obj.getClass())
+        {
             return false;
+        }
         //SET eq to false
         boolean eq = false;
         //FOR every string in the major field
-        for(String s : getMajor())                    //has common major name
+        for(String majorString : getMajor())                    //has common major name
         {
             //FOR every string in the comparing object's major field
             for(String s2 : ((CatConvCourse)obj).getMajor())
             {
                 //SET eq as true if they match
-                eq |= (s.equalsIgnoreCase(s2));
+                eq |= (majorString.equalsIgnoreCase(s2));
             }
             //ENDFOR
         }
@@ -83,52 +85,91 @@ public class CatConvCourse
     }
     
     /*---------'get' methods---------*/
+    /**
+     * returns the course number
+     * @return number
+     */
     public int getNumber()
     {
         return number;
     }
     
+    /**
+     * returns the course name
+     * @return  name
+     */
     public String getName()
     {
         return name;
     }
-   public int getUnits()
-   {
-       return units;
-   }
-   
-   public String getDesc()
-   {
-       return getDescription();
-   }
     
-   /*---------'set' methods---------*/
-   public void setNumber(int Number)
-   {
-       number = Number;
-   }
+    /**
+     * returns the number of units
+     * @return units
+     */
+    public int getUnits()
+    {
+        return units;
+    }
    
-   public void setUnits(int Units)
-   {
-       units = Units;
-   }
-   
-   public void setDesc(String Description)
-   {
-        setDescription(Description);
-   }
-   
-   public void setName(String Name)
-   {
-       name = Name;
-   }
-   
-   public void setMajor(Collection<String> Major)
-   {
-        setMajor(new ArrayList<String>(Major));
-   }
+    /**
+     * returns the description string of the course
+     * @return the description
+     */
+    public String getDesc()
+    {
+        return getDescription();
+    }
+
+    /*---------'set' methods---------*/
+    
+    /**
+     * sets the course number
+     * @param number the number to set it to
+     */
+    public void setNumber(int number)
+    {
+        this.number = number;
+    }
 
     /**
+     * sets the number of units 
+     * @param units the number of units
+     */
+    public void setUnits(int units)
+    {
+        this.units = units;
+    }
+    
+    
+    /** 
+     * sets the description for the course
+     * @param description 
+     */
+    public void setDesc(String description)
+    {
+        setDescription(description);
+    }
+
+    /**
+     * sets the course name
+     * @param name 
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
+     * sets the major for the course
+     * @param major 
+     */
+    public void setMajor(Collection<String> major)
+    {
+        setMajor(new ArrayList<String>(major));
+    }
+
+    /**returns the major of the course
      * @return the major
      */
     public List<String> getMajor()
@@ -136,7 +177,7 @@ public class CatConvCourse
         return major;
     }
 
-    /**
+    /**sets the major of the course
      * @param major the major to set
      */
     public void setMajor(List<String> major)
@@ -144,7 +185,7 @@ public class CatConvCourse
         this.major = major;
     }
 
-    /**
+    /**gets the description string
      * @return the description
      */
     public String getDescription()
@@ -152,7 +193,7 @@ public class CatConvCourse
         return description;
     }
 
-    /**
+    /**sets the description string
      * @param description the description to set
      */
     public void setDescription(String description)
@@ -160,7 +201,7 @@ public class CatConvCourse
         this.description = description;
     }
 
-    /**
+    /**gets the prerequisite sets
      * @return the preRequisites
      */
     public Set<Set<CatConvCourse>> getPreRequisites()
@@ -168,7 +209,7 @@ public class CatConvCourse
         return preRequisites;
     }
 
-    /**
+    /** sets the prerequisite sets
      * @param preRequisites the preRequisites to set
      */
     public void setPreRequisites(Set<Set<CatConvCourse>> preRequisites)
@@ -176,7 +217,7 @@ public class CatConvCourse
         this.preRequisites = preRequisites;
     }
 
-    /**
+    /** gets the corequisite sets
      * @return the coRequisites
      */
     public Set<Set<CatConvCourse>> getCoRequisites()
@@ -184,7 +225,7 @@ public class CatConvCourse
         return coRequisites;
     }
 
-    /**
+    /**sets the corequisite sets
      * @param coRequisites the coRequisites to set
      */
     public void setCoRequisites(Set<Set<CatConvCourse>> coRequisites)

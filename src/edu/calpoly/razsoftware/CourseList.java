@@ -211,64 +211,7 @@ public class CourseList extends AbstractListModel
             Set<Set<Course>> preR = course.getPreRequisites();
             // INITIALIZE newPreR to the empty set
             Set<Set<Course>> newPreR = new HashSet<Set<Course>>();
-            // IF the course has prerequisites
-            if (preR != null)
-            {
-                // FOR each 'or' set of courses in the prerequisites of the
-                // course
-                for (Set<Course> sc : preR)
-                {
-                    // INITIALIZE sub to the empty set
-                    HashSet<Course> sub = new HashSet<Course>();
-                    // FOR each course in the set of 'or' courses
-                    for (Course c1 : sc)
-                    {
-                        // INITIALIZE found to false
-                        boolean found = false;
-                        // FOR each course in coursearray
-                        for (Course lookup : coursearray)
-                        {
-                            // IF the coursenumber of the current course does
-                            // not equal
-                            // the Course number of the currently looked up
-                            // course THEN
-                            if (lookup.getNumber() != course.getNumber()
-                                    && lookup.getNumber() == c1.getNumber())
-                            {
-                                // FOR every major String in the lookup course
-                                for (String majorString : lookup.getMajor())
-                                {
-                                    // IF the course to be looked up contains
-                                    // the string
-                                    // from the lookup course THEN
-                                    if (c1.getMajor().contains(majorString))
-                                    {
-                                        // add lookup to sub
-                                        sub.add(lookup);
-                                        // SET found to TRUE
-                                        found = true;
-                                        break;
-                                    }
-                                    // ENDIF
-                                }
-                                // ENDFOR
-                            }
-                            // ENDIF
-
-                            // IF found is true
-                            if (found)
-                            {
-                                break;
-                            }
-                            // ENDIF
-                        }
-                        // ENDFOR
-                    }
-                    // ENDFOR
-                    newPreR.add(sub);
-                }
-                // ENDFOR
-            } // ENDIF
+            reformatPreReqs(preR, coursearray, course, newPreR);
             course.setPreRequisites(newPreR);
 
             /* workin with the coreqs */
@@ -277,38 +220,124 @@ public class CourseList extends AbstractListModel
             // part
             Set<Set<Course>> coR = course.getCoRequisites();
             Set<Set<Course>> newCoR = new HashSet<Set<Course>>();
-            if (preR != null)
-                for (Set<Course> sc : coR)
-                {
-                    HashSet<Course> sub = new HashSet<Course>();
-                    for (Course c1 : sc)
-                    {
-                        boolean found = false;
-                        for (Course lookup : coursearray)
-                        {
-                            if (lookup.getNumber() != course.getNumber()
-                                    && lookup.getNumber() == c1.getNumber())
-                            {
-                                for (String s : lookup.getMajor())
-                                {
-                                    if (c1.getMajor().contains(s))
-                                    {
-                                        sub.add(lookup);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (found)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    newCoR.add(sub);
-                }
+            reformatCoReqs(preR, coR, coursearray, course, newCoR);
             course.setCoRequisites(newCoR);
         }
+    }
+
+    private void reformatCoReqs(Set<Set<Course>> preR,
+                                Set<Set<Course>> coR,
+                                Course[] coursearray,
+                                Course course,
+                                Set<Set<Course>> newCoR)
+    {
+        //IF the prerequisite structure is not null THEN
+        if (preR != null)
+        {
+            //FOR each set of courses in the corequisites
+            for (Set<Course> sc : coR)
+            {
+                HashSet<Course> sub = new HashSet<Course>();
+                //FOR each Course in the set
+                for (Course c1 : sc)
+                {
+                    boolean found = false;
+                    //FOR each course 
+                    for (Course lookup : coursearray)
+                    {
+                        // IF the coursenumber of the current course does not
+                        //equal the Course number of the currently looked up
+                        // course THEN
+                        if (lookup.getNumber() != course.getNumber()
+                                && lookup.getNumber() == c1.getNumber())
+                        {
+                            //FOR every major string in the course
+                            for (String major : lookup.getMajor())
+                            {
+                                //IF the cource major contains the major string
+                                if (c1.getMajor().contains(major))
+                                {
+                                    sub.add(lookup);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        //IF the course has been found, THEN
+                        if (found)
+                        {
+                            break;
+                        }
+                    }
+                }
+                newCoR.add(sub);
+            }
+        }
+    }
+
+    private void reformatPreReqs(Set<Set<Course>> preR,
+                              Course[] coursearray,
+                              Course course,
+                              Set<Set<Course>> newPreR)
+    {
+        // IF the course has prerequisites
+        if (preR != null)
+        {
+            // FOR each 'or' set of courses in the prerequisites of the
+            // course
+            for (Set<Course> sc : preR)
+            {
+                // INITIALIZE sub to the empty set
+                HashSet<Course> sub = new HashSet<Course>();
+                // FOR each course in the set of 'or' courses
+                for (Course c1 : sc)
+                {
+                    // INITIALIZE found to false
+                    boolean found = false;
+                    // FOR each course in coursearray
+                    for (Course lookup : coursearray)
+                    {
+                        // IF the coursenumber of the current course does
+                        // not equal
+                        // the Course number of the currently looked up
+                        // course THEN
+                        if (lookup.getNumber() != course.getNumber()
+                                && lookup.getNumber() == c1.getNumber())
+                        {
+                            // FOR every major String in the lookup course
+                            for (String majorString : lookup.getMajor())
+                            {
+                                // IF the course to be looked up contains
+                                // the string
+                                // from the lookup course THEN
+                                if (c1.getMajor().contains(majorString))
+                                {
+                                    // add lookup to sub
+                                    sub.add(lookup);
+                                    // SET found to TRUE
+                                    found = true;
+                                    break;
+                                }
+                                // ENDIF
+                            }
+                            // ENDFOR
+                        }
+                        // ENDIF
+
+                        // IF found is true
+                        if (found)
+                        {
+                            break;
+                        }
+                        // ENDIF
+                    }
+                    // ENDFOR
+                }
+                // ENDFOR
+                newPreR.add(sub);
+            }
+            // ENDFOR
+        } // ENDIF
     }
 
     /**

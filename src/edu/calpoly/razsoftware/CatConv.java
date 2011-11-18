@@ -29,8 +29,7 @@ import java.util.List;
  */
 public class CatConv
 {
-    public static final int kMAJORINDEX = 3; //index in split array that
-                                            //contains the major
+    private static final int kMAJORINDEX = 3; 
 
     /**
      * this method does the work, set it off and watch it go.
@@ -157,11 +156,13 @@ public class CatConv
                     for (; !spl[tokenIndex].startsWith("("); tokenIndex++)
                     {
                         // add token to the name of the course
-                        newCatConvCourse.setName(newCatConvCourse.getName() + (spl[tokenIndex] + " "));
+                        newCatConvCourse.setName(newCatConvCourse.getName() 
+                                + (spl[tokenIndex] + " "));
                     }
                     // SET the units of the course to the value in the
                     // parenthases
-                    newCatConvCourse.setUnits((int) Integer.valueOf(spl[tokenIndex].charAt(1) - '0'));
+                    newCatConvCourse.setUnits((int) Integer.valueOf(spl[
+                            tokenIndex].charAt(1) - '0'));
                 }
                 catch (Exception anyException)
                 {
@@ -250,7 +251,7 @@ public class CatConv
     }
 
     private static HashSet<Set<CatConvCourse>> 
-                refacttest(HashSet<Set<CatConvCourse>> req, 
+    refacttest(HashSet<Set<CatConvCourse>> req, 
                        HashSet<Set<CatConvCourse>> permutations)
     {
         //FOR every set in the requirements structure

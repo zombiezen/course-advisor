@@ -9,6 +9,7 @@ import java.util.HashSet;
  */
 public class Course implements Comparable<Course>
 {
+    private static final int kPADDING = 4;
     private List<String>     major;
     private int              number;
     private int              units;
@@ -216,7 +217,7 @@ public class Course implements Comparable<Course>
         if (preRecStr.length() != 0)
         {
             // REMOVE the last " or " from preRecStr
-            preRecStr = preRecStr.substring(0, preRecStr.length() - 4);
+            preRecStr = preRecStr.substring(0, preRecStr.length() - kPADDING);
         } // ENDIF
         
         return preRecStr;
@@ -248,4 +249,5 @@ public class Course implements Comparable<Course>
     {
         return major.get(0) + number;
     }
+
 }
