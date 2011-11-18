@@ -140,20 +140,10 @@ public class CatConvCourse
     {
         this.units = units;
     }
-    
-    
-    /** 
-     * sets the description for the course
-     * @param description 
-     */
-    public void setDesc(String description)
-    {
-        setDescription(description);
-    }
 
     /**
      * sets the course name
-     * @param name 
+     * @param name the new name of the course
      */
     public void setName(String name)
     {
@@ -162,7 +152,7 @@ public class CatConvCourse
 
     /**
      * sets the major for the course
-     * @param major 
+     * @param major the list of majors this course is listed under
      */
     public void setMajor(Collection<String> major)
     {

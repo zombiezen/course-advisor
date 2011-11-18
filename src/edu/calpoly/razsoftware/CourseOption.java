@@ -88,6 +88,7 @@ public class CourseOption
     {
         // INITIALIZE req to the empty string
         String req = "";
+        String orSeparator = " or ";
 
         // IF the set of fulfillment is not empty THEN
         if (fulfillmentOptions.size() > 0)
@@ -97,11 +98,11 @@ public class CourseOption
             {
                 // CONCATENATE the course's string representation with " or "
                 // and req
-                req += fulfilmentCourse.toString() + " or ";
+                req += fulfilmentCourse.toString() + orSeparator;
             }// ENDFOR
 
             // REMOVE the last " or " from the string
-            req = req.substring(0, req.length() - 4);
+            req = req.substring(0, req.length() - orSeparator.length());
         } // ENDIF
 
         return req;

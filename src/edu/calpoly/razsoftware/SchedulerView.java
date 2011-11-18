@@ -200,7 +200,7 @@ public class SchedulerView extends JFrame implements Observer
         nameLabel.setEditable(false);
         nameLabel.setFocusable(false);
 
-        unitsLabel.setBackground(null);
+        prereqLabel.setBackground(null);
         prereqLabel.setBorder(loweredBorder);
         prereqLabel.setEditable(false);
         prereqLabel.setFocusable(false);

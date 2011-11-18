@@ -19,7 +19,10 @@ import com.google.gson.Gson;
  * @author adam
  */
 public class FlowchartCsvToJsonConverter
-{
+{     /**
+     * index in split array that contains the course
+     */
+    public static final int kCourseIndex = 3; 
     /**
      * Runs the application to convert the CVS file
      * 
@@ -45,15 +48,15 @@ public class FlowchartCsvToJsonConverter
             int quarter = Integer.valueOf(tokens[1]);
             boolean mutex = tokens[2].contains("TR");
             HashSet<Course> options = new HashSet<Course>();
-            //FOR each course available for the option
-            for (int i = 3; i < tokens.length; i++)
+            //FOR each course available for the option            
+            for (int course = kCourseIndex; course < tokens.length; course++)
             {
                 //Parse the courses and add it to the options
                 ArrayList<String> tmplst = new ArrayList<String>();
-                tmplst.add(tokens[i].split(" ")[0]);
+                tmplst.add(tokens[course].split(" ")[0]);
                 Course createdCourse =
                         new Course(tmplst,
-                                Integer.valueOf(tokens[i].split(" ")[1]), 0,
+                                Integer.valueOf(tokens[course].split(" ")[1]), 0,
                                 "NA", "NA");
                 options.add(createdCourse);
             }

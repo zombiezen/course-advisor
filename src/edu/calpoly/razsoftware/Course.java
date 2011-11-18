@@ -203,15 +203,19 @@ public class Course implements Comparable<Course>
                     // preRecStr
                     preRecStr += prereqCourse.toString() + "&";
                 }// ENDFOR
+                 // IF preRecStr is not an empty string THEN
+                if (preRecStr.length() != 0)
+                {
+                    // REMOVE the last character(&) of preRecStr
+                    preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
+                } // ENDIF
+                
+                // CONCATENATE " or " with preRecStr
+                preRecStr += " or ";
+                
             } // ENDFOR
-            // IF preRecStr is not an empty string THEN
-            if (preRecStr.length() != 0)
-            {
-                // REMOVE the last character of preRecStr
-                preRecStr = preRecStr.substring(0, preRecStr.length() - 1);
-            } // ENDIF
-            // CONCATENATE " or " with preRecStr
-            preRecStr += " or ";
+            
+
         } 
         // IF preRecStr is not an empty string THEN
         if (preRecStr.length() != 0)
@@ -219,7 +223,6 @@ public class Course implements Comparable<Course>
             // REMOVE the last " or " from preRecStr
             preRecStr = preRecStr.substring(0, preRecStr.length() - kPADDING);
         } // ENDIF
-        
         return preRecStr;
     }
     
