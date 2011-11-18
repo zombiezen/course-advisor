@@ -1,10 +1,9 @@
 package edu.calpoly.razsoftware;
 import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -266,22 +265,22 @@ public class SchedulerView extends JFrame
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
 
-        openMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
         openMenuItem.setMnemonic('O');
         openMenuItem.setText("Open");
         fileMenu.add(openMenuItem);
 
-        saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save");
         fileMenu.add(saveMenuItem);
 
-        saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK|java.awt.event.InputEvent.SHIFT_MASK));
+        saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK|InputEvent.SHIFT_MASK));
         saveAsMenuItem.setText("Save As");
         saveAsMenuItem.setMnemonic('A');
         fileMenu.add(saveAsMenuItem);
 
-        quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,InputEvent.CTRL_MASK));
         quitMenuItem.setText("Quit");
         quitMenuItem.setMnemonic('Q');
         fileMenu.add(quitMenuItem);

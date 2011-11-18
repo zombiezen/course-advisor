@@ -26,7 +26,7 @@ public class CoursesTaken
      */
     public CoursesTaken()
     {
-        taken = new HashSet();
+        taken = new HashSet<Course>();
     }
 
     /**
@@ -49,14 +49,14 @@ public class CoursesTaken
      */
     public CoursesTaken(File file, CourseList cl) throws IOException
     {
-        Gson gson = new Gson();
-        Scanner s = new Scanner(file);
+        Scanner takenScanner = new Scanner(file);
         taken = new HashSet<Course>();
 
-        while (s.hasNextLine())
+        //WHILE the user has taken more courses
+        while (takenScanner.hasNextLine())
         {
 
-            String str = s.nextLine();
+            String str = takenScanner.nextLine();
 
             JsonParser jparse = new JsonParser();
             JsonElement jelem = jparse.parse(str);
@@ -73,7 +73,7 @@ public class CoursesTaken
 
         } // else we have an empty JSon file
 
-        s.close();
+        takenScanner.close();
     }
 
     /**
@@ -95,17 +95,21 @@ public class CoursesTaken
     public void write(File file) throws IOException
     {
         Gson gson = new Gson();
+        //IF the file exists
         if (file != null)
         {
+            
             BufferedWriter bwriter = new BufferedWriter(new FileWriter(file));
-
+            //IF the user has taken classes
             if (taken != null)
             {
-                for (Course c : taken)
+                //FOR each class the user has taken
+                for (Course takenCourse : taken)
                 {
+                    //WRITE to the file
                     JsonObject json = new JsonObject();
-                    json.addProperty("major", c.getMajor().get(0));
-                    json.addProperty("number", c.getNumber());
+                    json.addProperty("major", takenCourse.getMajor().get(0));
+                    json.addProperty("number", takenCourse.getNumber());
                     bwriter.write(gson.toJson(json) + "\n");
                 }
             }

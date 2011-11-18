@@ -649,9 +649,9 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         String filterText = gui.getRequiredFilter();
         coursesRequired.filterList(filterText);
         List<Course> filteredCourses =
-                new ArrayList<Course>(coursesRequired.filtered);
+                new ArrayList<Course>(coursesRequired.getFiltered());
         // FOR each course in the required list
-        for (Course requiredCourse : coursesRequired.filtered)
+        for (Course requiredCourse : coursesRequired.getFiltered())
         {
             // IF the prereqs are met for the course
             if (requiredCourse.preRecsMet(coursesTaken.getCourses()))
@@ -674,7 +674,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
                 }
             }
         }// ENDFOR
-        coursesRequired.filtered.clear();
-        coursesRequired.filtered.addAll(filteredCourses);
+        coursesRequired.getFiltered().clear();
+        coursesRequired.getFiltered().addAll(filteredCourses);
     }
 }
