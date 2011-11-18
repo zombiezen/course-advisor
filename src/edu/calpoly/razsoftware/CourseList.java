@@ -159,18 +159,18 @@ public class CourseList extends AbstractListModel
     * @param clicked Course to toggle
     */
    
-   public void toggle(Course clicked)
-   {
-       //IF course is in the set
-       if(contains(clicked))
-       {
-           remove(clicked);
-       }
-       else
-       {
-           add(clicked);
-       }
-   }
+    public void toggle(Course clicked)
+    {
+        //IF course is in the set
+        if(contains(clicked))
+        {
+            remove(clicked);
+        }
+        else
+        {
+            add(clicked);
+        }
+    }
 
     /**
      * clears the CourseList
@@ -413,13 +413,16 @@ public class CourseList extends AbstractListModel
      */
     public void filterList(String text)
     {
+        System.out.println("Filtering");
         // INITIALIZE filtered as new list
         filtered = new ArrayList<Course>();
-        // IF text is not empty
-        if (!text.equals(""))
-        {
-            // FOR every course in the list
-            for (Course course : courses)
+
+        filtered = new ArrayList<Course>();
+        // FOR every course in the list
+        for (Course course : courses)
+        {     
+            // IF text is not empty
+            if (!text.equals(""))
             {
                 // IF the course contains the text, THEN
                 if (course.toString().toLowerCase().contains(text.toLowerCase()))
@@ -427,11 +430,13 @@ public class CourseList extends AbstractListModel
                     // add c to the filtered list
                     filtered.add(course);
                 }
-                // ENDIF
-            }
-            // ENDFOR
-        }
-        // ENDIF
+            }//ELSE everything matches
+            else
+            {
+                filtered.add(course);
+            }// ENDIF
+        }// ENDFOR
+        
         this.fireContentsChanged(this, 0, filtered.size());
 
     }
