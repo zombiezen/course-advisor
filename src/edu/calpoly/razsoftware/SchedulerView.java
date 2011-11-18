@@ -3,6 +3,8 @@ import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -39,7 +41,7 @@ import javax.swing.table.TableRowSorter;
  *
  * @author Daniel,Michael Van Beek 
  */
-public class SchedulerView extends JFrame
+public class SchedulerView extends JFrame implements Observer
 {
     private static final String      kApplicationName            = "Course Advisor";
     private static final String      kVersion             = "v1.0";
@@ -193,7 +195,7 @@ public class SchedulerView extends JFrame
 
         Border loweredBorder = new BevelBorder(BevelBorder.LOWERED);
 
-        unitsLabel.setBackground(null);
+        nameLabel.setBackground(null);
         nameLabel.setBorder(loweredBorder);
         nameLabel.setEditable(false);
         nameLabel.setFocusable(false);
@@ -447,6 +449,7 @@ public class SchedulerView extends JFrame
      */
     public void setController(SchedulerController controller)
     {
+        controller.addObserver(this);
         addButton.addActionListener(controller);
         removeButton.addActionListener(controller);
         clearButton.addActionListener(controller);
@@ -625,6 +628,15 @@ public class SchedulerView extends JFrame
     {
         JOptionPane.showMessageDialog(this, kApplicationName + " " + kVersion + "\n"
                 + kAuthors + kLiscense, "About", JOptionPane.PLAIN_MESSAGE);
+    }
+    /**
+     * Responds after the Controller loads a new user state
+     * {@inheritDoc}
+     */
+    @Override
+    public void update(Observable o, Object arg)
+    {
+        repaint();
     }
 
 }

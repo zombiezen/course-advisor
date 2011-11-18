@@ -2,8 +2,8 @@ package edu.calpoly.razsoftware;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
@@ -33,8 +34,8 @@ import com.google.gson.Gson;
  * modify the model correctly depending on the users actions
  * @author michaelsvanbeek, Daniel Johnson, Derek Panger
  */
-public class SchedulerController extends KeyAdapter implements ActionListener,
-        ListSelectionListener
+public class SchedulerController extends Observable implements ActionListener,
+        ListSelectionListener, KeyListener
 {
 
     private static final String kFileExtension   = "us";
@@ -128,15 +129,7 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         // ELSEIF the user wants to Autofill the suggested list
         else if (e.getActionCommand().equals("Autofill"))
         {
-            int maxUnits = gui.getScheduleUnits();
-            int unitCount = 0;
-            // FOR each course already in the suggested schedule
-            for (Course scheduledCourse : schedule.getCourses())
-            {
-                // add the units value
-                unitCount += scheduledCourse.getUnits();
-            }
-            autoFillSechdule(maxUnits - unitCount);
+            autoFillSechdule();
         }
 
         // the menu actions
@@ -182,6 +175,20 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     {
         filterRequired();
 
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public void keyPressed(KeyEvent event)
+    {
+       //do nothing 
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public void keyTyped(KeyEvent event)
+    {
+       //don nothing 
     }
 
     /**
@@ -289,8 +296,8 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
                 setSaved(true);
                 filterRequired();
             }
-
-            gui.repaint();
+            setChanged();
+            notifyObservers();
         }
 
     }
@@ -436,23 +443,11 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
     {
         setSaved(false);
         Course clickedCourse = gui.getSelectedPassed();
-        // If the user has taken the course they are clicking on
-        if (coursesTaken.contains(clickedCourse))
-        {
-            // remove it from their state
-            coursesTaken.remove(clickedCourse);
-        }
-        // If the user has not taken the course they are clicking on
-        else
-        {
-            // add it from their state
-            coursesTaken.add(clickedCourse);
-        }
+        coursesTaken.toggle(clickedCourse);
         unfulfilledOptions = decider.decideClasses(coursesTaken, chart);
         coursesRequired.clear();
         coursesRequired.addAll(decider.getRequiredCourses(unfulfilledOptions));
         filterRequired();
-        gui.repaint();
     }
 
     /**
@@ -502,7 +497,6 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         }// ENDIF
          // update the gui
         gui.setInfo(selected, option);
-        gui.repaint();
     }
 
     /**
@@ -572,7 +566,24 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         schedule.clear();
         updateUnitCount();
     }
-
+    
+    /**
+     * Calculates the number of units to add to the schedule
+     * @return the number of units to add to the schedule
+     */
+    private int calculateUnits()
+    {
+        int maxUnits = gui.getScheduleUnits();
+        int unitCount = 0;
+        // FOR each course already in the suggested schedule
+        for (Course scheduledCourse : schedule.getCourses())
+        {
+            // add the units value
+            unitCount += scheduledCourse.getUnits();
+        }
+        return maxUnits-unitCount;
+    }
+    
     /**
      * Handles the "AutoFill" button being pressed. Uses our autofill algorithm
      * to fill it.
@@ -580,8 +591,9 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
      * @param unitsToAdd
      *            the max number of units to add to the suggested list
      */
-    private void autoFillSechdule(int unitsToAdd)
+    private void autoFillSechdule()
     {
+        int unitsToAdd = calculateUnits();
         //IF the user has fulfilled all of the requirements
         if (unfulfilledOptions.isEmpty())
         {
@@ -648,6 +660,8 @@ public class SchedulerController extends KeyAdapter implements ActionListener,
         String preReq = gui.getRequiredCombo();
         String filterText = gui.getRequiredFilter();
         coursesRequired.filterList(filterText);
+
+        System.out.println(coursesRequired.getFiltered());
         List<Course> filteredCourses =
                 new ArrayList<Course>(coursesRequired.getFiltered());
         // FOR each course in the required list
