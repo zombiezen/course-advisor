@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
  * 
  * @author rlight
  */
-public class CourseDecider
+public class CourseOptionDecider
 {
    /**
     * Computes the course options remaining to be fulfilled.

@@ -63,7 +63,7 @@ public class SchedulerController extends Observable implements ActionListener,
     private SchedulerView       gui;
     private Flowchart           chart;
     private CourseList          catalog;
-    private CourseDecider       decider;
+    private CourseOptionDecider       decider;
 
     private boolean             saved            = true;
     private File                savedFile;
@@ -85,7 +85,7 @@ public class SchedulerController extends Observable implements ActionListener,
     {
         this.coursesRequired = coursesRequired;
 
-        decider = new CourseDecider();
+        decider = new CourseOptionDecider();
 
         this.coursesTaken = coursesTaken;
         this.schedule = schedule;

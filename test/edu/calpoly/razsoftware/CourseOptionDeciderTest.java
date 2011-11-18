@@ -7,15 +7,15 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CourseDeciderTest
+public class CourseOptionDeciderTest
 {
-    private CourseDecider decider;
+    private CourseOptionDecider decider;
     private Course cpe101, cpe102, cpe103;
 
     @Before
     public void createDecider()
     {
-        decider = new CourseDecider();
+        decider = new CourseOptionDecider();
     }
 
     @Before
