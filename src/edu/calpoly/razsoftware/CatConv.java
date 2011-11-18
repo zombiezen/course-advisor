@@ -212,34 +212,52 @@ public class CatConv
         // ELSE
         else
         {
-            HashSet<Set<CatConvCourse>> permutations =
+            //INITIALIZE a set of set of courses
+            HashSet<Set<CatConvCourse>> permutations = 
                     new HashSet<Set<CatConvCourse>>();
-            for (Set<CatConvCourse> s : req)
+            //FOR every set in the requirements structure
+            for(Set<CatConvCourse> s : req)
             {
-                if (permutations.isEmpty())
+                //IF the set is empty
+                if(permutations.isEmpty())
                 {
-                    for (CatConvCourse c : s)
+                    //FOR every course in the set
+                    for(CatConvCourse c : s)
                     {
-                        HashSet<CatConvCourse> newitem =
+                        //INITIALIZE a new set of courses
+                        HashSet<CatConvCourse> newitem = 
                                 new HashSet<CatConvCourse>();
+                        //add the course to that set
                         newitem.add(c);
+                        //add this set to the set of sets
                         permutations.add(newitem);
                     }
+                    //ENDFOR
                 }
+                //ELSE IF the set is not empty
                 else
                 {
-                    HashSet<Set<CatConvCourse>> newPerm =
+                    //INITIALIZE a new set of sets of courses
+                    HashSet<Set<CatConvCourse>> newPerm = 
                             new HashSet<Set<CatConvCourse>>();
-                    for (Set<CatConvCourse> s2 : permutations)
+                    //FOR each set in the permutations
+                    for(Set<CatConvCourse> s2 : permutations)
                     {
-                        for (CatConvCourse c : s)
+                        //FOR each course in the original set
+                        for(CatConvCourse c : s)
                         {
-                            HashSet<CatConvCourse> dupeset =
+                            //create a new set duplicating the set in the 
+                            //original set
+                            HashSet<CatConvCourse> dupeset = 
                                     new HashSet<CatConvCourse>(s2);
+                            //add the current course to the set
                             dupeset.add(c);
+                            //add the set to the original set
                             newPerm.add(dupeset);
                         }
+                        //ENDFOR
                     }
+                    //ENDFOR
                     permutations = new HashSet<Set<CatConvCourse>>(newPerm);
 
                 }
