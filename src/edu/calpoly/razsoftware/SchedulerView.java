@@ -43,16 +43,24 @@ import javax.swing.table.TableRowSorter;
  */
 public class SchedulerView extends JFrame implements Observer
 {
-    private static final String      kApplicationName            = "Course Advisor";
+    /**     
+     * The current version number to display in the about box
+     */
     private static final String      kVersion             = "v1.0";
+    
+    /**     
+     * The name of the authors so they can be shown as contributers in the about box
+     */
     private static final String      kAuthors             = "\nAdam Spurgin\n"
                                                             + "Ross Light\n"
                                                             + "Michael Van Beek\n"
                                                             + "Daniel Johnson\n"
                                                             + "Thomas Wong\n"
                                                             + "Derek Panger\n";
-
-    private static final String      kLiscense  = "\nGson: Copyright \u00a9 "
+    /**     
+     * The License of the referenced libraries this info is displayed in the about box.
+     */
+    private static final String      kLicense  = "\nGson: Copyright \u00a9 "
                                                 + "2008-2011 Google Inc.\n"
                                                 + "Guava: Copyright \u00a9 " 
                                                 + "2010-2011 Google Inc.\n"
@@ -439,35 +447,9 @@ public class SchedulerView extends JFrame implements Observer
 
     }// </editor-fold>//GEN-END:initComponents
    
-
-
     /**
-     * Associates the given controller with all of the components in this window
-     * 
-     * @param controller
-     *            The controller for this view
-     */
-    public void setController(SchedulerController controller)
-    {
-        controller.addObserver(this);
-        addButton.addActionListener(controller);
-        removeButton.addActionListener(controller);
-        clearButton.addActionListener(controller);
-        suggestButton.addActionListener(controller);
-        requiredList.addListSelectionListener(controller);
-        suggestedList.addListSelectionListener(controller);
-        openMenuItem.addActionListener(controller);
-        saveMenuItem.addActionListener(controller);
-        saveAsMenuItem.addActionListener(controller);
-        quitMenuItem.addActionListener(controller);
-        requiredFilter.addKeyListener(controller);
-        requiredComboBox.addActionListener(controller);
-        passedTable.getSelectionModel().addListSelectionListener(controller);
-
-    }
-
-    /**
-     * Returns the Course that is selected in the "Passed" pane
+     * Returns the Course that is selected in the "Passed" pane, first column
+     * This is so the controller can display information about the course.
      * 
      * @return Course that is selected in the "Passed" pane
      */
@@ -485,9 +467,12 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Returns the Course that is selected in the "Required" pane
+     * Returns the Course that is selected in the "Required Courses" pane, second column
+     * This is so the controller can display information about the course. 
+     * Additionally the controller needs the course when the user
+     * wants to add it to the suggested schedule
      * 
-     * @return Course that is selected in the "Required" pane
+     * @return Course that is selected in the "Required Courses" pane
      */
     public Course getSelectedRequired()
     {
@@ -495,9 +480,12 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Returns the Course that is selected in the "Schedule" pane
+     * Returns the Course that is selected in the "Suggested Schedule" pane, third column
+     * This is so the controller can display information about the course.
+     * Additionally the controller needs the course when the user
+     * wants to remove it to the suggested schedule
      * 
-     * @return Course that is selected in the "Schedule" pane
+     * @return Course that is selected in the "Suggested Schedule" pane
      */
     public Course getSelectedSchedule()
     {
@@ -506,6 +494,7 @@ public class SchedulerView extends JFrame implements Observer
 
     /**
      * Returns the current selected item in the required comboBox
+     * This is one of three things All, Prerequisites Met, or Prerequisite Not Met.
      * 
      * @return The text that is visible in the required combo box
      */
@@ -526,7 +515,8 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Returns the number of units in the units to take box
+     * Returns the number of units the user has entered into the box
+     * for their requested unit amount.
      * 
      * @return the number of units in the units to take box
      */
@@ -536,7 +526,8 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Fills the "Info" section with the info of the parameter Course
+     * Fills the "Info" section of the window, below the second and third columns,
+     *  with the info of the Course parameter and it's associated CourseOption
      * 
      * @param selectedCourse
      *            course to display
@@ -576,13 +567,13 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Associates the model with the different panes in this window
+     * Associates the model with the different panels in this window
      * 
      * @param tableModel
-     *            The model the is displayed in the JTable
+     *            The model the is displayed in the JTable, left column
      * @param coursesRequired
      *            The list of classes required to fulfill the graduation
-     *            requirement
+     *            requirement, middle column
      * @param coursesSuggested
      *            The suggested schedule that is displayed in the last column
      */
@@ -593,6 +584,7 @@ public class SchedulerView extends JFrame implements Observer
         //now that we have the model for the table we can create the tables filter
         passedSorter.setRowFilter(new RowFilter<CourseTableModel, Integer>()
         {
+            //Only include courses whose String value contains the filter text
             public boolean include(
                     Entry<? extends CourseTableModel, ? extends Integer> entry)
             {
@@ -609,12 +601,37 @@ public class SchedulerView extends JFrame implements Observer
         //Now that all the data is loaded the window can be visible
         setVisible(true);
     }
+    
+    /**
+     * Associates the given controller with all of the components in this window
+     * 
+     * @param controller
+     *            The controller for this view
+     */
+    public void setController(SchedulerController controller)
+    {
+        controller.addObserver(this);
+        addButton.addActionListener(controller);
+        removeButton.addActionListener(controller);
+        clearButton.addActionListener(controller);
+        suggestButton.addActionListener(controller);
+        requiredList.addListSelectionListener(controller);
+        suggestedList.addListSelectionListener(controller);
+        openMenuItem.addActionListener(controller);
+        saveMenuItem.addActionListener(controller);
+        saveAsMenuItem.addActionListener(controller);
+        quitMenuItem.addActionListener(controller);
+        requiredFilter.addKeyListener(controller);
+        requiredComboBox.addActionListener(controller);
+        passedTable.getSelectionModel().addListSelectionListener(controller);
+
+    }
 
     /**
-     * Updates the count of the dynamic unit count label to the given value
+     * Updates the value of the dynamic unit count label to the given number
      * 
      * @param count
-     *            the new unit count in the suggested schedule column;
+     *            the sum of the units of the courses in the suggested schedule column;
      */
     public void updateUnitCount(int count)
     {
@@ -622,12 +639,14 @@ public class SchedulerView extends JFrame implements Observer
     }
 
     /**
-     * Pops up a window that displays information about the application
+     * Displays a window that provides information about the application.
+     * This includes authors, the version number, and the licenses for the used libraries
+     * 
      */
     private void displayAboutInfo()
     {
-        JOptionPane.showMessageDialog(this, kApplicationName + " " + kVersion + "\n"
-                + kAuthors + kLiscense, "About", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(this, SchedulerController.kApplicationName + " " + kVersion + "\n"
+                + kAuthors + kLicense, "About", JOptionPane.PLAIN_MESSAGE);
     }
     /**
      * Responds after the Controller loads a new user state

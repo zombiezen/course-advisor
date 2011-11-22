@@ -7,9 +7,9 @@ import javax.swing.table.AbstractTableModel;
 import com.google.common.collect.ImmutableList;
 
 /**
- * An table model that accesses a backend model to display the values in the
- * cells It also delegates the changing of the data to a seperate controller
- * class
+ * A table model that accesses the backend data model to display the Course objects
+ * and whether or not they have been marked as taken. It also delegates the
+ *  marking of classes being taken to a controller class
  * 
  * @author Daniel
  * 
