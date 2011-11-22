@@ -112,7 +112,8 @@ public class SchedulerController extends Observable implements ActionListener,
      */
     private boolean                      saved          = true;
     /**
-     * If the user has saved or loaded a file this variable is a reference to the pointer.
+     * If the user has saved or loaded a file 
+     * this variable is a reference to the pointer.
      * This is used so the save functionality knows what file to save to 
      */
     private File                         savedFile;
