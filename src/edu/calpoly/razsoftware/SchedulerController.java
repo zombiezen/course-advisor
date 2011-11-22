@@ -30,16 +30,27 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.google.gson.Gson;
 
 /**
- * This class represents all of the logic necessary to 
- * modify the model correctly depending on the users actions
+ * This class is the Controller  in the MVC design.
+ * It receives events from the GUI and dispatches it to the
+ * necessary components of the model.
  * @author michaelsvanbeek, Daniel Johnson, Derek Panger
  */
 public class SchedulerController extends Observable implements ActionListener,
         ListSelectionListener, KeyListener
 {
 
+    /**
+     * The saved file extension for this application.
+     * The save and load dialogs filter their view by this extension.
+     * The save dialog guarantees that the extension is
+     * appended onto the end of the file name.
+     */
     private static final String kFileExtension   = "us";
-    private static final String kApplicationName = "Course Advisor";
+    /**
+     * The name of the application to display n the about box
+     *  and the application title bar
+     */
+    public static final String kApplicationName = "Course Advisor";
     /**
      * The choice the user selects when they would like to see all of the
      * required classes
@@ -55,18 +66,56 @@ public class SchedulerController extends Observable implements ActionListener,
      * with prerequisites not met
      */
     public static final String  kPrereqNotMet    = "Prerequisite Not Met";
+    
+    
+    /**
+     * Represents a list of courses the user has marked as taken
+     */
+    private CourseList                   coursesTaken;
 
-    private CourseList          coursesTaken;
-    private CourseList          coursesRequired;
-    private CourseList          schedule;
-    private Set<CourseOption>   unfulfilledOptions;
-    private SchedulerView       gui;
-    private Flowchart           chart;
-    private CourseList          catalog;
-    private CourseOptionDecider       decider;
+    /**
+     * Represents all of the CourseOption a user would have to complete for a degree
+     */
+    private Flowchart                    chart;
+    /**
+     * Represents the unfulfilled CourseOption the user has to complete for their degree
+     */
+    private Set<CourseOption>            unfulfilledOptions;
+    /**
+     * Represents a list of courses the user can take to fulfill an unfulfilledOptions
+     */
+    private CourseList                   coursesRequired;
+    /**
+     * Represents a list of courses the program has suggested 
+     * to the user to fulfill the unfulfilledOptions.
+     */
+    private CourseList                   schedule;
+    /**
+     * Holds a reference to the view to query for information when necessary.
+     */
+    private SchedulerView                gui;
+    /**
+     * Represents the entire course catalog for the University
+     */
+    private CourseList                   catalog;
+    /**
+     * Holds a reference to the CourseOptionDecider so it can 
+     * tell the decider to update the unfulfilledOptions after
+     * the user marks a Course as taken
+     */
+    private CourseOptionDecider          decider;
 
-    private boolean             saved            = true;
-    private File                savedFile;
+    /**
+     * A global flag to determine if the application is saved, defaults to true.
+     * Is reset to true whenever the user saves. Is changed to false when they
+     * add or remove a class from the taken list
+     */
+    private boolean                      saved          = true;
+    /**
+     * If the user has saved or loaded a file this variable is a reference to the pointer.
+     * This is used so the save functionality knows what file to save to 
+     */
+    private File                         savedFile;
 
     /**
      * Constructor
@@ -374,7 +423,7 @@ public class SchedulerController extends Observable implements ActionListener,
     }
 
     /**
-     * Saves the current list of Courses Taken to the file the the user chooses
+     * Saves the current list of Courses Taken to the file of the user choice
      */
     private void saveAsUserState()
     {
@@ -436,8 +485,8 @@ public class SchedulerController extends Observable implements ActionListener,
     }
 
     /**
-     * Handles a check box being clicked in the GUI. Adds or removes the checked
-     * Course as applicable.
+     * Handles a check box being clicked in the GUI.
+     * Adds or removes the checked Course as applicable.
      */
     void checkBoxClicked()
     {
@@ -534,7 +583,7 @@ public class SchedulerController extends Observable implements ActionListener,
     }
 
     /**
-     * update the unit count for the suggested schedule column
+     * update the unit count of the courses currently in the suggested schedule.
      */
     private void updateUnitCount()
     {
@@ -548,7 +597,7 @@ public class SchedulerController extends Observable implements ActionListener,
         gui.updateUnitCount(count);
     }
 
-/**
+    /**
     * Handles the "<" button being clicked.  Removes the selected field from
     * schedule.
     */
