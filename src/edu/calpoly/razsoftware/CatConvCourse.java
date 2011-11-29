@@ -15,6 +15,7 @@ import com.google.gson.Gson;
  * accesses
  * 
  * @author aspurgin
+ * @version $Revision$
  */
 public class CatConvCourse 
 {

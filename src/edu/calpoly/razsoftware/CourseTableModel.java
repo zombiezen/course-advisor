@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
  *  marking of classes being taken to a controller class
  * 
  * @author djohns34
+ * @version $Revision$
  * 
  */
 class CourseTableModel extends AbstractTableModel
