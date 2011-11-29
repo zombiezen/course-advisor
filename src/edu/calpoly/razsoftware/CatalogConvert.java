@@ -25,7 +25,9 @@ public class CatalogConvert
      private static final int kMAJORINDEX = 3; 
 
     /**
-     * this method does the work, set it off and watch it go.
+     * this method is the entry point, this methods manages all the courses read
+     * from the file, and writes all the elevent JSON data to the specified
+     * output file.
      * @param args arguments passed to the program, first one is the source for
      * the data, the second is an optional destination name. 
      * @throws IOException if the course file could not be found
