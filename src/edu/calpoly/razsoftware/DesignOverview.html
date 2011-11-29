@@ -1,0 +1,95 @@
+<html>
+<body>
+   <h1>Design Overview</h1>
+   
+   <h2>Identifying Info</h2>
+   Project Name: Course Finder<br>
+   Team Name: RAZ Software<br>
+   Authors: Michael Van Beek<br>
+   Version: 1.3<br>
+   Date: November 27, 2011<br>
+   
+   <h2>Design Overview</h2>
+   Course Finder is a tool to help students plan which classes to take. 
+   Currently it only supports the 2007-09 Computer Science program at Cal Poly. 
+   With minor data entry on edge cases, it can support all degrees at Cal Poly. 
+   The software starts with a set of requirements for the major and refines a 
+   list of courses that are left to take as the user checks off classes they 
+   have taken. That list can be limited to classes whose requirements are met. 
+   From there, the user can select classes to add to their schedule and let the 
+   program suggest courses to take.<br>
+   <br>
+   The design was shaped by the principles of Model-View-Controller. It also 
+   tries to focus on the core dynamic of how registration rules work. From the
+   top down, a student is working to earn a Degree [formerly Flowchart]. A Degree
+   is a collection of CourseOptions which consist of Courses you could take. Many
+   CourseOptions may consist of only one Course. They can be mutually exclusive 
+   or not. Courses have prerequisites, which can represent any and/or logic.
+   
+   <h3>Model-View-Controller</h3>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/SchedulerView.html">SchedulerView</a>
+   is an interface that defines the methods to view the model. It is currently implemented as 
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/SchedulerFrame.html">SchedulerFrame</a>
+   which extends
+   <a href="http://download.oracle.com/javase/1.4.2/docs/api/javax/swing/JFrame.html">JFrame</a>
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/SchedulerController.html">SchedulerController</a>
+   fulfills the Controller part of MVC and extends 
+   <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/event/KeyAdapter.html">KeyAdapter</a>
+   and
+   <a href="http://download.oracle.com/javase/1.4.2/docs/api/java/awt/event/ActionListener.html">ActionListener</a>
+   . It handles actions from the view and modifies the model as necessary.
+   SchedulerModel is not actually a class, but a collection of classes which represent our model, as defined below.  
+   
+   <h4>SchedulerModel</h4>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/Course.html">Course</a>
+   is the most basic element of our design. Course objects contain a list of the majors that this 
+   class is listed as, an a listing number, the number of units, a brief description, and sets of sets of courses that are 
+   prerequisites for it. Courses will be able to determine if their prerequisites have bene met if they are passed a set of 
+   courses taken. 
+   <a href="https://wiki.csc.calpoly.edu/RAZ/wiki/wiki%3AExample%20of%20Pre-Recs">Example of Pre-Recs</a>
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CourseOption.html">CourseOption</a>
+   objects will hold a name for the requirement (the name of the course if there is only one option), whether or not this class can 
+   satisfy multiple requirements, and a list of Course objects that satisfy that requirement.
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/Flowchart.html">Flowchart</a>
+   objects will contain a set of 
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CourseOption.html">CourseOption</a>
+   objects for every requirement of the major.
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CourseList.html">CourseList</a>
+   will contain a list of all Course objects that are relevant for the flowcharts used.
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CourseDecider.html">CourseDecider</a>
+   will take a flowchart object and preform the calculations necessary to determine which courses have been taken, 
+   which can be taken, and which need to be taken but are blocked by prerequisites.<br>
+   <br>
+   <br>
+   We have a 3 separate classes that are use GSON to build the classes.
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/FlowChartReader.html">FlowChartReader</a>
+   is a single purpose class to fill Flowchart objects.
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/FlowChartCsvToJsonConverter.html">FlowChartCsvToJsonConverter</a>
+   <br>
+   <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CatConvCourse.html">CatConvCourse</a>
+   
+   <h2>Tools</span></h2>
+   We are using Trac Wiki for project management, collaboration, document sharing, and 
+   SubVersion repositories.<br>
+   We are using Netbeans IDE version 7 for coding, GUI design and SubVersion integration.<br>
+   We are using Microsoft Paint for prototype design.<br>
+   We use checkstyle-all-4.4.jar and 308checks.jar to syle our code.
+   
+   <h2>Libraries</h2>
+   We are utilizing Java Swing for graphics.<br>
+   We are utilizing GSON for parsing and importing data<br>
+   We are utilizing GUAVA for general utility functions.<br>
+   We are utilizing JUNIT for unit testing of components.
+   
+   <h2>External References</h2>
+   <a href="https://wiki.csc.calpoly.edu/RAZ/wiki/wiki%3AClass%20Design#ExternalReferences">UI Prototype</a>
+   
+</body>
+</html>
