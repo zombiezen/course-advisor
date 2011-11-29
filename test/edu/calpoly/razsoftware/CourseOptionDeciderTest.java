@@ -35,7 +35,7 @@ public class CourseOptionDeciderTest
     public void emptyCase()
     {
         CourseList state = new CourseList();
-        Flowchart flowchart = new Flowchart();
+        Degree flowchart = new Degree();
 
         assertEquals(ImmutableSet.<CourseOption>of(),
                      decider.decideClasses(state, flowchart));
@@ -44,7 +44,7 @@ public class CourseOptionDeciderTest
     @Test
     public void shouldReportEmptyForComplete()
     {
-        Flowchart flowchart = new Flowchart();
+        Degree flowchart = new Degree();
         CourseOption option101 = new CourseOption(cpe101, 1);
         flowchart.addOption(option101);
         CourseList state = new CourseList(ImmutableSet.of(cpe101));
@@ -56,7 +56,7 @@ public class CourseOptionDeciderTest
     @Test
     public void shouldReportAbleToTake()
     {
-        Flowchart flowchart = new Flowchart();
+        Degree flowchart = new Degree();
         CourseOption option101 = new CourseOption(cpe101, 1);
         CourseOption option102 = new CourseOption(cpe102, 2);
         flowchart.addOption(option101);
@@ -70,7 +70,7 @@ public class CourseOptionDeciderTest
     @Test
     public void shouldReportUnableToTake()
     {
-        Flowchart flowchart = new Flowchart();
+        Degree flowchart = new Degree();
         CourseOption option101 = new CourseOption(cpe101, 1);
         CourseOption option102 = new CourseOption(cpe102, 2);
         CourseOption option103 = new CourseOption(cpe103, 3);
@@ -86,7 +86,7 @@ public class CourseOptionDeciderTest
     @Test
     public void shouldHandleSuperfluousCourse()
     {
-        Flowchart flowchart = new Flowchart();
+        Degree flowchart = new Degree();
         CourseOption option = new CourseOption("SCIENCE!",
                                                ImmutableSet.of(cpe101, cpe102),
                                                true, 1);

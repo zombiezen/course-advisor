@@ -25,7 +25,7 @@ public class CourseOptionDecider
      * @param flowchart The flowchart that specifies
      * @return Returns the courses that need to be taken 
     */
-    public Set<CourseOption> decideClasses(CourseList state, Flowchart flowchart)
+    public Set<CourseOption> decideClasses(CourseList state, Degree flowchart)
     {
       // INITIALIZE the mapping of courses to the options it can fulfill to an
         // empty map
