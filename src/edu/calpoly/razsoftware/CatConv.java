@@ -7,6 +7,7 @@ package edu.calpoly.razsoftware;
 /**
  *
  * @author aspurgin
+ * @version $Revision$
  */
 import java.io.File;
 import java.io.FileWriter;

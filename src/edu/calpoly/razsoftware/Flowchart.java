@@ -7,6 +7,7 @@ import java.util.Set;
  * Represents the Flowchart for a user
  * 
  * @author rlight
+ * @version $Revision$
  */
 public class Flowchart
 {

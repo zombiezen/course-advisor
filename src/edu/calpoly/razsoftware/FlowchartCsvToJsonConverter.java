@@ -17,6 +17,7 @@ import com.google.gson.Gson;
  * A utility application to change the CVS flowchart to a json file
  * 
  * @author aspurgin
+ * @version $Revision$
  */
 public class FlowchartCsvToJsonConverter
 {     /**

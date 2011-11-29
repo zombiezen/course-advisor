@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
  * A class that computes the course options remaining to be fulfilled.
  * 
  * @author rlight
+ * @version $Revision$
  */
 public class CourseOptionDecider
 {

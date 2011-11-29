@@ -18,6 +18,7 @@ import com.google.gson.Gson;
  * from various sources
  * 
  * @author aspurgin
+ * @version $Revision$
  */
 public class CourseList extends AbstractListModel
 {

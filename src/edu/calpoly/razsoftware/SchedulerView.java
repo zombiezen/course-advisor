@@ -40,6 +40,7 @@ import javax.swing.table.TableRowSorter;
  * interact with to change the model
  *
  * @author djohns34,msvanbee
+ * @version $Revision$
  */
 public class SchedulerView extends JFrame implements Observer
 {

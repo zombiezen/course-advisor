@@ -34,6 +34,7 @@ import com.google.gson.Gson;
  * It receives events from the GUI and dispatches it to the
  * necessary components of the model.
  * @author msvanbee, djohns34, dpanger
+ * @version $Revision$
  */
 public class SchedulerController extends Observable implements ActionListener,
         ListSelectionListener, KeyListener
