@@ -14,8 +14,12 @@ import javax.swing.AbstractListModel;
 import com.google.gson.Gson;
 
 /**
- * represents a list of easily referenceable courses that can be constructed
- * from various sources
+ * Represents a list of easily referenceable courses that can be constructed
+ * from various sources. The list of courses represents a catalog for courses
+ * available as well as courses that have been taken.
+ * Operations:
+ * A CourseList can be the catalog of courses.
+ * A CourseList can be the list of courses that a user has taken.
  * 
  * @author aspurgin
  * @version $Revision$
