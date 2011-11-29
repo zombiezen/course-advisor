@@ -4,13 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents the Flowchart for a user
+ * The Degree class models the data provided by a department course flowchart.
+ * It contains a set of course options.
+ * <p>
+ * Operations:
+ * <ul>
+ * <li>Add course options
+ * </ul>
  * 
  * @author rlight
  * @version $Revision$
  */
 public class Degree
 {
+    /** The set of course options required to complete the degree. */
     private Set<CourseOption> sectionReqs;
 
     /**
