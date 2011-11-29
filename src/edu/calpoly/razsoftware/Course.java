@@ -6,6 +6,7 @@ import java.util.HashSet;
 /**
  * Represents a course the user can take
  * 
+ * @author msvanbee
  */
 public class Course implements Comparable<Course>
 {

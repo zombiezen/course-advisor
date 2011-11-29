@@ -33,7 +33,7 @@ import com.google.gson.Gson;
  * This class is the Controller  in the MVC design.
  * It receives events from the GUI and dispatches it to the
  * necessary components of the model.
- * @author michaelsvanbeek, Daniel Johnson, Derek Panger
+ * @author msvanbee, djohns34, dpanger
  */
 public class SchedulerController extends Observable implements ActionListener,
         ListSelectionListener, KeyListener

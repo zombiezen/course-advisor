@@ -6,6 +6,7 @@ import java.util.TreeSet;
 /**
  * Represents the different courses that can be taken to fulfill a requirement
  * 
+ * @author rlight
  */
 public class CourseOption 
 {

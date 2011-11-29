@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 /**
  * Converts the file of a flowchart into a Flowchart object to be
  *         used by the application
- * @author Adam 
+ * @author aspurgin
  * 
  */
 public class FlowchartReader

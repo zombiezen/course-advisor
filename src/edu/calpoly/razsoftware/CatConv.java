@@ -6,7 +6,7 @@ package edu.calpoly.razsoftware;
 
 /**
  *
- * @author adam
+ * @author aspurgin
  */
 import java.io.File;
 import java.io.FileWriter;
