@@ -37,18 +37,21 @@ public class CatalogConvert
         //IF there are no command line arguments THEN
         if(args.length==0)
         {
-            System.out.println("Invalid command line arguments, please specify file name");
-            System.out.println("proper use is \"CatalogConvert <input file> <output file>\"");
+            System.out.println("Invalid command line arguments,"
+                    + " please specify file name");
+            System.out.println("proper use is \"CatalogConvert "
+                    + "<input file> <output file>\"");
             return;
         }
         //ENDIF
-        File input = new File(args[0]);
-        File output = new File("Cat.json");
+        File input = new File(args[0]); //file to be read
+        File output = new File("Cat.json"); //file to write to
         
-        Scanner reader;
-        FileWriter outWriter;
-        Gson gson = new Gson();
-        ArrayList<Course> courses = new ArrayList<Course>();
+        Scanner reader; //does the reading
+        FileWriter outWriter; //does the writing
+        Gson gson = new Gson(); //encodes the objects to JSON strings
+        ArrayList<Course> courses = new ArrayList<Course>(); //holds the parsed 
+                                                               //courses
         
         //IF the command line arguments contain a specified
         //destination name THEN
