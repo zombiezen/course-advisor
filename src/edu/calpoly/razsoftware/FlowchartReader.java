@@ -18,26 +18,6 @@ public class FlowchartReader
     private static Gson gson = new Gson();
 
     /**
-     * provides a flowchart based off a JSON file containing newline-delineated
-     * "CourseOption" classes
-     * 
-     * @param path
-     *            location of the JSON file
-     * @return a flowchart based off the file
-     */
-    /*
-     * public static Flowchart readFlowchart(File path, CourseList courses) {
-     * HashSet<CourseOption> options = new HashSet<CourseOption>(); Scanner s =
-     * null; try { s = new Scanner(path); } catch (FileNotFoundException ex) {
-     * Logger.getLogger(FlowchartReader. class.getName()).log(Level.SEVERE,
-     * null, ex); } HashSet<Course> tmpCourseList = new HashSet<Course>();
-     * while(s.hasNextLine()) { CourseOption co = gson.fromJson(s.nextLine(),
-     * CourseOption.class); for(Course c : co.getOptions()) { Course course =
-     * courses.lookUp(c.getMajor().get(0), c.getNumber()); if(course != null) {
-     * c = course; } } options.add(co); } return new Flowchart(options); }
-     */
-
-    /**
      * provides a flowchart based off a inputstream of a JSON file containing
      * newline-delineated "CourseOption" classes
      * 
