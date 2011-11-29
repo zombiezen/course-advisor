@@ -26,6 +26,9 @@ import com.google.gson.Gson;
  */
 public class CourseList extends AbstractListModel
 {
+    /**
+     * contains all courses in this list
+     */
     private Set<Course> courses;
 
     /**
@@ -401,6 +404,9 @@ public class CourseList extends AbstractListModel
         // ENDIF
     }
 
+    /**
+     * list of filtered classes, populated when a filter is requested
+     */
     private List<Course> filtered;
     
     /**
