@@ -43,7 +43,7 @@ public class CatalogConvert
         }
         //ENDIF
         File input = new File(args[0]);
-        File output = new File("NewCat.json");
+        File output = new File("Cat.json");
         
         Scanner reader;
         FileWriter outWriter;
