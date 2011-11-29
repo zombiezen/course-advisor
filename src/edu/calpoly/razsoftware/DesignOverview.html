@@ -75,6 +75,39 @@
    <br>
    <a href="http://users.csc.calpoly.edu/~twwong/RAZ/edu/calpoly/razsoftware/CatConvCourse.html">CatConvCourse</a>
    
+   <h2>Design Rationale</h2>
+   
+   <h3>How to store requirements</h3>
+   Option A: Class / Tech Elective / GE Area<br>
+   Advantages: Data is defined in the terms that the school uses.<br>
+   Disadvantages: 3 (or more if implementing other flow charts) types of classes required with very similar functionality.<br>
+   Option B: !CourseOption<br>
+   Advantages: Only one type of "requirement" to worry about<br>
+   Disadvantages: Single courses still need to be wrapped in a !CourseOption<br>
+   Decision: Option B, because the simplicity of the design is more important to us than classes being named the same way as Cal Poly does.<br>
+   
+   <h3>How to represent prerequisites</h3>
+   Option A: OR set of AND sets<br>
+   Advantages: Represents all possible cases.<br>
+   Disadvantages: Sets can get large if there are a lot of options.<br>
+   Option B: AND set or OR sets<br>
+   Disadvantages: You can't represent all possible cases.<br>
+   Option C: Create a domain specific language<br>
+   Advantages: Able to concisely represent the necessary logic.<br>
+   Disadvantages: Lots of work to implement.<br>
+   Decision: Option A, because it was the most efficient way of creating a system to handle prerequisites.
+
+   <h3>Merge !CourseList and !CoursesTaken</h3>
+   Option A: Keep !CourseLIst and !CoursesTaken as separate classes<br>
+   Advantages: <br>
+   Disadvantages: !CourseList and !CoursesTaken are both essentially wrappers around a list of courses with similar functionality<br>
+   Option B: add !CoursesTaken logic to !CourseList<br>
+   Advantages: Simplifies redundant code.<br>
+   Disadvantages: Must add "single purpose" JSON code from !CoursesTaken to !CourseList<br>
+   Decision: Option B, because it simplifies redundant code.<br>
+   <br>
+   Data file - gson
+   
    <h2>Tools</span></h2>
    We are using Trac Wiki for project management, collaboration, document sharing, and 
    SubVersion repositories.<br>
