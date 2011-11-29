@@ -81,9 +81,9 @@
    Option A: Class / Tech Elective / GE Area<br>
    Advantages: Data is defined in the terms that the school uses.<br>
    Disadvantages: 3 (or more if implementing other flow charts) types of classes required with very similar functionality.<br>
-   Option B: !CourseOption<br>
+   Option B: CourseOption<br>
    Advantages: Only one type of "requirement" to worry about<br>
-   Disadvantages: Single courses still need to be wrapped in a !CourseOption<br>
+   Disadvantages: Single courses still need to be wrapped in a CourseOption<br>
    Decision: Option B, because the simplicity of the design is more important to us than classes being named the same way as Cal Poly does.<br>
    
    <h3>How to represent prerequisites</h3>
@@ -97,11 +97,11 @@
    Disadvantages: Lots of work to implement.<br>
    Decision: Option A, because it was the most efficient way of creating a system to handle prerequisites.
 
-   <h3>Merge !CourseList and !CoursesTaken</h3>
-   Option A: Keep !CourseLIst and !CoursesTaken as separate classes<br>
+   <h3>Merge CourseList and CoursesTaken</h3>
+   Option A: Keep CourseLIst and CoursesTaken as separate classes<br>
    Advantages: <br>
-   Disadvantages: !CourseList and !CoursesTaken are both essentially wrappers around a list of courses with similar functionality<br>
-   Option B: add !CoursesTaken logic to !CourseList<br>
+   Disadvantages: CourseList and CoursesTaken are both essentially wrappers around a list of courses with similar functionality<br>
+   Option B: add CoursesTaken logic to CourseList<br>
    Advantages: Simplifies redundant code.<br>
    Disadvantages: Must add "single purpose" JSON code from !CoursesTaken to !CourseList<br>
    Decision: Option B, because it simplifies redundant code.<br>
