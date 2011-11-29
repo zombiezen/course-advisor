@@ -96,6 +96,15 @@
    Advantages: Able to concisely represent the necessary logic.<br>
    Disadvantages: Lots of work to implement.<br>
    Decision: Option A, because it was the most efficient way of creating a system to handle prerequisites.
+   
+   <h3>Data Storage Format</h3>
+   Option A: Use self-made data format<br>
+   Advantages: Compact data structure reduces file sizes. Format would meet our specifications exactly. Fast to parse.<br>
+   Disadvantages: We'd be pioneering a new concept, unforeseen difficulties could require a complete revision of the data format. Unknown data format would be annoying for anyone working on it in the future. unexpected content or volume of content could "break" it.<br>
+   Option B: Use the JSON format<br>
+   Advantages: Well established format. Format would not be corrupted by unexpected content or excessive volume of content<br>
+   Disadvantages: Complex and relatively slow to parse. Comparatively large file size. Without the proper library, difficult to use.<br>
+   Decision: Option B, because it would be more open to change in the program in the long run. The GSON library was used because of the simplicity of use.<br>
 
    <h3>Merge CourseList and CoursesTaken</h3>
    Option A: Keep CourseLIst and CoursesTaken as separate classes<br>
