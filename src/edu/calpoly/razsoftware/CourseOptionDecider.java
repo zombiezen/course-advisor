@@ -11,7 +11,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * A class that computes the course options remaining to be fulfilled.
+ * The CourseOptionDecider class can compute the course options remaining to be
+ * fulfilled given a list of courses already taken.
+ * <p>
+ * Operations:
+ * <ul>
+ * <li>Compute unfulfilled course options.<br>
+ * <li>Get the set of required courses from a set of unfulfilled course
+ * </ul>
  * 
  * @author rlight
  * @version $Revision$
