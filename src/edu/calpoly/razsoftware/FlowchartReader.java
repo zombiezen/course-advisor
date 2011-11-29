@@ -27,7 +27,7 @@ public class FlowchartReader
      *            the catalog of courses
      * @return a flowchart based off the file
      */
-    public static Flowchart readFlowchart(InputStream iStream,
+    public static Degree readFlowchart(InputStream iStream,
             CourseList courses)
     {
         // INITIALIZE the set of course options to the empty set
@@ -74,6 +74,6 @@ public class FlowchartReader
             options.add(co);
         }
         // CREATE a new flowchart from the course options set
-        return new Flowchart(options);
+        return new Degree(options);
     }
 }

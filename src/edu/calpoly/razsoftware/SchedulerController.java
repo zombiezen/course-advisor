@@ -77,7 +77,7 @@ public class SchedulerController extends Observable implements ActionListener,
     /**
      * Represents all of the CourseOption a user would have to complete for a degree
      */
-    private Flowchart                    chart;
+    private Degree                    chart;
     /**
      * Represents the unfulfilled CourseOption the user has to complete for their degree
      */

@@ -9,14 +9,14 @@ import java.util.Set;
  * @author rlight
  * @version $Revision$
  */
-public class Flowchart
+public class Degree
 {
     private Set<CourseOption> sectionReqs;
 
     /**
      * Used to Construct a Flowchart that represents the classes a user can take
      */
-    public Flowchart()
+    public Degree()
     {
         sectionReqs = new HashSet<CourseOption>();
     }
@@ -25,7 +25,7 @@ public class Flowchart
      * Constructor for flowchart with section requirements
      * @param sectionReqs requirements for course option
      */
-    public Flowchart(Set<CourseOption> sectionReqs)
+    public Degree(Set<CourseOption> sectionReqs)
     {
        this();
         this.sectionReqs.addAll(sectionReqs);
