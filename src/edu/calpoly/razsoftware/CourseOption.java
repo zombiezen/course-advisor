@@ -4,16 +4,27 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Represents the different courses that can be taken to fulfill a requirement
+ * The CourseOption class holds the set of courses that can be taken to fulfill
+ * a requirement.  A CourseOption also has a name, whether it is mutually
+ * exclusive, and which quarter the college recommends you take the option in.
  * 
  * @author rlight
  * @version $Revision$
  */
 public class CourseOption 
 {
+    /** The description of the course option as it appears in the flowchart. */
     private String      requirementName;
+    
+    /** The set of courses that can fulfill the option. */
     private Set<Course> fulfillmentOptions;
+    
+    /** Whether or not fulfilling this option precludes using the course for
+     *  fulfilling another course option. */
     private boolean     mutuallyExclusive;
+    
+    /** The recommended quarter to take the course option in.  1 is fall quarter
+     *  of freshman year. */
     private int         quarter;
 
     /**
