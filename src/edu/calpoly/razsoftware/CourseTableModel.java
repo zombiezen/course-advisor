@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
  * and whether or not they have been marked as taken. It also delegates the
  *  marking of classes being taken to a controller class
  * 
- * @author Daniel
+ * @author djohns34
  * 
  */
 class CourseTableModel extends AbstractTableModel

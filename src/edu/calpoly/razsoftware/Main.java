@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 
 /**
  * The main methos the initilaizes different componets and links them together
- * @author light
+ * @author djohns34
  */
 public class Main
 {

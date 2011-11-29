@@ -6,6 +6,7 @@ import java.util.Set;
 /**
  * Represents the Flowchart for a user
  * 
+ * @author rlight
  */
 public class Flowchart
 {

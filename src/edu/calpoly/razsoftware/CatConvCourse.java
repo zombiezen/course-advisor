@@ -14,7 +14,7 @@ import com.google.gson.Gson;
  * DO NOT use this in any method or class the user directly or indirectly
  * accesses
  * 
- * @author adam
+ * @author aspurgin
  */
 public class CatConvCourse 
 {
