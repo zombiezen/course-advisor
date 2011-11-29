@@ -4,20 +4,41 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 /**
- * Represents a course the user can take
+ * Represents a course the user can take.  A course has at least one major that
+ * it is listed as, a number representing its course number, a number of units,
+ * a name, a description, and a representation of its prerequisites.
  * 
  * @author msvanbee
  * @version $Revision$
  */
 public class Course implements Comparable<Course>
 {
+    /* Represents the padding in pixles between courses */
     private static final int kPADDING = 4;
+    
+    /* Represents the names of the majors that this course is listed as */
     private List<String>     major;
+    
+    /* Represnts the course number of this Course.  Ex: 102 for CPE102 */
     private int              number;
+    
+    /* Represnts the number of units for this Course.  Ex: 4 for CPE 308 */
     private int              units;
+    
+    /* Represents the name of this Course.*/
     private String           name;
+    
+    /* Represents a description of the Course */
     private String           description;
+    
+    /* Represents a set of set of courses that are prerequisites for this Course
+     * .  The bottom set is "AND" and the top set is "OR".
+     */
     private Set<Set<Course>> preRequisites;
+    
+    /* Represents a set of set of courses that are corequisites for this Course
+     * .  The bottom set is "AND" and the top set is "OR".
+     */
     private Set<Set<Course>> coRequisites;
 
     /**
