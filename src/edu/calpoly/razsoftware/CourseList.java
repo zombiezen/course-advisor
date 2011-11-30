@@ -233,6 +233,16 @@ public class CourseList extends AbstractListModel
         }
     }
 
+    /**
+     * reformats the corequisites to conform to the correct structure where each
+     * top level set needs to have at least one completed set inside.  
+     * this method was refactored out of a part of another method to reduce 
+     * cyclomatic complexity
+     * @param coR coreq data structure
+     * @param coursearray array of courses being used to build references
+     * @param course current course being worked with
+     * @param newCoR new corequisite structure
+     */
     private void reformatCoReqs(Set<Set<Course>> preR,
                                 Set<Set<Course>> coR,
                                 Course[] coursearray,
@@ -283,6 +293,16 @@ public class CourseList extends AbstractListModel
         }
     }
 
+    /**
+     * reformats the prerequisites to conform to the correct structure where 
+     * each top level set needs to have at least one completed set inside.  
+     * this method was refactored out of a part of another method to reduce 
+     * cyclomatic complexity
+     * @param preR prereq data structure
+     * @param coursearray array of courses being used to build references
+     * @param course current course being worked with
+     * @param newPreR new prerequisite structure
+     */
     private void reformatPreReqs(Set<Set<Course>> preR,
                               Course[] coursearray,
                               Course course,
