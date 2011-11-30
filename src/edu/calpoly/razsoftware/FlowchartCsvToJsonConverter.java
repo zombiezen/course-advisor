@@ -35,6 +35,8 @@ public class FlowchartCsvToJsonConverter
     {
         Gson gson = new Gson();
         File csvInput = new File("FlowChart.csv");
+        if(args.length>0)
+            csvInput = new File(args[0]);
         File jsonOutput = new File("FlowChart.json");
         Scanner csvReader = new Scanner(csvInput);
         FileWriter jsonWriter = new FileWriter(jsonOutput);
