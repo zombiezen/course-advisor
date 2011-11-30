@@ -30,9 +30,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.google.gson.Gson;
 
 /**
- * This class is the Controller  in the MVC design.
- * It receives events from the GUI and dispatches it to the
- * necessary components of the model.
+ * This class is the Controller in the MVC design. It receives all of the events
+ * from the GUI. It then analyzes theses events, requests the
+ * necessary information from the {@link SchedulerView}, and dispatches
+ * the changes to the  necessary components of the model.
+ * 
  * @author msvanbee, djohns34, dpanger
  * @version $Revision$
  */
@@ -41,17 +43,16 @@ public class SchedulerController extends Observable implements ActionListener,
 {
 
     /**
-     * The saved file extension for this application.
-     * The save and load dialogs filter their view by this extension.
-     * The save dialog guarantees that the extension is
-     * appended onto the end of the file name.
+     * The saved file extension for this application. The save and load dialogs
+     * filter their view by this extension. The save dialog guarantees that the
+     * extension is appended onto the end of the file name.
      */
     private static final String kFileExtension   = "us";
     /**
-     * The name of the application to display n the about box
-     *  and the application title bar
+     * The name of the application to display n the about box and the
+     * application title bar
      */
-    public static final String kApplicationName = "Course Advisor";
+    public static final String  kApplicationName = "Course Advisor";
     /**
      * The choice the user selects when they would like to see all of the
      * required classes
@@ -67,57 +68,58 @@ public class SchedulerController extends Observable implements ActionListener,
      * with prerequisites not met
      */
     public static final String  kPrereqNotMet    = "Prerequisite Not Met";
-    
-    
+
     /**
      * Represents a list of courses the user has marked as taken
      */
-    private CourseList                   coursesTaken;
+    private CourseList          coursesTaken;
 
     /**
-     * Represents all of the CourseOption a user would have to complete for a degree
+     * Represents all of the CourseOption a user would have to complete for a
+     * degree
      */
-    private Degree                    chart;
+    private Degree              chart;
     /**
-     * Represents the unfulfilled CourseOption the user has to complete for their degree
+     * Represents the unfulfilled CourseOption the user has to complete for
+     * their degree
      */
-    private Set<CourseOption>            unfulfilledOptions;
+    private Set<CourseOption>   unfulfilledOptions;
     /**
-     * Represents a list of courses the user can take to fulfill an unfulfilledOptions
+     * Represents a list of courses the user can take to fulfill an
+     * unfulfilledOptions
      */
-    private CourseList                   coursesRequired;
+    private CourseList          coursesRequired;
     /**
-     * Represents a list of courses the program has suggested 
-     * to the user to fulfill the unfulfilledOptions.
+     * Represents a list of courses the program has suggested to the user to
+     * fulfill the unfulfilledOptions.
      */
-    private CourseList                   schedule;
+    private CourseList          schedule;
     /**
      * Holds a reference to the view to query for information when necessary.
      */
-    private SchedulerView                gui;
+    private SchedulerView       gui;
     /**
      * Represents the entire course catalog for the University
      */
-    private CourseList                   catalog;
+    private CourseList          catalog;
     /**
-     * Holds a reference to the CourseOptionDecider so it can 
-     * tell the decider to update the unfulfilledOptions after
-     * the user marks a Course as taken
+     * Holds a reference to the CourseOptionDecider so it can tell the decider
+     * to update the unfulfilledOptions after the user marks a Course as taken
      */
-    private CourseOptionDecider          decider;
+    private CourseOptionDecider decider;
 
     /**
      * A global flag to determine if the application is saved, defaults to true.
      * Is reset to true whenever the user saves. Is changed to false when they
      * add or remove a class from the taken list
      */
-    private boolean                      saved          = true;
+    private boolean             saved            = true;
     /**
-     * If the user has saved or loaded a file 
-     * this variable is a reference to the pointer.
-     * This is used so the save functionality knows what file to save to 
+     * If the user has saved or loaded a file this variable is a reference to
+     * the pointer. This is used so the save functionality knows what file to
+     * save to
      */
-    private File                         savedFile;
+    private File                savedFile;
 
     /**
      * Constructor
@@ -227,19 +229,21 @@ public class SchedulerController extends Observable implements ActionListener,
         filterRequired();
 
     }
+
     /**
      * {@inheritDoc}
      */
     public void keyPressed(KeyEvent event)
     {
-       //do nothing 
+        // do nothing
     }
+
     /**
      * {@inheritDoc}
      */
     public void keyTyped(KeyEvent event)
     {
-       //don nothing 
+        // don nothing
     }
 
     /**
@@ -434,61 +438,64 @@ public class SchedulerController extends Observable implements ActionListener,
             @Override
             public void approveSelection()
             {
-                File selectedFile = getSelectedFile();                
-                //IF the selected file doen't have the correct extension
+                File selectedFile = getSelectedFile();
+                // IF the selected file doen't have the correct extension
                 if (!selectedFile.getName().endsWith("." + kFileExtension))
                 {
-                   
-                        //append the extension onto the name
-                    selectedFile = new File(selectedFile.getPath() + "." 
-                        + kFileExtension);
-                    
-                }//ENDIF
-                //If the user is overwriting a already existing file
+
+                    // append the extension onto the name
+                    selectedFile =
+                            new File(selectedFile.getPath() + "."
+                                    + kFileExtension);
+
+                }// ENDIF
+                 // If the user is overwriting a already existing file
                 if (selectedFile.exists() && !selectedFile.equals(savedFile))
                 {
-                    int overWrite = JOptionPane.showConfirmDialog(this,
-                                    getSelectedFile().getName()
-                                    +" already exists.\nDo you want to replace it?",
-                                    "Confirm Save As",
-                                    JOptionPane.YES_NO_CANCEL_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE);
-                    //IF the user wants to overwrite
+                    int overWrite =
+                            JOptionPane.showConfirmDialog(this,
+                                            getSelectedFile().getName()
+                                             + " already exists.\n" +
+                                             "Do you want to replace it?",
+                                            "Confirm Save As",
+                                            JOptionPane.YES_NO_CANCEL_OPTION,
+                                            JOptionPane.QUESTION_MESSAGE);
+                    // IF the user wants to overwrite
                     if (overWrite == JOptionPane.OK_OPTION)
                     {
-                        //save the file
+                        // save the file
                         savedFile = selectedFile;
                         super.approveSelection();
-                    }//ELSEIF the user wants to cancel
+                    }// ELSEIF the user wants to cancel
                     else if (overWrite == JOptionPane.CANCEL_OPTION)
                     {
-                        //cancel the save
+                        // cancel the save
                         super.cancelSelection();
                     }
                     return;
-                }//ELSE the file does not exist
+                }// ELSE the file does not exist
                 else
                 {
                     savedFile = selectedFile;
                     super.approveSelection();
-                }//ENDIF
+                }// ENDIF
 
             }
         };
         chooser.setFileFilter(kSaveLoadFilter);
         chooser.setSelectedFile(savedFile);
         int choice = chooser.showSaveDialog(gui);
-        //IF the user wants to save
+        // IF the user wants to save
         if (choice == JFileChooser.APPROVE_OPTION)
         {
-            //save their state
+            // save their state
             saveUserState();
-        }//END IF
+        }// END IF
     }
 
     /**
-     * Handles a check box being clicked in the GUI.
-     * Adds or removes the checked Course as applicable.
+     * Handles a check box being clicked in the GUI. Adds or removes the checked
+     * Course as applicable.
      */
     void checkBoxClicked()
     {
@@ -566,13 +573,12 @@ public class SchedulerController extends Observable implements ActionListener,
         if (!selectedCourse.preRecsMet(coursesTaken.getCourses()))
         {
             // Verify they really want to add it to their schedule
-            choice = JOptionPane.showConfirmDialog(
-                            gui,
-                            "You have not fulfilled the prerequisites for this course.\n"
-                            +"Are you sure you want to add this to your schedule?",
-                            "Prerequisites not met",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
+            choice = JOptionPane.showConfirmDialog(gui, 
+                        "You have not fulfilled the prerequisites for this course.\n"
+                        + "Are you sure you want to add this to your schedule?",
+                          "Prerequisites not met",
+                          JOptionPane.YES_NO_OPTION,
+                          JOptionPane.QUESTION_MESSAGE);
 
         }
         // IF the user wants to add the course, add it
@@ -599,7 +605,7 @@ public class SchedulerController extends Observable implements ActionListener,
         gui.updateUnitCount(count);
     }
 
-    /**
+/**
     * Handles the "<" button being clicked.  Removes the selected field from
     * schedule.
     */
@@ -617,9 +623,10 @@ public class SchedulerController extends Observable implements ActionListener,
         schedule.clear();
         updateUnitCount();
     }
-    
+
     /**
      * Calculates the number of units to add to the schedule
+     * 
      * @return the number of units to add to the schedule
      */
     private int calculateUnits()
@@ -632,9 +639,9 @@ public class SchedulerController extends Observable implements ActionListener,
             // add the units value
             unitCount += scheduledCourse.getUnits();
         }
-        return maxUnits-unitCount;
+        return maxUnits - unitCount;
     }
-    
+
     /**
      * Handles the "AutoFill" button being pressed. Uses our autofill algorithm
      * to fill it.
@@ -645,14 +652,15 @@ public class SchedulerController extends Observable implements ActionListener,
     private void autoFillSechdule()
     {
         int unitsToAdd = calculateUnits();
-        //IF the user has fulfilled all of the requirements
+        // IF the user has fulfilled all of the requirements
         if (unfulfilledOptions.isEmpty())
         {
             return;
-        }//ENDIF
+        }// ENDIF
 
-        //Sort the CourseOption depending on the quarter they are suggested
-        List<CourseOption> unfulfilled = new ArrayList<CourseOption>(unfulfilledOptions);
+        // Sort the CourseOption depending on the quarter they are suggested
+        List<CourseOption> unfulfilled =
+                new ArrayList<CourseOption>(unfulfilledOptions);
         Collections.sort(unfulfilled, new Comparator<CourseOption>()
         {
             @Override
@@ -661,34 +669,36 @@ public class SchedulerController extends Observable implements ActionListener,
                 return new Integer(o1.getQuarter()).compareTo(o2.getQuarter());
             }
         });
-        //FOR each CourseOption
+        // FOR each CourseOption
         for (CourseOption co : unfulfilled)
         {
-            //If there is still room in the schedule
+            // If there is still room in the schedule
             if (unitsToAdd > 0)
             {
                 boolean courseFound = false;
-                //for each course in the CourseOption
+                // for each course in the CourseOption
                 for (Course optionCourse : co.getFulfillmentOptions())
                 {
-                    //IF a course hasn't been found for this option
-                    //the course has all of the prereqs met,
-                    //they have not already taken it,
-                    //it is a small enough unit count//
-                    //and it isn't already in the list
-                    if (!courseFound&&optionCourse.preRecsMet(coursesTaken.getCourses())
+                    // IF a course hasn't been found for this option
+                    // the course has all of the prereqs met,
+                    // they have not already taken it,
+                    // it is a small enough unit count//
+                    // and it isn't already in the list
+                    if (!courseFound
+                            && optionCourse.preRecsMet(coursesTaken
+                                    .getCourses())
                             && !coursesTaken.contains(optionCourse)
                             && +optionCourse.getUnits() <= unitsToAdd
                             && !schedule.contains(optionCourse))
                     {
                         courseFound = true;
-                        //Add it to the suggested schedule
+                        // Add it to the suggested schedule
                         schedule.add(optionCourse);
-                        unitsToAdd-=optionCourse.getUnits();                    
-                    }//ENDIF    
-                }//ENDFOR
-            }//ENDIF
-        }//ENDFOR
+                        unitsToAdd -= optionCourse.getUnits();
+                    }// ENDIF
+                }// ENDFOR
+            }// ENDIF
+        }// ENDFOR
         updateUnitCount();
     }
 
