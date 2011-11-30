@@ -8,7 +8,10 @@ package edu.calpoly.razsoftware;
 import javax.swing.UIManager;
 
 /**
- * The main methos the initilaizes different componets and links them together
+ * The main method initializes the Model, {@link SchedulerView}, and
+ * {@link SchedulerController}. It then links the appropriate pieces of the
+ * model to the different components in the view and controller.
+ * 
  * @author djohns34
  * @version $Revision$
  */
@@ -17,6 +20,7 @@ public class Main
 
     /**
      * Starts the running of the program
+     * 
      * @param args
      *            the command line arguments
      */
