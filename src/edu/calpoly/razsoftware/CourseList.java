@@ -17,10 +17,12 @@ import com.google.gson.Gson;
  * Represents a list of easily referenceable courses that can be constructed
  * from various sources. The list of courses represents a catalog for courses
  * available as well as courses that have been taken.
+ * <p>
  * Operations:
- * A CourseList can be the catalog of courses.
- * A CourseList can be the list of courses that a user has taken.
- * 
+ * <ul>
+ * <li>A CourseList can be the catalog of courses.<br>
+ * <li>A CourseList can be the list of courses that a user has taken.
+ * </ul>
  * @author aspurgin
  * @version $Revision$
  */
