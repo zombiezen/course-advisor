@@ -32,7 +32,7 @@ public class CourseList extends AbstractListModel
     private Set<Course> courses;
 
     /**
-     * blank constructor, initializes the inner set as a treeset
+     * blank constructor, instantiates private local classes
      */
     public CourseList()
     {
@@ -40,10 +40,12 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * constructs a catalog off of a collection of courses
+     * constructs a catalog from a collection of Course objects. Behaves similar
+     * to Collection constructor
      * 
      * @param in
      *            collection of courses
+     * @postcondition inner set contains references to supplied courses
      */
     public CourseList(Collection<Course> in)
     {
@@ -61,6 +63,8 @@ public class CourseList extends AbstractListModel
     /**
      * constructs a CourseList from a JSON input stream
      * 
+     * @precondition JSON stream must be correctly formatted
+     * @precondition JSON objects from stream much match Course class
      * @param input
      *            the JSON input stream
      */
@@ -102,7 +106,7 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * adds a single course into the set
+     * adds a single course into the set, fires the model update
      * 
      * @param c
      *            the course
@@ -114,7 +118,7 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * adds all courses in a collection
+     * adds all courses in a collection, fires the model update
      * 
      * @param addedCourses
      *            a collection of courses
@@ -131,7 +135,7 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * removes a course from the set
+     * removes a course from the set, fires the model update
      * 
      * @param c
      *            the course to be removed
@@ -181,7 +185,8 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * clears the CourseList
+     * clears the CourseList, notifies the model
+     * @postcondition Courselist is now empty
      */
     public void clear()
     {
@@ -205,7 +210,10 @@ public class CourseList extends AbstractListModel
 
     /**
      * replaces course keys attained from JSON file with class references from
-     * CourseList
+     * CourseList. This MUST be done before attempting to use with any decision 
+     * making code
+     * @precondition courselist is not empty
+     * @postcondition all courses' requisites are now pointers to other courses
      */
     private void completePointers()
     {
@@ -369,8 +377,8 @@ public class CourseList extends AbstractListModel
     }
 
     /**
-     * returns a full class object from the course list
-     * 
+     * returns a full course object from the course list based off the key of 
+     * that course. a key is simply one of the majors and the number 
      * @param major
      *            abbreviation of major
      * @param number
